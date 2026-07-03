@@ -97,8 +97,11 @@ func close_details_pane():
 	Globals.hud.open_details_pane.queue_free()
 	Globals.hud.open_details_pane = null
 
-func _on_collision_area_input_event(_viewport, _event, _shape_idx):
-	if deployed and Input.is_action_just_pressed("LeftClick"):
+func _on_collision_area_input_event(_viewport, event, _shape_idx):
+	var tapped = (event is InputEventMouseButton \
+		and event.button_index == MOUSE_BUTTON_LEFT and event.pressed) \
+		or (event is InputEventScreenTouch and event.pressed)
+	if deployed and tapped:
 		if is_instance_valid(Globals.hud.open_details_pane):
 			if Globals.hud.open_details_pane.turret == self:
 				close_details_pane()
