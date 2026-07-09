@@ -14,18 +14,13 @@ var turret_type := "":
 	set(value):
 		turret_type = value
 		var cfg: Dictionary = Data.turrets[value]
-		$Sprite2D.texture = load(cfg["sprite"])
+		sheet_tex = load(cfg["sprite"])
+		if cfg.has("idle"):
+			idle_tex = load(cfg["idle"])
 		sprite_scale = cfg["scale"]
 		$Sprite2D.scale = Vector2(sprite_scale, sprite_scale)
 		uses_sheet = cfg.get("directional_sheet", false)
-		if uses_sheet:
-			$Sprite2D.hframes = 3
-			$Sprite2D.vframes = 1
-			$Sprite2D.frame = FRAME_DOWN
-			# origem do nó = pés do personagem: a respiração e o
-			# recuo esticam para cima, sem "flutuar"
-			var fh: float = $Sprite2D.texture.get_height()
-			$Sprite2D.offset = Vector2(0, -fh / 2.0 + 3.0)
+		show_idle()
 		rotates = cfg.get("rotates", false)
 		for stat in cfg["stats"].keys():
 			set(stat, cfg["stats"][stat])
@@ -40,7 +35,31 @@ var uses_sheet := false
 var sprite_scale := 1.0
 var bob_t := 0.0
 var punch_tween: Tween
+var sheet_tex: Texture2D
+var idle_tex: Texture2D
 var current_target = null
+
+# Parado: frame idle dedicado. Atacando: sheet direcional.
+func show_idle():
+	var tex: Texture2D = idle_tex if idle_tex else sheet_tex
+	if $Sprite2D.texture == tex:
+		return
+	$Sprite2D.texture = tex
+	$Sprite2D.hframes = 1 if idle_tex else 3
+	$Sprite2D.vframes = 1
+	$Sprite2D.frame = 0
+	$Sprite2D.flip_h = false
+	# origem do nó = pés do personagem (nada de flutuar)
+	$Sprite2D.offset = Vector2(0, -tex.get_height() / 2.0 + 3.0)
+
+func show_sheet():
+	if $Sprite2D.texture == sheet_tex:
+		return
+	$Sprite2D.texture = sheet_tex
+	$Sprite2D.hframes = 3
+	$Sprite2D.vframes = 1
+	$Sprite2D.frame = FRAME_DOWN
+	$Sprite2D.offset = Vector2(0, -sheet_tex.get_height() / 2.0 + 3.0)
 #Stats
 var attack_speed := 1.0:
 	set(value):
@@ -55,8 +74,8 @@ var turret_level := 1
 
 func _process(delta):
 	if not deployed:
-		@warning_ignore("standalone_ternary")
-		colliding() if $CollisionArea.has_overlapping_areas() else not_colliding()
+		# posicionamento livre: o fantasma é sempre verde
+		not_colliding()
 	elif uses_sheet:
 		update_facing(delta)
 	elif rotates:
@@ -65,6 +84,7 @@ func _process(delta):
 
 func update_facing(delta):
 	if is_instance_valid(current_target):
+		show_sheet()
 		var v: Vector2 = current_target.position - position
 		if absf(v.x) >= absf(v.y):
 			$Sprite2D.frame = FRAME_SIDE
@@ -76,6 +96,7 @@ func update_facing(delta):
 			$Sprite2D.frame = FRAME_UP
 			$Sprite2D.flip_h = false
 	else:
+		show_idle()
 		try_get_closest_target()
 	# respiração contínua ancorada nos pés (escala, não posição)
 	bob_t += delta

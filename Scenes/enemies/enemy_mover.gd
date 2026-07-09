@@ -10,7 +10,7 @@ var enemy_type := "":
 		for stat in Data.enemies[val]["stats"].keys():
 			set(stat, Data.enemies[val]["stats"][stat])
 
-enum State {walking, healed}
+enum State {walking, stopped}
 var state = State.walking
 var goldYield := 10.0
 var hp := 10.0
@@ -18,9 +18,14 @@ var baseDamage := 5.0
 var speed := 1.0
 var is_destroyed := false
 
+# corações andam levemente acima do centro da estrada para não
+# encostar na base das casas
+const RIDE_OFFSET := -14.0
+
 @onready var spawner := get_parent() as EnemyPath
 func _ready():
 	add_to_group("enemy")
+	v_offset = RIDE_OFFSET
 
 func _process(delta):
 	if state == State.walking:
@@ -42,7 +47,40 @@ func finished_path():
 	is_destroyed = true
 	spawner.enemy_destroyed()
 	Globals.currentMap.get_base_damage(baseDamage)
-	queue_free()
+	attack_guardian_animation()
+
+# o coração partido pula na Elisa, que treme com o golpe
+func attack_guardian_animation():
+	state = State.stopped
+	remove_from_group("enemy")
+	$Area/CollisionShape2D.set_deferred("disabled", true)
+	$AnimationPlayer.stop()
+	var guardian: Node2D = Globals.currentMap.get_node_or_null("Mamae")
+	if guardian == null:
+		queue_free()
+		return
+	var start: Vector2 = $Sprite2D.global_position
+	var target: Vector2 = guardian.global_position + Vector2(0, -26)
+	var mid := Vector2((start.x + target.x) / 2.0, minf(start.y, target.y) - 56.0)
+	var tween := create_tween()
+	tween.tween_property($Sprite2D, "global_position", mid, 0.22) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property($Sprite2D, "global_position", target, 0.2) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween.tween_callback(func(): _hit_guardian(guardian))
+	tween.tween_property($Sprite2D, "scale", $Sprite2D.scale * Vector2(1.4, 0.5), 0.08)
+	tween.tween_property($Sprite2D, "modulate:a", 0.0, 0.16)
+	tween.tween_callback(queue_free)
+
+func _hit_guardian(guardian: Node2D):
+	guardian.modulate = Color(1, 0.45, 0.5)
+	var tween := guardian.create_tween()
+	tween.set_parallel()
+	tween.tween_property(guardian, "modulate", Color.WHITE, 0.35)
+	tween.tween_property(guardian, "scale", Vector2(1.12, 0.88), 0.07)
+	tween.set_parallel(false)
+	tween.tween_property(guardian, "scale", Vector2(1, 1), 0.25) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func get_damage(amount):
 	# "amount" = poder de cura do defensor
@@ -58,16 +96,16 @@ func get_damage(amount):
 
 func healing_hit_animation():
 	var tween := create_tween()
-	tween.tween_property(self, "v_offset", 0, 0.05)
+	tween.tween_property(self, "v_offset", RIDE_OFFSET, 0.05)
 	tween.tween_property(self, "modulate", Color(0.65, 1.0, 0.8), 0.1)
 	tween.tween_property(self, "modulate", Color.WHITE, 0.3)
 	tween.set_parallel()
-	tween.tween_property(self, "v_offset", -5, 0.2)
+	tween.tween_property(self, "v_offset", RIDE_OFFSET - 5, 0.2)
 	tween.set_parallel(false)
-	tween.tween_property(self, "v_offset", 0, 0.2)
+	tween.tween_property(self, "v_offset", RIDE_OFFSET, 0.2)
 
 func healed_animation():
-	state = State.healed
+	state = State.stopped
 	remove_from_group("enemy")
 	$Area/CollisionShape2D.set_deferred("disabled", true)
 	$AnimationPlayer.stop()

@@ -20,6 +20,9 @@ func _ready():
 	Globals.turretsNode = $Turrets
 	Globals.projectilesNode = $Projectiles
 	Globals.currentMap = self
+	# atualiza o HUD ao (re)criar o mapa
+	Globals.baseHpChanged.emit(baseHP, baseMaxHp)
+	Globals.goldChanged.emit(gold)
 
 func get_base_damage(damage):
 	if gameOver:

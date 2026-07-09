@@ -5,7 +5,7 @@ extends Node2D
 
 const ENTRY := Vector2(-590, -65)
 const ENTRY_DIR := Vector2.RIGHT
-const DEST := Vector2(-545, 55)
+const DEST := Vector2(-478, 96)
 const SPAN := 140.0
 
 var chevrons: Array[Sprite2D] = []

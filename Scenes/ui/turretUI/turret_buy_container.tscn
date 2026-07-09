@@ -54,7 +54,7 @@ texture = ExtResource("3_coin")
 
 [node name="CostLabel" type="Label" parent="VBox/CostRow"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 18
 text = "30"
 
 [node name="CantBuy" type="ColorRect" parent="."]

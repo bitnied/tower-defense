@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scenes/maps/baseMap.gd" id="1_elmap"]
 [ext_resource type="Texture2D" path="res://Assets/maps/map_elisa.png" id="2_elbg"]
-[ext_resource type="Texture2D" path="res://Assets/defenders/elisa_sheet.png" id="3_elmom"]
+[ext_resource type="Texture2D" path="res://Assets/scenario/elisa_atacada.png" id="3_elmom"]
 [ext_resource type="Script" path="res://Scenes/maps/EnemySpawner.gd" id="4_elspawn"]
 [ext_resource type="Script" path="res://Scenes/maps/entry_hints.gd" id="5_elhints"]
 
@@ -21,10 +21,8 @@ texture = ExtResource("2_elbg")
 [node name="Mamae" type="Sprite2D" parent="."]
 z_index = 1
 texture_filter = 1
-position = Vector2(-545, 34)
+position = Vector2(-478, 108)
 texture = ExtResource("3_elmom")
-hframes = 3
-frame = 0
 
 [node name="EntryHints" type="Node2D" parent="."]
 z_index = 1

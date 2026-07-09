@@ -7,7 +7,6 @@ func _ready():
 	%Congrats.text = Data.texts["congrats"]
 	%Title.text = Data.texts["howto_title"]
 	%HowtoLabel.text = Data.texts["howto"]
-	%StartButton.text = Data.texts["howto_button"]
 
 func _on_play_button_pressed():
 	%HowtoDialog.visible = true

@@ -94,7 +94,22 @@ for name in ["Tiago", "Luna", "Leo", "Elisa"]:
     port = autocrop(port)
     port = fit_cell(port, 96, 92)
     port.save(f"{ASSETS}/defenders/{name.lower()}_portrait.png")
+    # frame idle (parado, sem alvo): Tiago tem arquivo próprio,
+    # os demais usam o PNG individual do personagem
+    idle_src = f"{ART}/Characters/Tiago Idle.png" if name == "Tiago" \
+        else f"{ART}/Characters/{name}.png"
+    idle = Image.open(idle_src).convert("RGBA")
+    idle = autocrop(idle)
+    idle = fit_cell(idle, CELL, CONTENT, bottom_anchor=True)
+    idle.save(f"{ASSETS}/defenders/{name.lower()}_idle.png")
     print("defender ok:", name)
+
+# guardiã: Elisa sendo atacada (fim da estrada)
+g = Image.open(f"{ART}/Characters/Elisa Atacada.png").convert("RGBA")
+g = autocrop(g)
+g = fit_cell(g, 96, 92, bottom_anchor=True)
+g.save(f"{ASSETS}/scenario/elisa_atacada.png")
+print("guardia ok")
 
 # ---------------- 2. Elementos ----------------
 EL = Image.open(f"{ART}/corações - projéteis - cadeado.jpeg").convert("RGB")

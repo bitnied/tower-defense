@@ -43,28 +43,12 @@ func end_grab():
 	update_placeholder_position()
 	var ph = placeholder
 	placeholder = null
-	var free_spot := placement_is_free(ph)
-	if free_spot and check_can_purchase(Globals.currentMap.gold):
+	# posicionamento livre: pode construir em qualquer lugar do cenário
+	if check_can_purchase(Globals.currentMap.gold):
 		Globals.currentMap.gold -= Data.turrets[turretType]["cost"]
 		ph.build()
 	else:
-		if not free_spot and is_instance_valid(Globals.hud):
-			Globals.hud.show_banner(Data.texts["road_blocked"], 1.3)
 		ph.queue_free()
-
-# Synchronous physics query so the decision never depends on the one-frame
-# delay of Area2D overlap updates (fast taps/drags, duplicated web events).
-func placement_is_free(ph) -> bool:
-	var area: Area2D = ph.get_node("CollisionArea")
-	var params := PhysicsShapeQueryParameters2D.new()
-	params.shape = area.get_node("CollisionShape2D").shape
-	params.transform = Transform2D(0.0, ph.global_position)
-	params.collide_with_areas = true
-	params.collide_with_bodies = false
-	params.collision_mask = area.collision_mask
-	params.exclude = [area.get_rid()]
-	var space: PhysicsDirectSpaceState2D = ph.get_world_2d().direct_space_state
-	return space.intersect_shape(params, 1).is_empty()
 
 func create_placeholder():
 	var turretScene := load(Data.turrets[turretType]["scene"])
