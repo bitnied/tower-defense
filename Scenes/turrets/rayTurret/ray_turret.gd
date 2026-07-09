@@ -26,6 +26,7 @@ func attack():
 		if can_fire:
 			can_fire = false
 			ray_enabled = true
+			attack_punch()
 			$RayDuration.start()
 	else:
 		try_get_closest_target()

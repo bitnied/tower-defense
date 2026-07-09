@@ -8,9 +8,9 @@
 
 [sub_resource type="Curve2D" id="Curve2D_elisa"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -620, -190, 0, 0, 0, 0, 300, -190, 0, 0, 0, 0, 350, -165, 0, 0, 0, 0, 385, -130, 0, 0, 0, 0, 400, -90, 0, 0, 0, 0, 400, 90, 0, 0, 0, 0, 385, 130, 0, 0, 0, 0, 350, 165, 0, 0, 0, 0, 300, 190, 0, 0, 0, 0, -500, 190)
+"points": PackedVector2Array(0, 0, 0, 0, -600, -65, -36, 0, 36, 0, 202, -65, 0, -36, 0, 36, 268, 0, 36, 0, -36, 0, 202, 66, 0, 0, 0, 0, -545, 66)
 }
-point_count = 10
+point_count = 5
 
 [node name="ElisaMap" type="Node2D"]
 script = ExtResource("1_elmap")
@@ -21,7 +21,7 @@ texture = ExtResource("2_elbg")
 [node name="Mamae" type="Sprite2D" parent="."]
 z_index = 1
 texture_filter = 1
-position = Vector2(-516, 182)
+position = Vector2(-545, 40)
 texture = ExtResource("3_elmom")
 
 [node name="EntryHints" type="Node2D" parent="."]
@@ -50,7 +50,7 @@ collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Obstacles"]
-polygon = PackedVector2Array(-620, -235, 320, -235, 445, -110, 445, 110, 320, 235, -620, 235, -620, 145, 280, 145, 355, 70, 355, -70, 280, -145, -620, -145)
+polygon = PackedVector2Array(-600, -101, 202, -101, 276, -73, 304, 0, 276, 73, 202, 102, -600, 102, -600, 30, 196, 30, 226, 0, 196, -29, -600, -29)
 
 [connection signal="timeout" from="PathSpawner/SpawnDelay" to="PathSpawner" method="_on_spawn_delay_timeout"]
 [connection signal="timeout" from="PathSpawner/WaveDelayTimer" to="PathSpawner" method="_on_wave_delay_timer_timeout"]

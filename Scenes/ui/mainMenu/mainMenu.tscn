@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://duvsvsvu8biwm"]
+[gd_scene load_steps=3 format=3 uid="uid://duvsvsvu8biwm"]
 
 [ext_resource type="Script" path="res://Scenes/ui/mainMenu/main_menu.gd" id="1_lnqmy"]
 [ext_resource type="Texture2D" path="res://Assets/menu/home_bg.png" id="2_jl1fa"]
-[ext_resource type="Texture2D" path="res://Assets/menu/title_lettering.png" id="3_title"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -24,65 +23,58 @@ expand_mode = 1
 stretch_mode = 6
 texture = ExtResource("2_jl1fa")
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="BottomBox" type="VBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
+offset_left = -330.0
+offset_top = -206.0
+offset_right = 330.0
+offset_bottom = -14.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
+theme_override_constants/separation = 8
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+[node name="HowtoPanel" type="PanelContainer" parent="BottomBox"]
+self_modulate = Color(1, 1, 1, 0.85)
 layout_mode = 2
-theme_override_constants/separation = 14
+size_flags_horizontal = 4
 
-[node name="TitleTexture" type="TextureRect" parent="CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(640, 128)
+[node name="HowtoMargin" type="MarginContainer" parent="BottomBox/HowtoPanel"]
 layout_mode = 2
-expand_mode = 1
-stretch_mode = 5
-texture = ExtResource("3_title")
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
 
-[node name="Tagline" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="HowtoLabel" type="Label" parent="BottomBox/HowtoPanel/HowtoMargin"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(640, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
-horizontal_alignment = 1
-text = "Um presente de aniversário para a Elisa"
-
-[node name="HowtoPanel" type="PanelContainer" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="HowtoMargin" type="MarginContainer" parent="CenterContainer/VBoxContainer/HowtoPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 14
-
-[node name="HowtoLabel" type="Label" parent="CenterContainer/VBoxContainer/HowtoPanel/HowtoMargin"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(600, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 19
+theme_override_font_sizes/font_size = 15
 horizontal_alignment = 1
 autowrap_mode = 2
 text = "Como jogar"
 
-[node name="Congrats" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="Congrats" type="Label" parent="BottomBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 21
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_outline_color = Color(0.35, 0.1, 0.2, 1)
+theme_override_constants/outline_size = 6
 horizontal_alignment = 1
 text = "Parabéns!"
 
-[node name="PlayWrap" type="CenterContainer" parent="CenterContainer/VBoxContainer"]
+[node name="PlayWrap" type="CenterContainer" parent="BottomBox"]
 layout_mode = 2
 
-[node name="PlayButton" type="Button" parent="CenterContainer/VBoxContainer/PlayWrap"]
-custom_minimum_size = Vector2(260, 64)
+[node name="PlayButton" type="Button" parent="BottomBox/PlayWrap"]
+custom_minimum_size = Vector2(250, 58)
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 26
 text = "Jogar"
 
-[connection signal="pressed" from="CenterContainer/VBoxContainer/PlayWrap/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="BottomBox/PlayWrap/PlayButton" to="." method="_on_play_button_pressed"]

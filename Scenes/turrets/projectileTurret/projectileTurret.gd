@@ -5,6 +5,7 @@ var bulletPierce := 1
 
 func attack():
 	if is_instance_valid(current_target):
+		attack_punch()
 		var projectileScene := preload("res://Scenes/turrets/projectileTurret/bullet/bulletBase.tscn")
 		var projectile := projectileScene.instantiate()
 		projectile.bullet_type = Data.turrets[turret_type]["bullet"]

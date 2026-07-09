@@ -12,8 +12,9 @@ extends Node
 # DEFENSORES (a chave "turrets" é mantida por compatibilidade
 # com os scripts do template).
 # Ordem de custo/impacto: Tiago < Luna < Leo < Elisa.
-# "directional_sheet": spritesheet 4 frames x 9 linhas
-#   (linhas 0-7 = direções L, SE, S, SO, O, NO, N, NE; linha 8 = parado)
+# "directional_sheet": sheet de 3 células horizontais
+#   [baixo, direita, cima] — a esquerda é o espelho da direita.
+# "portrait": imagem usada no card de compra e no painel de detalhes.
 # --------------------------------------------------------------
 const turrets := {
 	"tiago": {
@@ -35,6 +36,7 @@ const turrets := {
 		"max_level": 3,
 		"scene": "res://Scenes/turrets/projectileTurret/projectileTurret.tscn",
 		"sprite": "res://Assets/defenders/tiago_sheet.png",
+		"portrait": "res://Assets/defenders/tiago_portrait.png",
 		"directional_sheet": true,
 		"scale": 1.0,
 		"rotates": false,
@@ -59,6 +61,7 @@ const turrets := {
 		"max_level": 3,
 		"scene": "res://Scenes/turrets/rayTurret/rayTurret.tscn",
 		"sprite": "res://Assets/defenders/luna_sheet.png",
+		"portrait": "res://Assets/defenders/luna_portrait.png",
 		"directional_sheet": true,
 		"scale": 1.0,
 		"rotates": false,
@@ -82,6 +85,7 @@ const turrets := {
 		"max_level": 3,
 		"scene": "res://Scenes/turrets/projectileTurret/projectileTurret.tscn",
 		"sprite": "res://Assets/defenders/leo_sheet.png",
+		"portrait": "res://Assets/defenders/leo_portrait.png",
 		"directional_sheet": true,
 		"scale": 1.0,
 		"rotates": false,
@@ -106,6 +110,7 @@ const turrets := {
 		"max_level": 3,
 		"scene": "res://Scenes/turrets/projectileTurret/projectileTurret.tscn",
 		"sprite": "res://Assets/defenders/elisa_sheet.png",
+		"portrait": "res://Assets/defenders/elisa_portrait.png",
 		"directional_sheet": true,
 		"scale": 1.0,
 		"rotates": false,

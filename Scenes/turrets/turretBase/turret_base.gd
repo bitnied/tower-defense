@@ -3,23 +3,25 @@ class_name Turret
 
 signal turretUpdated
 
-# Spritesheet direcional: 4 frames x 9 linhas.
-# Linhas 0-7 = direções (L, SE, S, SO, O, NO, N, NE), linha 8 = parado.
-const SHEET_COLS := 4
-const SHEET_ROWS := 9
-const IDLE_ROW := 8
+# Spritesheet direcional simples: 3 células horizontais
+# [0]=baixo (frente), [1]=direita (perfil, espelha p/ esquerda), [2]=cima.
+# A "vida" do sprite vem por código: bob contínuo + recuo no ataque.
+const FRAME_DOWN := 0
+const FRAME_SIDE := 1
+const FRAME_UP := 2
 
 var turret_type := "":
 	set(value):
 		turret_type = value
 		var cfg: Dictionary = Data.turrets[value]
 		$Sprite2D.texture = load(cfg["sprite"])
-		$Sprite2D.scale = Vector2(cfg["scale"], cfg["scale"])
+		sprite_scale = cfg["scale"]
+		$Sprite2D.scale = Vector2(sprite_scale, sprite_scale)
 		uses_sheet = cfg.get("directional_sheet", false)
 		if uses_sheet:
-			$Sprite2D.hframes = SHEET_COLS
-			$Sprite2D.vframes = SHEET_ROWS
-			$Sprite2D.frame_coords = Vector2i(0, IDLE_ROW)
+			$Sprite2D.hframes = 3
+			$Sprite2D.vframes = 1
+			$Sprite2D.frame = FRAME_DOWN
 		rotates = cfg.get("rotates", false)
 		for stat in cfg["stats"].keys():
 			set(stat, cfg["stats"][stat])
@@ -31,7 +33,9 @@ var draw_range := false
 #Attacking
 var rotates := false
 var uses_sheet := false
-var anim_frame := 0.0
+var sprite_scale := 1.0
+var bob_t := 0.0
+var punch_tween: Tween
 var current_target = null
 #Stats
 var attack_speed := 1.0:
@@ -57,14 +61,32 @@ func _process(delta):
 
 func update_facing(delta):
 	if is_instance_valid(current_target):
-		var ang := rad_to_deg((current_target.position - position).angle())
-		var row := posmod(int(round(ang / 45.0)), 8)
-		anim_frame = fmod(anim_frame + delta * maxf(attack_speed, 1.0) * 4.0, float(SHEET_COLS))
-		$Sprite2D.frame_coords = Vector2i(int(anim_frame), row)
+		var v: Vector2 = current_target.position - position
+		if absf(v.x) >= absf(v.y):
+			$Sprite2D.frame = FRAME_SIDE
+			$Sprite2D.flip_h = v.x < 0
+		elif v.y > 0:
+			$Sprite2D.frame = FRAME_DOWN
+			$Sprite2D.flip_h = false
+		else:
+			$Sprite2D.frame = FRAME_UP
+			$Sprite2D.flip_h = false
 	else:
-		anim_frame = fmod(anim_frame + delta * 3.0, float(SHEET_COLS))
-		$Sprite2D.frame_coords = Vector2i(int(anim_frame), IDLE_ROW)
 		try_get_closest_target()
+	# respiração/bob contínuo
+	bob_t += delta
+	$Sprite2D.position.y = sin(bob_t * 3.0) * 2.0
+
+# Recuo rápido ao atacar (chamado pelas torres ao disparar)
+func attack_punch():
+	if punch_tween and punch_tween.is_running():
+		return
+	punch_tween = create_tween()
+	punch_tween.tween_property($Sprite2D, "scale",
+		Vector2(sprite_scale * 1.14, sprite_scale * 0.86), 0.07)
+	punch_tween.tween_property($Sprite2D, "scale",
+		Vector2(sprite_scale, sprite_scale), 0.2) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func _draw():
 	if draw_range:

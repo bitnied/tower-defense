@@ -36,16 +36,17 @@ func _check_unlocks(wave_count, _enemy_count):
 func is_defender_locked(key: String) -> bool:
 	return Data.turrets[key].get("locked", false) and not unlocked_defenders.has(key)
 
-# Ícone de preview de um defensor (recorta o frame "parado" do sheet)
+# Ícone de preview de um defensor (retrato dedicado, se existir;
+# senão recorta o frame frontal do sheet)
 func defender_icon(key: String) -> Texture2D:
 	var cfg: Dictionary = Data.turrets[key]
+	if cfg.has("portrait"):
+		return load(cfg["portrait"])
 	var tex: Texture2D = load(cfg["sprite"])
 	if cfg.get("directional_sheet", false):
 		var at := AtlasTexture.new()
-		var fw: float = tex.get_width() / 4.0
-		var fh: float = tex.get_height() / 9.0
 		at.atlas = tex
-		at.region = Rect2(0, fh * 8, fw, fh)
+		at.region = Rect2(0, 0, tex.get_width() / 3.0, tex.get_height())
 		return at
 	return tex
 

@@ -3,9 +3,9 @@ extends Node2D
 # caminho mostrando por onde os corações vão entrar, e um anel
 # pulsa no destino (a mamãe). Somem quando a onda começa.
 
-const ENTRY := Vector2(-600, -190)
+const ENTRY := Vector2(-590, -65)
 const ENTRY_DIR := Vector2.RIGHT
-const DEST := Vector2(-516, 182)
+const DEST := Vector2(-545, 55)
 const SPAN := 140.0
 
 var chevrons: Array[Sprite2D] = []
