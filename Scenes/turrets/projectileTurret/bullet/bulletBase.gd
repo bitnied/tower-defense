@@ -4,6 +4,7 @@ var bullet_type := "":
 	set(value):
 		bullet_type = value
 		style = Data.bullets[value].get("style", "")
+		scale = Vector2(2, 2) * Data.bullets[value].get("scale", 1.0)
 		if style == "wave":
 			# onda sonora: efeito procedural (arcos), sem sprite
 			$AnimatedSprite2D.visible = false

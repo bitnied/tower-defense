@@ -10,21 +10,31 @@ var ray_length := 400.0
 var ray_duration := 2.0
 
 var glow: Line2D
+var core: Line2D
 var origin_sparks: CPUParticles2D
 var impact_sparks: CPUParticles2D
+var light_t := 0.0
 
 func _ready():
 	glow = Line2D.new()
 	glow.points = PackedVector2Array([Vector2.ZERO, Vector2.ZERO])
-	glow.width = 22.0
-	glow.default_color = Color(1.0, 0.55, 0.8, 0.32)
+	glow.width = 30.0
+	glow.default_color = Color(1.0, 0.55, 0.8, 0.45)
 	glow.begin_cap_mode = Line2D.LINE_CAP_ROUND
 	glow.end_cap_mode = Line2D.LINE_CAP_ROUND
 	glow.z_index = 2
 	$HitArea.add_child(glow)
-	origin_sparks = _make_sparks(10, 18.0)
+	core = Line2D.new()
+	core.points = PackedVector2Array([Vector2.ZERO, Vector2.ZERO])
+	core.width = 5.0
+	core.default_color = Color(1.0, 0.96, 1.0, 0.95)
+	core.begin_cap_mode = Line2D.LINE_CAP_ROUND
+	core.end_cap_mode = Line2D.LINE_CAP_ROUND
+	core.z_index = 4
+	$HitArea.add_child(core)
+	origin_sparks = _make_sparks(16, 24.0)
 	$HitArea.add_child(origin_sparks)
-	impact_sparks = _make_sparks(16, 30.0)
+	impact_sparks = _make_sparks(26, 38.0)
 	$HitArea.add_child(impact_sparks)
 
 func _make_sparks(amount: int, velocity: float) -> CPUParticles2D:
@@ -54,8 +64,8 @@ func hand_offset() -> Vector2:
 	if $Sprite2D.frame == FRAME_UP:
 		return Vector2(0, -64)
 	if $Sprite2D.frame == FRAME_SIDE:
-		return Vector2(-16 if $Sprite2D.flip_h else 16, -42)
-	return Vector2(0, -38)
+		return Vector2(-20 if $Sprite2D.flip_h else 20, -28)
+	return Vector2(0, -34)
 
 func _process(delta):
 	super._process(delta)
@@ -63,8 +73,15 @@ func _process(delta):
 		ray_extension += 0.1
 		activate_ray(ray_extension)
 	if not ray_enabled and ray_extension > 0:
-		ray_extension -= 0.01
+		# retração rápida: some antes dela virar para outro lado
+		ray_extension = maxf(ray_extension - 0.12, 0.0)
 		deactivate_ray(ray_extension)
+	# pulso de luz enquanto o raio está ativo
+	if ray_enabled:
+		light_t += delta
+		var pulse := 1.0 + 0.25 * sin(light_t * 18.0)
+		glow.width = 30.0 * pulse
+		core.width = 5.0 + 1.5 * sin(light_t * 24.0)
 
 func attack():
 	if not $RayDuration.is_stopped():
@@ -89,10 +106,12 @@ func activate_ray(ratio):
 		var beam_z := 1 if is_facing_up() else 3
 		$HitArea/Line2D.z_index = beam_z
 		glow.z_index = beam_z - 1
+		core.z_index = beam_z + 1
 		var to_target: Vector2 = current_target.position - position - $HitArea.position
 		var offset: Vector2 = to_target.normalized() * ray_length * ratio
 		$HitArea/Line2D.set_point_position(1, offset)
 		glow.set_point_position(1, offset)
+		core.set_point_position(1, offset)
 		$HitArea/CollisionShape2D.shape.b = offset
 		impact_sparks.position = offset
 
@@ -100,6 +119,7 @@ func deactivate_ray(ratio):
 	var offset = $HitArea/Line2D.get_point_position(1) * ratio
 	$HitArea/Line2D.set_point_position(1, offset)
 	glow.set_point_position(1, offset)
+	core.set_point_position(1, offset)
 	$HitArea/CollisionShape2D.shape.b = offset
 	impact_sparks.position = offset
 

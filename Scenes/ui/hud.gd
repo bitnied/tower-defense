@@ -28,7 +28,7 @@ func show_wave_count(current_wave, enemies):
 	$WaveWaitTimer.stop()
 	waited = 0
 	%WaveLabel.text = "Onda %d/%d" % [current_wave, max_waves()]
-	%RemainLabel.text = "A caminho: %d" % enemies
+	%RemainLabel.text = "Faltam: %d" % enemies
 	%RemainLabel.visible = true
 	_refresh_play_button()
 
@@ -39,11 +39,11 @@ func show_wave_timer(wait_time):
 	_refresh_play_button()
 
 func _on_wave_wait_timer_timeout():
-	%WaveLabel.text = "Próxima em %d" % (next_wait_time - waited)
+	%WaveLabel.text = "Próxima: %d" % (next_wait_time - waited)
 	waited += 1
 
 func update_enemy_count(remain):
-	%RemainLabel.text = "A caminho: %d" % remain
+	%RemainLabel.text = "Faltam: %d" % remain
 
 # ---------- botão play / acelerar (estilo BTD6) ----------
 
@@ -80,8 +80,11 @@ func _on_pause_button_pressed():
 
 # ---------- avisos ----------
 
-func _on_defender_unlocked(_key):
-	show_banner(Data.texts["unlock_banner"])
+func _on_defender_unlocked(key):
+	if key == "elisa":
+		show_banner(Data.texts["unlock_banner"])
+	else:
+		show_banner("%s entrou na defesa!" % Data.turrets[key]["name"])
 
 var banner_tween: Tween
 

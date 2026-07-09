@@ -67,6 +67,8 @@ const turrets := {
 		"directional_sheet": true,
 		"scale": 1.0,
 		"rotates": false,
+		"locked": true,
+		"unlock_wave": 2,
 	},
 	"leo": {
 		"stats": {
@@ -93,10 +95,12 @@ const turrets := {
 		"scale": 0.7,
 		"rotates": false,
 		"bullet": "kiss",
+		"locked": true,
+		"unlock_wave": 4,
 	},
 	"elisa": {
 		"stats": {
-			"damage": 9.0,
+			"damage": 10.0,
 			"attack_speed": 2.2,
 			"attack_range": 240.0,
 			"bulletSpeed": 340.0,
@@ -120,9 +124,10 @@ const turrets := {
 		"rotates": false,
 		"bullet": "gold_heart",
 		# Surpresa do jogo: Elisa aparece como "?" e é liberada
-		# no começo da onda 3 (de 5).
+		# no começo da onda 5 (de 10).
 		"locked": true,
-		"unlock_wave": 3,
+		"unlock_wave": 5,
+		"mystery": true,
 	},
 }
 
@@ -145,6 +150,7 @@ const bullets := {
 	},
 	"kiss": {
 		"frames": "res://Assets/bullets/kiss.tres",
+		"scale": 0.7,
 	},
 	"gold_heart": {
 		"frames": "res://Assets/bullets/gold_heart.tres",
@@ -159,30 +165,30 @@ const bullets := {
 const enemies := {
 	"coracaoRachado": {
 		"stats": {
-			"hp": 8.0,
-			"speed": 0.75,
+			"hp": 10.0,
+			"speed": 0.85,
 			"baseDamage": 1.0,
-			"goldYield": 6.0,
+			"goldYield": 5.0,
 			},
 		"difficulty": 1.0,
 		"sprite": "res://Assets/enemies/heart_cracked.png",
 	},
 	"coracaoPartido": {
 		"stats": {
-			"hp": 16.0,
-			"speed": 0.6,
+			"hp": 22.0,
+			"speed": 0.68,
 			"baseDamage": 2.0,
-			"goldYield": 10.0,
+			"goldYield": 9.0,
 			},
 		"difficulty": 2.0,
 		"sprite": "res://Assets/enemies/heart_broken.png",
 	},
 	"coracaoDespedacado": {
 		"stats": {
-			"hp": 30.0,
-			"speed": 0.45,
+			"hp": 45.0,
+			"speed": 0.52,
 			"baseDamage": 3.0,
-			"goldYield": 16.0,
+			"goldYield": 14.0,
 			},
 		"difficulty": 3.0,
 		"sprite": "res://Assets/enemies/heart_shattered.png",
@@ -203,7 +209,7 @@ const maps := {
 		"startingGold": 60,
 		"spawner_settings":
 			{
-			"difficulty": {"initial": 0.8, "increase": 1.18, "multiplies": true},
+			"difficulty": {"initial": 1.0, "increase": 1.22, "multiplies": true},
 			"max_waves": 10,
 			"wave_spawn_count": 6,
 			"special_waves": {},

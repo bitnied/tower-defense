@@ -16,16 +16,31 @@ var can_purchase := false:
 func _ready():
 	Globals.defenderUnlocked.connect(_on_defender_unlocked)
 
+# o card inteiro serve de alça de arrasto (não só o retrato)
+func _gui_input(event):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT \
+			and event.pressed:
+		var drag: TextureRect = $VBox/TextureRect
+		if drag.check_can_purchase(Globals.currentMap.gold):
+			drag.start_grab()
+
 func refresh_icon():
 	if turret_type == "":
 		return
+	var cfg: Dictionary = Data.turrets[turret_type]
 	if Globals.is_defender_locked(turret_type):
-		$VBox/TextureRect.texture = load(Data.locked_icon)
-		$VBox/CostRow/CostLabel.text = "?"
 		$LockIcon.visible = true
+		if cfg.get("mystery", false):
+			# surpresa não revelada (Elisa): só um "?"
+			$VBox/TextureRect.texture = load(Data.locked_icon)
+			$VBox/CostRow/CostLabel.text = "?"
+		else:
+			# reforço a caminho: retrato + onda em que chega
+			$VBox/TextureRect.texture = Globals.defender_icon(turret_type)
+			$VBox/CostRow/CostLabel.text = "Onda %d" % int(cfg.get("unlock_wave", 1))
 	else:
 		$VBox/TextureRect.texture = Globals.defender_icon(turret_type)
-		$VBox/CostRow/CostLabel.text = str(Data.turrets[turret_type]["cost"])
+		$VBox/CostRow/CostLabel.text = str(cfg["cost"])
 		$LockIcon.visible = false
 
 func _on_defender_unlocked(key):

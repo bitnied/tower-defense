@@ -60,6 +60,8 @@ func _on_wave_delay_timer_timeout():
 	current_difficulty = get_current_difficulty()
 	current_wave_spawn_count = round(wave_spawn_count * current_difficulty)
 	spawnable_enemies = get_spawnable_enemies()
+	# ondas finais spawnam mais rápido (mais pressão)
+	$SpawnDelay.wait_time = clampf(0.95 - current_wave * 0.045, 0.5, 0.95)
 	Globals.waveStarted.emit(current_wave, current_wave_spawn_count)
 	$SpawnDelay.start()
 
