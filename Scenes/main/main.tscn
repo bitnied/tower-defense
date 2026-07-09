@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://d0otd33ubv3hq" path="res://Scenes/ui/turretUI/turret_buy_container.tscn" id="3_pljl8"]
 [ext_resource type="Script" path="res://Scenes/ui/turretUI/turrets_panel.gd" id="3_ryupq"]
 [ext_resource type="Texture2D" path="res://Assets/ui/icon_life.png" id="4_life"]
-[ext_resource type="Texture2D" path="res://Assets/ui/icon_coin.png" id="5_coin"]
+[ext_resource type="Texture2D" path="res://Assets/enemies/heart_healed.png" id="5_coin"]
 [ext_resource type="Texture2D" path="res://Assets/ui/icon_gear.png" id="6_gear"]
 [ext_resource type="Texture2D" path="res://Assets/ui/icon_play.png" id="7_play"]
 

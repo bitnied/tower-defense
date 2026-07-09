@@ -78,7 +78,7 @@ const turrets := {
 			"damage": {"amount": 6.0, "multiplies": false},
 			"attack_speed": {"amount": 1.35, "multiplies": true},
 		},
-		"name": "Léo",
+		"name": "Leo",
 		"subtitle": "Manda beijo: boquinhas certeiras",
 		"cost": 85,
 		"upgrade_cost": 45,
@@ -87,7 +87,7 @@ const turrets := {
 		"sprite": "res://Assets/defenders/leo_sheet.png",
 		"portrait": "res://Assets/defenders/leo_portrait.png",
 		"directional_sheet": true,
-		"scale": 1.0,
+		"scale": 0.7,
 		"rotates": false,
 		"bullet": "kiss",
 	},
@@ -137,6 +137,7 @@ const stats := {
 const bullets := {
 	"sound_wave": {
 		"frames": "res://Assets/bullets/sound_wave.tres",
+		"style": "wave",
 	},
 	"kiss": {
 		"frames": "res://Assets/bullets/kiss.tres",
@@ -198,8 +199,8 @@ const maps := {
 		"startingGold": 60,
 		"spawner_settings":
 			{
-			"difficulty": {"initial": 0.8, "increase": 1.32, "multiplies": true},
-			"max_waves": 5,
+			"difficulty": {"initial": 0.8, "increase": 1.18, "multiplies": true},
+			"max_waves": 10,
 			"wave_spawn_count": 6,
 			"special_waves": {},
 			},
@@ -211,13 +212,17 @@ const maps := {
 # --------------------------------------------------------------
 const texts := {
 	"tagline": "Um presente de aniversário para a Elisa",
-	"howto": "Corações partidos avançam pelo caminho até a mamãe.
-Coloque a família no cenário para curá-los com amor:
-cada coração curado vira moeda para chamar mais reforços.
+	"howto": "Corações partidos avançam pela estrada até a mamãe.
+Coloque a família no cenário para curá-los com amor.
+Cada coração curado se junta a você — e são eles a sua
+moeda para chamar mais reforços da família.
 Não deixe os corações partidos chegarem até a mamãe!",
+	"howto_title": "Como jogar",
+	"howto_button": "Vamos!",
 	"congrats": "Feliz aniversário, Elisa!
-Com amor: Tiago, Léo e Luna",
+Com amor: Tiago, Leo e Luna",
 	"unlock_banner": "Surpresa! A Elisa entrou na defesa!",
+	"road_blocked": "Aqui não dá! A estrada precisa ficar livre.",
 	"gameover_title": "Ainda tem coração precisando de amor...",
 	"gameover_msg": "A família inteira está na torcida.
 Respira fundo e tenta de novo!",
@@ -226,7 +231,7 @@ Respira fundo e tenta de novo!",
 e protegeu a mamãe!
 
 Feliz aniversário!
-Com amor: Tiago, Léo e Luna",
+Com amor: Tiago, Leo e Luna",
 }
 
 const family_photo := "res://Assets/ui/familia_placeholder.png"

@@ -12,8 +12,11 @@ func attack():
 		projectile.damage = damage
 		projectile.speed = bulletSpeed
 		projectile.pierce = bulletPierce
+		# sai da frente do personagem; só fica atrás quando ele
+		# está de costas (mirando para cima)
+		projectile.z_index = 1 if is_facing_up() else 3
 		Globals.projectilesNode.add_child(projectile)
-		projectile.position = position
+		projectile.position = position + Vector2(0, -34)
 		projectile.target = current_target.position
 	else:
 		try_get_closest_target()

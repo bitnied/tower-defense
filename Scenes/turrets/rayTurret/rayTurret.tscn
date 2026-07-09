@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dr0ndem12yexg" path="res://Assets/bullets/Pixel.png" id="4_fjepc"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_aicnu"]
-radius = 22.8
+radius = 14.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kae7m"]
 radius = 230.11

@@ -83,22 +83,26 @@ func _on_pause_button_pressed():
 func _on_defender_unlocked(_key):
 	show_banner(Data.texts["unlock_banner"])
 
-func show_banner(message: String):
+var banner_tween: Tween
+
+func show_banner(message: String, hold := 2.6):
 	var banner: Label = %BannerLabel
+	if banner_tween and banner_tween.is_running():
+		banner_tween.kill()
 	banner.text = message
 	banner.visible = true
 	banner.modulate.a = 0.0
 	banner.pivot_offset = banner.size / 2
 	banner.scale = Vector2(0.6, 0.6)
-	var tween := create_tween()
-	tween.set_parallel()
-	tween.tween_property(banner, "modulate:a", 1.0, 0.25)
-	tween.tween_property(banner, "scale", Vector2(1, 1), 0.35) \
+	banner_tween = create_tween()
+	banner_tween.set_parallel()
+	banner_tween.tween_property(banner, "modulate:a", 1.0, 0.25)
+	banner_tween.tween_property(banner, "scale", Vector2(1, 1), 0.35) \
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.set_parallel(false)
-	tween.tween_interval(2.6)
-	tween.tween_property(banner, "modulate:a", 0.0, 0.4)
-	tween.tween_callback(func(): banner.visible = false)
+	banner_tween.set_parallel(false)
+	banner_tween.tween_interval(hold)
+	banner_tween.tween_property(banner, "modulate:a", 0.0, 0.4)
+	banner_tween.tween_callback(func(): banner.visible = false)
 
 func reset():
 	fast = false

@@ -22,6 +22,10 @@ var turret_type := "":
 			$Sprite2D.hframes = 3
 			$Sprite2D.vframes = 1
 			$Sprite2D.frame = FRAME_DOWN
+			# origem do nó = pés do personagem: a respiração e o
+			# recuo esticam para cima, sem "flutuar"
+			var fh: float = $Sprite2D.texture.get_height()
+			$Sprite2D.offset = Vector2(0, -fh / 2.0 + 3.0)
 		rotates = cfg.get("rotates", false)
 		for stat in cfg["stats"].keys():
 			set(stat, cfg["stats"][stat])
@@ -73,9 +77,15 @@ func update_facing(delta):
 			$Sprite2D.flip_h = false
 	else:
 		try_get_closest_target()
-	# respiração/bob contínuo
+	# respiração contínua ancorada nos pés (escala, não posição)
 	bob_t += delta
-	$Sprite2D.position.y = sin(bob_t * 3.0) * 2.0
+	if punch_tween == null or not punch_tween.is_running():
+		var b := sin(bob_t * 2.6)
+		$Sprite2D.scale = Vector2(sprite_scale * (1.0 - 0.012 * b),
+			sprite_scale * (1.0 + 0.025 * b))
+
+func is_facing_up() -> bool:
+	return uses_sheet and $Sprite2D.frame == FRAME_UP
 
 # Recuo rápido ao atacar (chamado pelas torres ao disparar)
 func attack_punch():

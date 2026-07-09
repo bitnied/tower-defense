@@ -43,10 +43,13 @@ func end_grab():
 	update_placeholder_position()
 	var ph = placeholder
 	placeholder = null
-	if placement_is_free(ph) and check_can_purchase(Globals.currentMap.gold):
+	var free_spot := placement_is_free(ph)
+	if free_spot and check_can_purchase(Globals.currentMap.gold):
 		Globals.currentMap.gold -= Data.turrets[turretType]["cost"]
 		ph.build()
 	else:
+		if not free_spot and is_instance_valid(Globals.hud):
+			Globals.hud.show_banner(Data.texts["road_blocked"], 1.3)
 		ph.queue_free()
 
 # Synchronous physics query so the decision never depends on the one-frame

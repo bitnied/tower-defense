@@ -1,6 +1,6 @@
 # Elisa TD 💗
 
-Jogo-presente de aniversário para a Elisa, feito com amor por Tiago, Léo e Luna.
+Jogo-presente de aniversário para a Elisa, feito com amor por Tiago, Leo e Luna.
 
 Um tower defense carinhoso: **corações partidos** avançam por um caminho em U
 até a mamãe, e a família se posiciona pelo cenário para **curá-los com amor**.
@@ -17,7 +17,7 @@ defensora surpresa no meio do jogo.
 |---|---|---|---|
 | 1 | Tiago | toca violão (ondas sonoras) | 30 |
 | 2 | Luna | coração com as mãos (raio de amor) | 55 |
-| 3 | Léo | manda beijo (boquinhas) | 85 |
+| 3 | Leo | manda beijo (boquinhas) | 85 |
 | 4 | Elisa | aponta o dedo (corações dourados) | 130 — surpresa desbloqueada na onda 3 |
 
 ## Desenvolvimento

@@ -110,19 +110,61 @@ F = 1.38  # display->original
 def B(x0, y0, x1, y1):
     return (int(x0 * F), int(y0 * F), int(x1 * F), int(y1 * F))
 
-# corações: 3 níveis x 5 frames (48x48 por frame)
+# corações: 3 níveis x 5 frames (48x48 por frame).
+# Fatiamento ADAPTATIVO: em cada faixa horizontal, detecta os 5
+# aglomerados de conteúdo pelas colunas com alpha (evita cortes).
+def split_row(row_box, expected=5, gap_px=8):
+    strip = drop_black_text(key_white(EL.crop(row_box)))
+    a = strip.getchannel("A")
+    w, h = strip.size
+    cols = [0] * w
+    data = list(a.getdata())
+    for y in range(0, h, 2):
+        base = y * w
+        for x in range(w):
+            if data[base + x] > 24:
+                cols[x] += 1
+    clusters = []
+    x = 0
+    while x < w:
+        if cols[x] > 0:
+            x0 = x
+            gap = 0
+            while x < w and gap < gap_px:
+                gap = gap + 1 if cols[x] == 0 else 0
+                x += 1
+            clusters.append((x0, x - gap))
+        else:
+            x += 1
+    clusters = [c for c in clusters if c[1] - c[0] > 30]
+    # se dois corações se encostaram, divide o aglomerado mais largo
+    while len(clusters) < expected and clusters:
+        clusters.sort(key=lambda c: c[1] - c[0], reverse=True)
+        x0, x1 = clusters.pop(0)
+        mid = (x0 + x1) // 2
+        clusters += [(x0, mid), (mid, x1)]
+    clusters = sorted(clusters, key=lambda c: c[1] - c[0], reverse=True)[:expected]
+    clusters.sort()
+    out = []
+    for (x0, x1) in clusters:
+        cell = strip.crop((max(0, x0 - 4), 0, min(w, x1 + 4), h))
+        out.append(autocrop(cell))
+    return out
+
 HEART_ROWS = {
-    "heart_cracked":  [B(75, 55, 255, 225), B(300, 55, 470, 225), B(530, 55, 700, 225), B(780, 55, 950, 225), B(1030, 55, 1195, 225)],
-    "heart_broken":   [B(70, 275, 250, 435), B(295, 275, 465, 435), B(525, 275, 700, 435), B(770, 275, 945, 435), B(1020, 275, 1190, 435)],
-    "heart_shattered":[B(60, 480, 250, 660), B(280, 480, 480, 660), B(510, 480, 710, 660), B(760, 480, 950, 660), B(1000, 480, 1190, 660)],
+    "heart_cracked":   B(40, 50, 1230, 235),
+    "heart_broken":    B(40, 262, 1230, 448),
+    "heart_shattered": B(40, 462, 1230, 668),
 }
-for name, boxes in HEART_ROWS.items():
+for name, row_box in HEART_ROWS.items():
+    frames = split_row(row_box)
+    assert len(frames) == 5, f"{name}: {len(frames)} frames"
     sheet = Image.new("RGBA", (48 * 5, 48), (0, 0, 0, 0))
-    for i, box in enumerate(boxes):
-        f = fit_cell(slice_el(box), 48, 44)
+    for i, f in enumerate(frames):
+        f = fit_cell(f, 48, 44)
         sheet.paste(f, (i * 48, 0), f)
     sheet.save(f"{ASSETS}/enemies/{name}.png")
-    print("enemy ok:", name)
+    print("enemy ok:", name, len(frames))
 
 # coração curado (o de baixo-esquerda, com brilhos)
 healed = fit_cell(slice_el(B(50, 735, 440, 1090)), 48, 46)
