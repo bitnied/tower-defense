@@ -39,6 +39,9 @@ func get_spawnable_enemies():
 	for enemy in Data.enemies.keys():
 		if current_difficulty >= Data.enemies[enemy]["difficulty"]:
 			enemies.append(enemy)
+	if enemies.is_empty():
+		# nunca deixar a onda sem inimigos (dificuldade < 1.0)
+		enemies.append("coracaoRachado")
 	return enemies
 
 func get_current_difficulty() -> float:

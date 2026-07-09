@@ -80,6 +80,7 @@ func attack_guardian_animation():
 	tween.tween_callback(queue_free)
 
 func _hit_guardian(guardian: Node2D):
+	Sfx.play("hit", -7.0)
 	guardian.modulate = Color(1, 0.45, 0.5)
 	var tween := guardian.create_tween()
 	tween.set_parallel()
@@ -122,6 +123,7 @@ func healed_animation():
 	$Sprite2D.hframes = 1
 	$Sprite2D.frame = 0
 	$Sprite2D.flip_v = false
+	Sfx.play("heal", -9.0)
 	spawn_reward_label()
 	if is_boss:
 		spawn_heart_rain()

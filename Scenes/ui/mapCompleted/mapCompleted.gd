@@ -3,6 +3,7 @@ extends PanelContainer
 
 func _ready():
 	Engine.time_scale = 1.0
+	Sfx.play("victory", -2.0)
 	%TitleLabel.text = Data.texts["victory_title"]
 	%MsgLabel.text = Data.texts["victory_msg"]
 	animate_appear()

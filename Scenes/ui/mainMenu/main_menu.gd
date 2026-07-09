@@ -9,6 +9,7 @@ func _ready():
 	%HowtoLabel.text = Data.texts["howto"]
 
 func _on_play_button_pressed():
+	Sfx.play("click", -10.0)
 	%HowtoDialog.visible = true
 
 func _on_start_game():

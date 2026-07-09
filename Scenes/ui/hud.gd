@@ -50,6 +50,7 @@ func update_enemy_count(remain):
 # ---------- botão play / acelerar (estilo BTD6) ----------
 
 func _on_play_button_pressed():
+	Sfx.play("click", -10.0)
 	var spawner = _spawner()
 	if spawner and spawner.is_waiting_for_wave():
 		spawner.start_next_wave_early()
@@ -76,6 +77,7 @@ func _refresh_play_button(_a = 0, _b = 0):
 # ---------- pause ----------
 
 func _on_pause_button_pressed():
+	Sfx.play("click", -10.0)
 	var pauseScene := preload("res://Scenes/ui/pauseMenu/pause_menu.tscn")
 	add_child(pauseScene.instantiate())
 	get_tree().paused = true
@@ -83,6 +85,7 @@ func _on_pause_button_pressed():
 # ---------- avisos ----------
 
 func _on_defender_unlocked(key):
+	Sfx.play("unlock", -4.0)
 	if key == "elisa":
 		show_banner(Data.texts["unlock_banner"])
 	else:

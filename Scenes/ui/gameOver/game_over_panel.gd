@@ -4,6 +4,7 @@ extends PanelContainer
 
 func _ready():
 	Engine.time_scale = 1.0
+	Sfx.play("gameover", -4.0)
 	%TitleLabel.text = Data.texts["gameover_title"]
 	%MsgLabel.text = Data.texts["gameover_msg"]
 	animate_appear()
