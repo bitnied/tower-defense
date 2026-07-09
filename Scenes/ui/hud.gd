@@ -69,10 +69,13 @@ func _refresh_play_button(_a = 0, _b = 0):
 	var waiting: bool = spawner == null or spawner.is_waiting_for_wave()
 	if waiting:
 		%PlayButton.icon = load("res://Assets/ui/icon_play.png")
-		%PlayButton.modulate = Color.WHITE
+		%PlayButton.text = ""
+		%PlayButton.self_modulate = Color.WHITE
 	else:
 		%PlayButton.icon = load("res://Assets/ui/icon_fast.png")
-		%PlayButton.modulate = Color.WHITE if fast else Color(1, 1, 1, 0.55)
+		%PlayButton.text = "2x" if fast else "1x"
+		# dourado quando o 2x está LIGADO
+		%PlayButton.self_modulate = Color(1.0, 0.84, 0.35) if fast else Color.WHITE
 
 # ---------- pause ----------
 

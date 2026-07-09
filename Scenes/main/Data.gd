@@ -42,6 +42,8 @@ const turrets := {
 		"scale": 1.0,
 		"rotates": false,
 		"bullet": "sound_wave",
+		"attack_sfx": "atk_tiago",
+		"muzzle": {"down": [4, -28], "side": [14, -30], "up": [0, -40]},
 	},
 	"luna": {
 		"stats": {
@@ -65,8 +67,9 @@ const turrets := {
 		"portrait": "res://Assets/defenders/luna_portrait.png",
 		"idle": "res://Assets/defenders/luna_idle.png",
 		"directional_sheet": true,
-		"scale": 1.0,
+		"scale": 0.7,
 		"rotates": false,
+		"attack_sfx": "atk_luna",
 		"locked": true,
 		"unlock_wave": 2,
 	},
@@ -95,20 +98,22 @@ const turrets := {
 		"scale": 0.7,
 		"rotates": false,
 		"bullet": "kiss",
+		"attack_sfx": "atk_leo",
+		"muzzle": {"down": [0, -44], "side": [12, -44], "up": [0, -58]},
 		"locked": true,
 		"unlock_wave": 4,
 	},
 	"elisa": {
 		"stats": {
-			"damage": 10.0,
-			"attack_speed": 2.2,
+			"damage": 24.0,
+			"attack_speed": 1.0,
 			"attack_range": 240.0,
-			"bulletSpeed": 340.0,
+			"bulletSpeed": 190.0,
 			"bulletPierce": 3,
 		},
 		"upgrades": {
-			"damage": {"amount": 5.0, "multiplies": false},
-			"attack_speed": {"amount": 1.3, "multiplies": true},
+			"damage": {"amount": 12.0, "multiplies": false},
+			"attack_speed": {"amount": 1.25, "multiplies": true},
 		},
 		"name": "Elisa",
 		"subtitle": "Aponta o dedo: corações dourados",
@@ -123,6 +128,8 @@ const turrets := {
 		"scale": 1.0,
 		"rotates": false,
 		"bullet": "gold_heart",
+		"attack_sfx": "atk_elisa",
+		"muzzle": {"down": [10, -25], "side": [24, -40], "up": [18, -61]},
 		# Surpresa do jogo: Elisa aparece como "?" e é liberada
 		# no começo da onda 5 (de 10).
 		"locked": true,
@@ -180,7 +187,7 @@ const enemies := {
 			"baseDamage": 2.0,
 			"goldYield": 9.0,
 			},
-		"difficulty": 2.0,
+		"difficulty": 1.8,
 		"sprite": "res://Assets/enemies/heart_broken.png",
 	},
 	"coracaoDespedacado": {
@@ -190,14 +197,14 @@ const enemies := {
 			"baseDamage": 3.0,
 			"goldYield": 14.0,
 			},
-		"difficulty": 3.0,
+		"difficulty": 2.6,
 		"sprite": "res://Assets/enemies/heart_shattered.png",
 	},
 	# Chefão da onda final: um coração gigante partido, lento e
 	# cheio de dor. difficulty 99 = nunca entra no sorteio normal.
 	"coracaoGigante": {
 		"stats": {
-			"hp": 420.0,
+			"hp": 560.0,
 			"speed": 0.3,
 			"baseDamage": 10.0,
 			"goldYield": 60.0,
@@ -220,7 +227,7 @@ const maps := {
 		"bg": "res://Assets/maps/map_elisa.png",
 		"scene": "res://Scenes/maps/map_elisa.tscn",
 		"baseHp": 10,
-		"startingGold": 60,
+		"startingGold": 50,
 		"spawner_settings":
 			{
 			"difficulty": {"initial": 1.0, "increase": 1.22, "multiplies": true},

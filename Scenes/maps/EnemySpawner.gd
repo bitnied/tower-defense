@@ -31,6 +31,9 @@ func spawn_new_enemy():
 		enemy.enemy_type = special["boss"]
 	else:
 		enemy.enemy_type = spawnable_enemies.pick_random()
+		# corações ficam mais "machucados" a cada onda (+6% de cura
+		# necessária por onda)
+		enemy.hp *= 1.0 + 0.06 * (current_wave - 1)
 	add_child(enemy)
 	enemies_spawned_this_wave += 1
 

@@ -59,13 +59,16 @@ func _spark_ramp() -> Gradient:
 	g.set_color(1, Color(1, 0.45, 0.75, 0))
 	return g
 
-# posição das mãos conforme a pose da sprite
+# posição das mãos conforme a pose da sprite (proporcional à escala)
 func hand_offset() -> Vector2:
+	var base: Vector2
 	if $Sprite2D.frame == FRAME_UP:
-		return Vector2(0, -64)
-	if $Sprite2D.frame == FRAME_SIDE:
-		return Vector2(-20 if $Sprite2D.flip_h else 20, -28)
-	return Vector2(0, -34)
+		base = Vector2(0, -64)
+	elif $Sprite2D.frame == FRAME_SIDE:
+		base = Vector2(-20 if $Sprite2D.flip_h else 20, -28)
+	else:
+		base = Vector2(0, -34)
+	return base * sprite_scale
 
 func _process(delta):
 	super._process(delta)
@@ -94,6 +97,7 @@ func attack():
 			can_fire = false
 			ray_enabled = true
 			attack_punch()
+			Sfx.play(Data.turrets[turret_type].get("attack_sfx", "click"), -18.0)
 			origin_sparks.emitting = true
 			impact_sparks.emitting = true
 			$RayDuration.start()
