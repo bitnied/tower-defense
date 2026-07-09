@@ -193,6 +193,20 @@ const enemies := {
 		"difficulty": 3.0,
 		"sprite": "res://Assets/enemies/heart_shattered.png",
 	},
+	# Chefão da onda final: um coração gigante partido, lento e
+	# cheio de dor. difficulty 99 = nunca entra no sorteio normal.
+	"coracaoGigante": {
+		"stats": {
+			"hp": 420.0,
+			"speed": 0.3,
+			"baseDamage": 10.0,
+			"goldYield": 60.0,
+			},
+		"difficulty": 99.0,
+		"sprite": "res://Assets/enemies/heart_shattered.png",
+		"scale": 2.4,
+		"boss": true,
+	},
 }
 
 const healed_heart_sprite := "res://Assets/enemies/heart_healed.png"
@@ -212,7 +226,8 @@ const maps := {
 			"difficulty": {"initial": 1.0, "increase": 1.22, "multiplies": true},
 			"max_waves": 10,
 			"wave_spawn_count": 6,
-			"special_waves": {},
+			# onda final: coração gigante + escolta
+			"special_waves": {"10": {"boss": "coracaoGigante", "escort": 14}},
 			},
 	},
 }

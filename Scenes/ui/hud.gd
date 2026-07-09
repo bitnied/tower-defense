@@ -30,6 +30,8 @@ func show_wave_count(current_wave, enemies):
 	%WaveLabel.text = "Onda %d/%d" % [current_wave, max_waves()]
 	%RemainLabel.text = "Faltam: %d" % enemies
 	%RemainLabel.visible = true
+	if current_wave == max_waves():
+		show_banner("Onda final! Curem o coração gigante!", 2.4)
 	_refresh_play_button()
 
 func show_wave_timer(wait_time):

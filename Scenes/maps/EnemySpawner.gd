@@ -18,11 +18,19 @@ var current_difficulty := 1.0
 var current_wave := 0
 var enemies_spawned_this_wave := 0
 var killed_this_wave := 0
+var leaked_this_wave := 0
+
+func enemy_leaked():
+	leaked_this_wave += 1
 
 func spawn_new_enemy():
 	var enemyScene := preload("res://Scenes/enemies/enemy_mover.tscn")
 	var enemy = enemyScene.instantiate()
-	enemy.enemy_type = spawnable_enemies.pick_random()
+	var special: Dictionary = special_waves.get(str(current_wave), {})
+	if enemies_spawned_this_wave == 0 and special.has("boss"):
+		enemy.enemy_type = special["boss"]
+	else:
+		enemy.enemy_type = spawnable_enemies.pick_random()
 	add_child(enemy)
 	enemies_spawned_this_wave += 1
 
@@ -60,6 +68,10 @@ func _on_wave_delay_timer_timeout():
 	current_difficulty = get_current_difficulty()
 	current_wave_spawn_count = round(wave_spawn_count * current_difficulty)
 	spawnable_enemies = get_spawnable_enemies()
+	var special: Dictionary = special_waves.get(str(current_wave), {})
+	if special.has("boss"):
+		current_wave_spawn_count = int(special.get("escort", 10)) + 1
+	leaked_this_wave = 0
 	# ondas finais spawnam mais rápido (mais pressão)
 	$SpawnDelay.wait_time = clampf(0.95 - current_wave * 0.045, 0.5, 0.95)
 	Globals.waveStarted.emit(current_wave, current_wave_spawn_count)
@@ -73,6 +85,12 @@ func enemy_destroyed():
 func check_wave_clear():
 	if killed_this_wave == current_wave_spawn_count:
 		#Wave cleared
+		if leaked_this_wave == 0 and is_instance_valid(Globals.currentMap) \
+				and not Globals.currentMap.gameOver:
+			# onda perfeita: nenhum coração chegou na mamãe
+			Globals.currentMap.gold += 10
+			if is_instance_valid(Globals.hud):
+				Globals.hud.show_banner("Onda perfeita! +10", 1.6)
 		if not current_wave == max_waves:
 			Globals.waveCleared.emit($WaveDelayTimer.wait_time)
 			$WaveDelayTimer.start()

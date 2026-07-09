@@ -104,6 +104,8 @@ func update_facing(delta):
 		var b := sin(bob_t * 2.6)
 		$Sprite2D.scale = Vector2(sprite_scale * (1.0 - 0.012 * b),
 			sprite_scale * (1.0 + 0.025 * b))
+	if turret_level >= 2:
+		queue_redraw()
 
 func is_facing_up() -> bool:
 	return uses_sheet and $Sprite2D.frame == FRAME_UP
@@ -122,6 +124,14 @@ func attack_punch():
 func _draw():
 	if draw_range:
 		draw_circle(Vector2(0,0), attack_range, "3ccd50a9", false, 1, true)
+	# aura de evolução: rosa no nível 2, dourada no nível 3
+	if deployed and turret_level >= 2:
+		var glow_col := Color(1.0, 0.55, 0.75, 0.12) if turret_level == 2 \
+			else Color(1.0, 0.82, 0.35, 0.14)
+		for i in range(3):
+			var r := 24.0 + i * 8.0 + sin(bob_t * 3.0) * 2.5
+			var a := glow_col.a * (1.0 - i * 0.3)
+			draw_circle(Vector2(0, -32), r, Color(glow_col.r, glow_col.g, glow_col.b, a))
 
 func set_placeholder():
 	modulate = Color("6eff297a")
@@ -196,7 +206,29 @@ func upgrade_turret():
 			set(upgrade, get(upgrade) * Data.turrets[turret_type]["upgrades"][upgrade]["amount"])
 		else:
 			set(upgrade, get(upgrade) + Data.turrets[turret_type]["upgrades"][upgrade]["amount"])
+	celebrate_upgrade()
 	turretUpdated.emit()
+
+# pulinho + faíscas douradas ao evoluir
+func celebrate_upgrade():
+	attack_punch()
+	queue_redraw()
+	var p := CPUParticles2D.new()
+	p.one_shot = true
+	p.emitting = true
+	p.amount = 16
+	p.lifetime = 0.55
+	p.spread = 180.0
+	p.gravity = Vector2(0, -24)
+	p.initial_velocity_min = 42.0
+	p.initial_velocity_max = 76.0
+	p.scale_amount_min = 2.0
+	p.scale_amount_max = 3.6
+	p.color = Color(1.0, 0.85, 0.4)
+	p.position = Vector2(0, -34)
+	p.z_index = 5
+	add_child(p)
+	p.finished.connect(p.queue_free)
 
 func attack():
 	if is_instance_valid(current_target):

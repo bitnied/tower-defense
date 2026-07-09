@@ -6,9 +6,14 @@ extends PathFollow2D
 var enemy_type := "":
 	set(val):
 		enemy_type = val
-		$Sprite2D.texture = load(Data.enemies[val]["sprite"])
-		for stat in Data.enemies[val]["stats"].keys():
-			set(stat, Data.enemies[val]["stats"][stat])
+		var cfg: Dictionary = Data.enemies[val]
+		$Sprite2D.texture = load(cfg["sprite"])
+		var s: float = cfg.get("scale", 1.0)
+		$Sprite2D.scale = Vector2(s, s)
+		$Area.scale = Vector2(s, s)
+		is_boss = cfg.get("boss", false)
+		for stat in cfg["stats"].keys():
+			set(stat, cfg["stats"][stat])
 
 enum State {walking, stopped}
 var state = State.walking
@@ -17,6 +22,7 @@ var hp := 10.0
 var baseDamage := 5.0
 var speed := 1.0
 var is_destroyed := false
+var is_boss := false
 
 # corações andam levemente acima do centro da estrada para não
 # encostar na base das casas
@@ -46,6 +52,7 @@ func finished_path():
 		return
 	is_destroyed = true
 	spawner.enemy_destroyed()
+	spawner.enemy_leaked()
 	Globals.currentMap.get_base_damage(baseDamage)
 	attack_guardian_animation()
 
@@ -116,6 +123,8 @@ func healed_animation():
 	$Sprite2D.frame = 0
 	$Sprite2D.flip_v = false
 	spawn_reward_label()
+	if is_boss:
+		spawn_heart_rain()
 	var start: Vector2 = $Sprite2D.global_position
 	var tween := create_tween()
 	tween.set_parallel()
@@ -125,6 +134,26 @@ func healed_animation():
 	tween.tween_property($Sprite2D, "modulate:a", 0.0, 0.45).set_delay(0.3)
 	tween.set_parallel(false)
 	tween.tween_callback(queue_free)
+
+# clímax do chefão: chuva de coraçõezinhos curados
+func spawn_heart_rain():
+	var tex: Texture2D = load(Data.healed_heart_sprite)
+	for i in range(16):
+		var h := Sprite2D.new()
+		h.texture = tex
+		h.z_index = 6
+		h.scale = Vector2(0.7, 0.7)
+		Globals.currentMap.add_child(h)
+		h.global_position = $Sprite2D.global_position \
+			+ Vector2(randf_range(-36, 36), randf_range(-26, 12))
+		var fly := Vector2(randf_range(-110, 110), randf_range(-150, -50))
+		var tw := h.create_tween()
+		tw.set_parallel()
+		tw.tween_property(h, "global_position", h.global_position + fly, 1.0) \
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tw.tween_property(h, "modulate:a", 0.0, 1.0).set_delay(0.35)
+		tw.set_parallel(false)
+		tw.tween_callback(h.queue_free)
 
 func spawn_reward_label():
 	var label := Label.new()
