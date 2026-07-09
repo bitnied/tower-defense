@@ -2,6 +2,7 @@ extends PanelContainer
 # Tela de vitória — a mensagem de aniversário para a Elisa.
 
 func _ready():
+	Engine.time_scale = 1.0
 	%TitleLabel.text = Data.texts["victory_title"]
 	%MsgLabel.text = Data.texts["victory_msg"]
 	animate_appear()

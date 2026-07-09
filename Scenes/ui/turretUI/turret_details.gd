@@ -12,8 +12,8 @@ func _ready():
 
 func animate_appear():
 	var tween := create_tween()
-	tween.tween_property(self, "position", Vector2(500,0), 0.01).as_relative()
-	tween.tween_property(self, "position", Vector2(-500,0), 0.3).as_relative()
+	tween.tween_property(self, "position", Vector2(-400,0), 0.01).as_relative()
+	tween.tween_property(self, "position", Vector2(400,0), 0.3).as_relative()
 
 func set_props():
 	%TurretTexture.texture = Globals.defender_icon(turret.turret_type)

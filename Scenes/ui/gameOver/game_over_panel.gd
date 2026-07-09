@@ -3,6 +3,7 @@ extends PanelContainer
 # tentar de novo.
 
 func _ready():
+	Engine.time_scale = 1.0
 	%TitleLabel.text = Data.texts["gameover_title"]
 	%MsgLabel.text = Data.texts["gameover_msg"]
 	animate_appear()

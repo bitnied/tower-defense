@@ -1,7 +1,25 @@
-# Guia de produção dos assets finais — Elisa's Defence
+# Guia de produção dos assets finais — Elisa TD
 
-Todos os assets atuais são **placeholders gerados por código**. Este guia diz
-exatamente o que produzir para substituí-los. Regra geral:
+Todos os assets atuais são **placeholders gerados por código**
+(regeneráveis com `python3 tools/gen_placeholders.py`). Este guia diz
+exatamente o que produzir para substituí-los.
+
+## Identidade visual (paleta Rosa & Dourado)
+
+| Uso | Cor |
+|---|---|
+| Fundo rosa suave | `#F7E1EA` |
+| Painéis/pills (vinho-rosado) | `#8E4A5E` (borda `#5C2E3D`) |
+| Cards de defensor | `#A85A70` |
+| Botões / destaque rosa | `#FF5F8F` (borda `#C23764`) |
+| Dourado (moeda, Elisa, cadeado) | `#E8B923` / `#F5CE42` |
+| Verde confirmação | `#58B368` |
+| Texto | branco com sombra suave |
+
+A UI (painéis, botões, ícones) já está pronta no jogo — os itens abaixo são
+os que **você** vai produzir.
+
+Regra geral:
 
 - **Formato**: PNG com fundo transparente (exceto os backgrounds, que são opacos).
 - **Mesmo nome e mesmo caminho de arquivo** do placeholder — basta sobrescrever
@@ -88,7 +106,7 @@ Os 3 frames giram em loop rápido durante o voo. O raio da Luna não é sprite �
 | Arquivo | O que é | Espec |
 |---|---|---|
 | `Assets/menu/home_bg.png` | fundo da tela inicial | 1152×648 px, opaco |
-| `Assets/menu/title_lettering.png` | lettering "Elisa's Defence" | 900×180 px, transparente |
+| `Assets/menu/title_lettering.png` | **LOGO "Elisa TD"** | transparente, ~900×200 px (proporção livre até ~5:1) |
 | `Assets/defenders/locked.png` | botão "?" da Elisa bloqueada | 64×64 px |
 | `Assets/ui/familia_placeholder.png` | FOTO DA FAMÍLIA (aparece na derrota e na vitória) | 360×300 px — substitua por uma foto real! Moldura estilo polaroid fica ótima. |
 

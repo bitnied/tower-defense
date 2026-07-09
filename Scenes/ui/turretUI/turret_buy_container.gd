@@ -1,9 +1,11 @@
 extends PanelContainer
+# Card de compra de um defensor (estilo BTD6): retrato + preço.
+# Quando o defensor ainda é surpresa (Elisa), mostra "?" + cadeado.
 
 var turret_type := "":
 	set(value):
 		turret_type = value
-		$TextureRect.turretType = value
+		$VBox/TextureRect.turretType = value
 		refresh_icon()
 
 var can_purchase := false:
@@ -18,19 +20,20 @@ func refresh_icon():
 	if turret_type == "":
 		return
 	if Globals.is_defender_locked(turret_type):
-		# Surpresa ainda não revelada: mostra "?"
-		$TextureRect.texture = load(Data.locked_icon)
-		$CostLabel.text = "?"
+		$VBox/TextureRect.texture = load(Data.locked_icon)
+		$VBox/CostRow/CostLabel.text = "?"
+		$LockIcon.visible = true
 	else:
-		$TextureRect.texture = Globals.defender_icon(turret_type)
-		$CostLabel.text = str(Data.turrets[turret_type]["cost"])
+		$VBox/TextureRect.texture = Globals.defender_icon(turret_type)
+		$VBox/CostRow/CostLabel.text = str(Data.turrets[turret_type]["cost"])
+		$LockIcon.visible = false
 
 func _on_defender_unlocked(key):
 	if key != turret_type:
 		return
 	refresh_icon()
 	if is_instance_valid(Globals.currentMap):
-		$TextureRect.check_can_purchase(Globals.currentMap.gold)
+		$VBox/TextureRect.check_can_purchase(Globals.currentMap.gold)
 	unlock_pop()
 
 func unlock_pop():

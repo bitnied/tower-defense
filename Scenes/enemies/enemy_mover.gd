@@ -22,11 +22,12 @@ var is_destroyed := false
 func _ready():
 	add_to_group("enemy")
 
-func _process(_delta):
+func _process(delta):
 	if state == State.walking:
-		#Move
-		progress_ratio += 0.0005 * speed
-		if progress_ratio == 1:
+		# Movimento por delta: independente de framerate (iPads 120Hz)
+		# e respeita Engine.time_scale (botão 2x).
+		progress_ratio += 0.03 * speed * delta
+		if progress_ratio >= 1:
 			finished_path()
 			return
 		#Flip

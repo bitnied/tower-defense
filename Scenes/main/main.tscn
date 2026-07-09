@@ -1,9 +1,24 @@
-[gd_scene load_steps=5 format=3 uid="uid://chgwxhrtw1lln"]
+[gd_scene load_steps=10 format=3 uid="uid://chgwxhrtw1lln"]
 
 [ext_resource type="Script" path="res://Scenes/main/main.gd" id="1_22s4b"]
 [ext_resource type="Script" path="res://Scenes/ui/hud.gd" id="2_cy82p"]
 [ext_resource type="PackedScene" uid="uid://d0otd33ubv3hq" path="res://Scenes/ui/turretUI/turret_buy_container.tscn" id="3_pljl8"]
 [ext_resource type="Script" path="res://Scenes/ui/turretUI/turrets_panel.gd" id="3_ryupq"]
+[ext_resource type="Texture2D" path="res://Assets/ui/icon_life.png" id="4_life"]
+[ext_resource type="Texture2D" path="res://Assets/ui/icon_coin.png" id="5_coin"]
+[ext_resource type="Texture2D" path="res://Assets/ui/icon_gear.png" id="6_gear"]
+[ext_resource type="Texture2D" path="res://Assets/ui/icon_play.png" id="7_play"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_side"]
+content_margin_left = 8.0
+content_margin_top = 10.0
+content_margin_right = 8.0
+content_margin_bottom = 10.0
+bg_color = Color(0.556863, 0.290196, 0.368627, 0.97)
+border_width_left = 4
+border_color = Color(0.360784, 0.180392, 0.239216, 1)
+corner_radius_top_left = 14
+corner_radius_bottom_left = 14
 
 [node name="main" type="Node2D"]
 script = ExtResource("1_22s4b")
@@ -22,58 +37,118 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("2_cy82p")
 
-[node name="TurretsPanel" type="PanelContainer" parent="UI/HUD"]
+[node name="TopLeft" type="HBoxContainer" parent="UI/HUD"]
 layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -96.0
-grow_horizontal = 2
-grow_vertical = 0
-script = ExtResource("3_ryupq")
+anchors_preset = 0
+offset_left = 14.0
+offset_top = 12.0
+offset_right = 400.0
+offset_bottom = 58.0
+theme_override_constants/separation = 10
 
-[node name="Turrets" type="HBoxContainer" parent="UI/HUD/TurretsPanel"]
+[node name="LifePill" type="PanelContainer" parent="UI/HUD/TopLeft"]
 layout_mode = 2
 
-[node name="TurretBuyContainer" parent="UI/HUD/TurretsPanel/Turrets" instance=ExtResource("3_pljl8")]
+[node name="HBox" type="HBoxContainer" parent="UI/HUD/TopLeft/LifePill"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="UI/HUD/TopLeft/LifePill/HBox"]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("4_life")
+
+[node name="HPLabel" type="Label" parent="UI/HUD/TopLeft/LifePill/HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "10/10"
+
+[node name="CoinPill" type="PanelContainer" parent="UI/HUD/TopLeft"]
 layout_mode = 2
 
-[node name="WaveWaitTimer" type="Timer" parent="UI/HUD"]
+[node name="HBox" type="HBoxContainer" parent="UI/HUD/TopLeft/CoinPill"]
+layout_mode = 2
+theme_override_constants/separation = 6
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/HUD"]
+[node name="Icon" type="TextureRect" parent="UI/HUD/TopLeft/CoinPill/HBox"]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("5_coin")
+
+[node name="GoldLabel" type="Label" parent="UI/HUD/TopLeft/CoinPill/HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "60"
+
+[node name="SidePanel" type="PanelContainer" parent="UI/HUD"]
 layout_mode = 1
-anchors_preset = 1
+anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -127.0
-offset_top = 12.0
-offset_right = -48.0
-offset_bottom = 62.0
+anchor_bottom = 1.0
+offset_left = -152.0
 grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_side")
+script = ExtResource("3_ryupq")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/HUD/VBoxContainer"]
+[node name="VBox" type="VBoxContainer" parent="UI/HUD/SidePanel"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
-[node name="GoldLabel" type="Label" parent="UI/HUD/VBoxContainer/HBoxContainer"]
+[node name="WaveRow" type="HBoxContainer" parent="UI/HUD/SidePanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="WavePill" type="VBoxContainer" parent="UI/HUD/SidePanel/VBox/WaveRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="WaveLabel" type="Label" parent="UI/HUD/SidePanel/VBox/WaveRow/WavePill"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Corações: 60"
+theme_override_font_sizes/font_size = 17
+text = "Onda 1/5"
 
-[node name="HPLabel" type="Label" parent="UI/HUD/VBoxContainer/HBoxContainer"]
+[node name="RemainLabel" type="Label" parent="UI/HUD/SidePanel/VBox/WaveRow/WavePill"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Mamãe: 10/10"
+theme_override_font_sizes/font_size = 12
+text = ""
 
-[node name="WaveLabel" type="Label" parent="UI/HUD/VBoxContainer"]
+[node name="PauseButton" type="Button" parent="UI/HUD/SidePanel/VBox/WaveRow"]
+custom_minimum_size = Vector2(46, 46)
+layout_mode = 2
+icon = ExtResource("6_gear")
+icon_alignment = 1
+
+[node name="Turrets" type="VBoxContainer" parent="UI/HUD/SidePanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-horizontal_alignment = 1
+theme_override_constants/separation = 8
 
-[node name="RemainLabel" type="Label" parent="UI/HUD/VBoxContainer"]
-unique_name_in_owner = true
+[node name="TurretBuyContainer" parent="UI/HUD/SidePanel/VBox/Turrets" instance=ExtResource("3_pljl8")]
 layout_mode = 2
-horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="UI/HUD/SidePanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PlayButton" type="Button" parent="UI/HUD/SidePanel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+icon = ExtResource("7_play")
+icon_alignment = 1
+
+[node name="WaveWaitTimer" type="Timer" parent="UI/HUD"]
 
 [node name="BannerLabel" type="Label" parent="UI/HUD"]
 unique_name_in_owner = true
@@ -96,3 +171,5 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [connection signal="timeout" from="UI/HUD/WaveWaitTimer" to="UI/HUD" method="_on_wave_wait_timer_timeout"]
+[connection signal="pressed" from="UI/HUD/SidePanel/VBox/WaveRow/PauseButton" to="UI/HUD" method="_on_pause_button_pressed"]
+[connection signal="pressed" from="UI/HUD/SidePanel/VBox/PlayButton" to="UI/HUD" method="_on_play_button_pressed"]

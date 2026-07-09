@@ -14,7 +14,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="Elisa's Defence"
+config/name="Elisa TD"
 run/main_scene="res://Scenes/ui/mainMenu/mainMenu.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
@@ -32,6 +32,7 @@ window/handheld/orientation=4
 
 [gui]
 
+theme/custom="res://Assets/ui/theme.tres"
 theme/default_font_size=20
 
 [input]

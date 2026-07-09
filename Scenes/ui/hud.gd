@@ -3,6 +3,7 @@ extends Control
 var next_wait_time := 0
 var waited := 0
 var open_details_pane : PanelContainer
+var fast := false
 
 func _ready():
 	Globals.hud = self
@@ -12,15 +13,16 @@ func _ready():
 	Globals.waveCleared.connect(show_wave_timer)
 	Globals.enemyDestroyed.connect(update_enemy_count)
 	Globals.defenderUnlocked.connect(_on_defender_unlocked)
+	_refresh_play_button()
 
 func max_waves() -> int:
 	return int(Data.maps[Globals.selected_map]["spawner_settings"]["max_waves"])
 
 func update_hp(newHp, maxHp):
-	%HPLabel.text = "Mamãe: %d/%d" % [round(newHp), round(maxHp)]
+	%HPLabel.text = "%d/%d" % [round(newHp), round(maxHp)]
 
 func update_gold(newGold):
-	%GoldLabel.text = "Corações: %d" % round(newGold)
+	%GoldLabel.text = str(round(newGold))
 
 func show_wave_count(current_wave, enemies):
 	$WaveWaitTimer.stop()
@@ -28,18 +30,55 @@ func show_wave_count(current_wave, enemies):
 	%WaveLabel.text = "Onda %d/%d" % [current_wave, max_waves()]
 	%RemainLabel.text = "A caminho: %d" % enemies
 	%RemainLabel.visible = true
+	_refresh_play_button()
 
 func show_wave_timer(wait_time):
 	%RemainLabel.visible = false
 	next_wait_time = wait_time-1
 	$WaveWaitTimer.start()
+	_refresh_play_button()
 
 func _on_wave_wait_timer_timeout():
-	%WaveLabel.text = "Próxima onda em %d" % (next_wait_time - waited)
+	%WaveLabel.text = "Próxima em %d" % (next_wait_time - waited)
 	waited += 1
 
 func update_enemy_count(remain):
 	%RemainLabel.text = "A caminho: %d" % remain
+
+# ---------- botão play / acelerar (estilo BTD6) ----------
+
+func _on_play_button_pressed():
+	var spawner = _spawner()
+	if spawner and spawner.is_waiting_for_wave():
+		spawner.start_next_wave_early()
+	else:
+		fast = not fast
+		Engine.time_scale = 2.0 if fast else 1.0
+	_refresh_play_button()
+
+func _spawner():
+	if is_instance_valid(Globals.currentMap):
+		return Globals.currentMap.get_node_or_null("PathSpawner")
+	return null
+
+func _refresh_play_button(_a = 0, _b = 0):
+	var spawner = _spawner()
+	var waiting: bool = spawner == null or spawner.is_waiting_for_wave()
+	if waiting:
+		%PlayButton.icon = load("res://Assets/ui/icon_play.png")
+		%PlayButton.modulate = Color.WHITE
+	else:
+		%PlayButton.icon = load("res://Assets/ui/icon_fast.png")
+		%PlayButton.modulate = Color.WHITE if fast else Color(1, 1, 1, 0.55)
+
+# ---------- pause ----------
+
+func _on_pause_button_pressed():
+	var pauseScene := preload("res://Scenes/ui/pauseMenu/pause_menu.tscn")
+	add_child(pauseScene.instantiate())
+	get_tree().paused = true
+
+# ---------- avisos ----------
 
 func _on_defender_unlocked(_key):
 	show_banner(Data.texts["unlock_banner"])
@@ -62,5 +101,8 @@ func show_banner(message: String):
 	tween.tween_callback(func(): banner.visible = false)
 
 func reset():
+	fast = false
+	Engine.time_scale = 1.0
+	_refresh_play_button()
 	if is_instance_valid(open_details_pane):
 		open_details_pane.turret.close_details_pane()

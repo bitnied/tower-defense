@@ -3,6 +3,7 @@ extends Control
 # entra direto no jogo.
 
 func _ready():
+	Engine.time_scale = 1.0
 	%Tagline.text = Data.texts["tagline"]
 	%HowtoLabel.text = Data.texts["howto"]
 	%Congrats.text = Data.texts["congrats"]

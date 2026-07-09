@@ -44,6 +44,14 @@ func _on_spawn_delay_timeout():
 		spawn_new_enemy()
 		$SpawnDelay.start()
 
+func is_waiting_for_wave() -> bool:
+	return not $WaveDelayTimer.is_stopped()
+
+func start_next_wave_early():
+	if is_waiting_for_wave():
+		$WaveDelayTimer.stop()
+		_on_wave_delay_timer_timeout()
+
 func _on_wave_delay_timer_timeout():
 	#Move to next wave
 	current_wave += 1
