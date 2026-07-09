@@ -1,7 +1,7 @@
 [gd_scene load_steps=16 format=3 uid="uid://bpnr2j3gxucn"]
 
 [ext_resource type="Script" path="res://Scenes/turrets/rayTurret/ray_turret.gd" id="1_bpos3"]
-[ext_resource type="Texture2D" uid="uid://83kim8fm0f2s" path="res://Assets/turrets/technoturret.png" id="2_45tcr"]
+[ext_resource type="Texture2D" path="res://Assets/defenders/luna_sheet.png" id="2_45tcr"]
 [ext_resource type="Shader" path="res://Scenes/turrets/rayTurret/laser.gdshader" id="3_qc2r3"]
 [ext_resource type="Texture2D" uid="uid://dr0ndem12yexg" path="res://Assets/bullets/Pixel.png" id="4_fjepc"]
 
@@ -44,8 +44,8 @@ shader_parameter/xStretch = 1.0
 shader_parameter/yStretch = 0.1
 shader_parameter/laserSize = 0.814
 shader_parameter/wobbliness = 0.084
-shader_parameter/color1 = Color(1, 0, 0, 1)
-shader_parameter/color2 = Color(1, 0.588235, 0, 1)
+shader_parameter/color1 = Color(1, 0.372549, 0.635294, 1)
+shader_parameter/color2 = Color(0.780392, 0.490196, 1, 1)
 shader_parameter/colorMixFactor = 3.528
 shader_parameter/glowFactor = 3.0
 shader_parameter/minAlpha = 0.5

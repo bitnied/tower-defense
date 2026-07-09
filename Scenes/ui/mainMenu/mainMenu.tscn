@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://duvsvsvu8biwm"]
+[gd_scene load_steps=4 format=3 uid="uid://duvsvsvu8biwm"]
 
 [ext_resource type="Script" path="res://Scenes/ui/mainMenu/main_menu.gd" id="1_lnqmy"]
-[ext_resource type="Texture2D" uid="uid://didi8ffqykvkh" path="res://Assets/menu/bg.png" id="2_jl1fa"]
+[ext_resource type="Texture2D" path="res://Assets/menu/home_bg.png" id="2_jl1fa"]
+[ext_resource type="Texture2D" path="res://Assets/menu/title_lettering.png" id="3_title"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -12,42 +13,76 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lnqmy")
 
-[node name="TextureRect" type="TextureRect" parent="."]
-texture_filter = 1
+[node name="Bg" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+expand_mode = 1
+stretch_mode = 6
 texture = ExtResource("2_jl1fa")
 
-[node name="MenuButtons" type="PanelContainer" parent="."]
-custom_minimum_size = Vector2(200, 150)
+[node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
+anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -40.0
-offset_top = -20.0
-offset_bottom = 20.0
-grow_horizontal = 0
+anchor_bottom = 1.0
+grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MenuButtons"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TitleTexture" type="TextureRect" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(640, 128)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("3_title")
+
+[node name="Tagline" type="Label" parent="CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+text = "Um presente de aniversário para a Elisa"
+
+[node name="HowtoPanel" type="PanelContainer" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="startButton" type="Button" parent="MenuButtons/VBoxContainer"]
+[node name="HowtoMargin" type="MarginContainer" parent="CenterContainer/VBoxContainer/HowtoPanel"]
 layout_mode = 2
-size_flags_vertical = 3
-text = "Start Game"
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 14
 
-[node name="quitButton" type="Button" parent="MenuButtons/VBoxContainer"]
+[node name="HowtoLabel" type="Label" parent="CenterContainer/VBoxContainer/HowtoPanel/HowtoMargin"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(600, 0)
 layout_mode = 2
-size_flags_vertical = 3
-text = "Quit"
+theme_override_font_sizes/font_size = 19
+horizontal_alignment = 1
+autowrap_mode = 2
+text = "Como jogar"
 
-[connection signal="pressed" from="MenuButtons/VBoxContainer/startButton" to="." method="_on_start_button_pressed"]
-[connection signal="pressed" from="MenuButtons/VBoxContainer/quitButton" to="." method="_on_quit_button_pressed"]
+[node name="Congrats" type="Label" parent="CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 21
+horizontal_alignment = 1
+text = "Parabéns!"
+
+[node name="PlayWrap" type="CenterContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="CenterContainer/VBoxContainer/PlayWrap"]
+custom_minimum_size = Vector2(260, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Jogar"
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/PlayWrap/PlayButton" to="." method="_on_play_button_pressed"]

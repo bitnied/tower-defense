@@ -73,6 +73,9 @@ func create_placeholder():
 
 func check_can_purchase(newGold):
 	if turretType:
+		if Globals.is_defender_locked(turretType):
+			get_parent().can_purchase = false
+			return false
 		if newGold >= Data.turrets[turretType]["cost"]:
 			get_parent().can_purchase = true
 			return true

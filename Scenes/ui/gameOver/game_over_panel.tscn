@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://efjbh7i3n3nn"]
+[gd_scene load_steps=3 format=3 uid="uid://efjbh7i3n3nn"]
 
 [ext_resource type="Script" path="res://Scenes/ui/gameOver/game_over_panel.gd" id="1_7egy2"]
+[ext_resource type="Texture2D" path="res://Assets/ui/familia_placeholder.png" id="2_photo"]
 
 [node name="GameOverPanel" type="PanelContainer"]
 modulate = Color(1, 1, 1, 0)
@@ -9,36 +10,64 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
 script = ExtResource("1_7egy2")
 
 [node name="CenterPanel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 200)
+custom_minimum_size = Vector2(400, 200)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterPanel"]
+[node name="Margin" type="MarginContainer" parent="CenterPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterPanel/Margin"]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_constants/separation = 10
 
-[node name="GameOverText" type="Label" parent="CenterPanel/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="CenterPanel/Margin/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "Game Over
-"
+theme_override_font_sizes/font_size = 24
+text = "Game Over"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="CenterPanel/VBoxContainer"]
+[node name="Photo" type="TextureRect" parent="CenterPanel/Margin/VBoxContainer"]
+custom_minimum_size = Vector2(280, 233)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("2_photo")
+
+[node name="MsgLabel" type="Label" parent="CenterPanel/Margin/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 19
+text = "Tente de novo!"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="CenterPanel/Margin/VBoxContainer"]
 layout_mode = 2
 
-[node name="RetryButton" type="Button" parent="CenterPanel/VBoxContainer"]
+[node name="RetryButton" type="Button" parent="CenterPanel/Margin/VBoxContainer"]
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
-text = "Retry"
+theme_override_font_sizes/font_size = 22
+text = "Tentar de novo"
 
-[node name="MainMenuButton" type="Button" parent="CenterPanel/VBoxContainer"]
+[node name="MainMenuButton" type="Button" parent="CenterPanel/Margin/VBoxContainer"]
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
-text = "Main Menu"
+text = "Menu"
 
-[connection signal="pressed" from="CenterPanel/VBoxContainer/RetryButton" to="." method="_on_retry_button_pressed"]
-[connection signal="pressed" from="CenterPanel/VBoxContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="CenterPanel/Margin/VBoxContainer/RetryButton" to="." method="_on_retry_button_pressed"]
+[connection signal="pressed" from="CenterPanel/Margin/VBoxContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]

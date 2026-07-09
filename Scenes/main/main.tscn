@@ -58,11 +58,12 @@ layout_mode = 2
 [node name="GoldLabel" type="Label" parent="UI/HUD/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+text = "Corações: 60"
 
 [node name="HPLabel" type="Label" parent="UI/HUD/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "HP: 20/20"
+text = "Mamãe: 10/10"
 
 [node name="WaveLabel" type="Label" parent="UI/HUD/VBoxContainer"]
 unique_name_in_owner = true
@@ -73,5 +74,25 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 horizontal_alignment = 1
+
+[node name="BannerLabel" type="Label" parent="UI/HUD"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -320.0
+offset_top = 90.0
+offset_right = 320.0
+offset_bottom = 150.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.839216, 0.235294, 0.419608, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/font_size = 36
+text = "Surpresa!"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="timeout" from="UI/HUD/WaveWaitTimer" to="UI/HUD" method="_on_wave_wait_timer_timeout"]

@@ -1,8 +1,11 @@
 extends PanelContainer
+# Tela de vitória — a mensagem de aniversário para a Elisa.
 
 func _ready():
+	%TitleLabel.text = Data.texts["victory_title"]
+	%MsgLabel.text = Data.texts["victory_msg"]
 	animate_appear()
-	
+
 func animate_appear():
 	var tween = create_tween()
 	tween.tween_property($CenterPanel, "pivot_offset", Vector2(100,100), 0.05)

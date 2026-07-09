@@ -1,183 +1,227 @@
 extends Node
+# ==============================================================
+#  ELISA'S DEFENCE
+#  Presente de aniversário para a Elisa — de Tiago, Leo e Luna.
+#
+#  Este arquivo define TODO o conteúdo do jogo: defensores,
+#  corações (inimigos), mapa, ondas e textos. Para trocar a arte
+#  placeholder pela final, veja ASSETS.md na raiz do projeto.
+# ==============================================================
 
+# --------------------------------------------------------------
+# DEFENSORES (a chave "turrets" é mantida por compatibilidade
+# com os scripts do template).
+# Ordem de custo/impacto: Tiago < Luna < Leo < Elisa.
+# "directional_sheet": spritesheet 4 frames x 9 linhas
+#   (linhas 0-7 = direções L, SE, S, SO, O, NO, N, NE; linha 8 = parado)
+# --------------------------------------------------------------
 const turrets := {
-	"gatling": {
+	"tiago": {
 		"stats": {
-			"damage": 10,
-			"attack_speed": 2.0,
+			"damage": 4.0,
+			"attack_speed": 1.2,
+			"attack_range": 190.0,
+			"bulletSpeed": 260.0,
+			"bulletPierce": 2,
+		},
+		"upgrades": {
+			"damage": {"amount": 3.0, "multiplies": false},
+			"attack_speed": {"amount": 1.4, "multiplies": true},
+		},
+		"name": "Tiago",
+		"subtitle": "Toca violão: ondas sonoras de amor",
+		"cost": 30,
+		"upgrade_cost": 25,
+		"max_level": 3,
+		"scene": "res://Scenes/turrets/projectileTurret/projectileTurret.tscn",
+		"sprite": "res://Assets/defenders/tiago_sheet.png",
+		"directional_sheet": true,
+		"scale": 1.0,
+		"rotates": false,
+		"bullet": "sound_wave",
+	},
+	"luna": {
+		"stats": {
+			"damage": 2.6,
+			"attack_speed": 0.7,
+			"attack_range": 220.0,
+			"ray_duration": 1.2,
+			"ray_length": 240.0,
+		},
+		"upgrades": {
+			"damage": {"amount": 1.6, "multiplies": false},
+			"ray_duration": {"amount": 1.3, "multiplies": true},
+		},
+		"name": "Luna",
+		"subtitle": "Coração com as mãos: raio de amor",
+		"cost": 55,
+		"upgrade_cost": 35,
+		"max_level": 3,
+		"scene": "res://Scenes/turrets/rayTurret/rayTurret.tscn",
+		"sprite": "res://Assets/defenders/luna_sheet.png",
+		"directional_sheet": true,
+		"scale": 1.0,
+		"rotates": false,
+	},
+	"leo": {
+		"stats": {
+			"damage": 12.0,
+			"attack_speed": 0.9,
 			"attack_range": 200.0,
-			"bulletSpeed": 200.0,
+			"bulletSpeed": 300.0,
 			"bulletPierce": 1,
 		},
 		"upgrades": {
-			"damage": {"amount": 2.5, "multiplies": false},
-			"attack_speed": {"amount": 1.5, "multiplies": true},
+			"damage": {"amount": 6.0, "multiplies": false},
+			"attack_speed": {"amount": 1.35, "multiplies": true},
 		},
-		"name": "Gatling Gun",
-		"cost": 50,
-		"upgrade_cost": 50,
-		"max_level": 2,
-		"scene": "res://Scenes/turrets/projectileTurret/projectileTurret.tscn",
-		"sprite": "res://Assets/turrets/technoturret.png",
-		"scale": 4.0,
-		"rotates": true,
-		"bullet": "fire",
-	},
-	"laser": {
-		"stats": {
-			"damage": 0.5,
-			"attack_speed": 20.0,
-			"attack_range": 250.0,
-			"bulletSpeed": 400.0,
-			"bulletPierce": 4,
-		},
-		"upgrades": {
-			"damage": {"amount": 2.5, "multiplies": false},
-			"attack_speed": {"amount": 1.5, "multiplies": true},
-		},
-		"name": "Flamethrower",
-		"cost": 70,
-		"upgrade_cost": 50,
+		"name": "Léo",
+		"subtitle": "Manda beijo: boquinhas certeiras",
+		"cost": 85,
+		"upgrade_cost": 45,
 		"max_level": 3,
 		"scene": "res://Scenes/turrets/projectileTurret/projectileTurret.tscn",
-		"sprite": "res://Assets/turrets/laserturret.png",
+		"sprite": "res://Assets/defenders/leo_sheet.png",
+		"directional_sheet": true,
 		"scale": 1.0,
 		"rotates": false,
-		"bullet": "laser",
+		"bullet": "kiss",
 	},
-	"ray": {
+	"elisa": {
 		"stats": {
-			"damage": 0.5,
-			"attack_speed": 0.5,
-			"attack_range": 300.0,
-			"ray_duration": 1.0,
-			"ray_length": 300.0,
+			"damage": 9.0,
+			"attack_speed": 2.2,
+			"attack_range": 240.0,
+			"bulletSpeed": 340.0,
+			"bulletPierce": 3,
 		},
 		"upgrades": {
-			"damage": {"amount": 1.0, "multiplies": false},
-			"attack_speed": {"amount": 1.5, "multiplies": true},
-			"ray_length": {"amount": 1.5, "multiplies": true},
-			"ray_duration": {"amount": 1.5, "multiplies": true},
+			"damage": {"amount": 5.0, "multiplies": false},
+			"attack_speed": {"amount": 1.3, "multiplies": true},
 		},
-		"name": "Raygun",
-		"cost": 30,
-		"upgrade_cost": 50,
+		"name": "Elisa",
+		"subtitle": "Aponta o dedo: corações dourados",
+		"cost": 130,
+		"upgrade_cost": 60,
 		"max_level": 3,
-		"scene": "res://Scenes/turrets/rayTurret/rayTurret.tscn",
-		"sprite": "res://Assets/turrets/reallaser.png",
-		"scale": 1.0,
-		"rotates": true,
-	},
-	"melee": {
-		"stats": {
-			"damage": 5.0,
-			"attack_speed": 1.0,
-			"attack_range": 100.0,
-		},
-		"upgrades": {
-			"damage": {"amount": 2.5, "multiplies": false},
-			"attack_speed": {"amount": 1.5, "multiplies": true},
-		},
-		"name": "Explosive",
-		"cost": 70,
-		"upgrade_cost": 50,
-		"max_level": 3,
-		"scene": "res://Scenes/turrets/meleeTurret/meleeTurret.tscn",
-		"sprite": "res://Assets/turrets/dynamite.png",
+		"scene": "res://Scenes/turrets/projectileTurret/projectileTurret.tscn",
+		"sprite": "res://Assets/defenders/elisa_sheet.png",
+		"directional_sheet": true,
 		"scale": 1.0,
 		"rotates": false,
+		"bullet": "gold_heart",
+		# Surpresa do jogo: Elisa aparece como "?" e é liberada
+		# no começo da onda 3 (de 5).
+		"locked": true,
+		"unlock_wave": 3,
 	},
 }
 
+const locked_icon := "res://Assets/defenders/locked.png"
+
 const stats := {
-	"damage": {"name": "Damage"},
-	"attack_speed": {"name": "Speed"},
-	"attack_range": {"name": "Range"},
-	"bulletSpeed": {"name": "Bullet Speed"},
-	"bulletPierce": {"name": "Bullet Pierce"},
-	"ray_length": {"name": "Ray Length"},
-	"ray_duration": {"name": "Ray Duration"},
+	"damage": {"name": "Cura"},
+	"attack_speed": {"name": "Velocidade"},
+	"attack_range": {"name": "Alcance"},
+	"bulletSpeed": {"name": "Vel. do carinho"},
+	"bulletPierce": {"name": "Alvos por tiro"},
+	"ray_length": {"name": "Alcance do raio"},
+	"ray_duration": {"name": "Duração do raio"},
 }
 
 const bullets := {
-	"fire": {
-		"frames": "res://Assets/bullets/bullet1.tres",
+	"sound_wave": {
+		"frames": "res://Assets/bullets/sound_wave.tres",
 	},
-	"laser": {
-		"frames": "res://Assets/bullets/bullet2.tres",
-	}
+	"kiss": {
+		"frames": "res://Assets/bullets/kiss.tres",
+	},
+	"gold_heart": {
+		"frames": "res://Assets/bullets/gold_heart.tres",
+	},
 }
 
+# --------------------------------------------------------------
+# CORAÇÕES PARTIDOS (inimigos).
+# "hp" = quanto amor falta para curar; "goldYield" = corações
+# que o jogador ganha quando o coração é curado.
+# --------------------------------------------------------------
 const enemies := {
-	"redDino": {
+	"coracaoRachado": {
 		"stats": {
-			"hp": 10.0,
-			"speed": 1.0,
-			"baseDamage": 5.0,
-			"goldYield": 10.0,
+			"hp": 8.0,
+			"speed": 0.75,
+			"baseDamage": 1.0,
+			"goldYield": 6.0,
 			},
 		"difficulty": 1.0,
-		"sprite": "res://Assets/enemies/dino1.png",
+		"sprite": "res://Assets/enemies/heart_cracked.png",
 	},
-	"blueDino": {
+	"coracaoPartido": {
 		"stats": {
-			"hp": 5.0,
-			"speed": 2.0,
-			"baseDamage": 5.0,
+			"hp": 16.0,
+			"speed": 0.6,
+			"baseDamage": 2.0,
 			"goldYield": 10.0,
 			},
 		"difficulty": 2.0,
-		"sprite": "res://Assets/enemies/dino2.png",
+		"sprite": "res://Assets/enemies/heart_broken.png",
 	},
-	"yellowDino": {
+	"coracaoDespedacado": {
 		"stats": {
-			"hp": 10.0,
-			"speed": 5.0,
-			"baseDamage": 1.0,
-			"goldYield": 10.0,
+			"hp": 30.0,
+			"speed": 0.45,
+			"baseDamage": 3.0,
+			"goldYield": 16.0,
 			},
 		"difficulty": 3.0,
-		"sprite": "res://Assets/enemies/dino3.png",
+		"sprite": "res://Assets/enemies/heart_shattered.png",
 	},
-	"greenDino": {
-		"stats": {
-			"hp": 10.0,
-			"speed": 10.0,
-			"baseDamage": 1.0,
-			"goldYield": 10.0,
-			},
-		"difficulty": 4.0,
-		"sprite": "res://Assets/enemies/dino4.png",
-	}
 }
 
+const healed_heart_sprite := "res://Assets/enemies/heart_healed.png"
+
+# --------------------------------------------------------------
+# FASE ÚNICA — caminho em U deitado até a mamãe.
+# --------------------------------------------------------------
 const maps := {
-	"map1": {
-		"name": "Grass Map",
-		"bg": "res://Assets/maps/map1.webp",
-		"scene": "res://Scenes/maps/map1.tscn",
+	"elisa": {
+		"name": "Jardim da Mamãe",
+		"bg": "res://Assets/maps/map_elisa.png",
+		"scene": "res://Scenes/maps/map_elisa.tscn",
 		"baseHp": 10,
-		"startingGold": 100,
+		"startingGold": 60,
 		"spawner_settings":
 			{
-			"difficulty": {"initial": 2.0, "increase": 1.5, "multiplies": true},
-			"max_waves": 10,
-			"wave_spawn_count": 10,
+			"difficulty": {"initial": 0.8, "increase": 1.32, "multiplies": true},
+			"max_waves": 5,
+			"wave_spawn_count": 6,
 			"special_waves": {},
 			},
 	},
-	"map2": {
-		"name": "Desert Map",
-		"bg": "res://Assets/maps/map2.png",
-		"scene": "res://Scenes/maps/map2.tscn",
-		"baseHp": 15,
-		"startingGold": 200,
-		"spawner_settings":
-			{
-			"difficulty": {"initial": 1.0, "increase": 1.2, "multiplies": true},
-			"max_waves": 10,
-			"wave_spawn_count": 10,
-			"special_waves": {},
-			},
-	}
 }
+
+# --------------------------------------------------------------
+# TEXTOS DO JOGO — edite à vontade os recados para a Elisa.
+# --------------------------------------------------------------
+const texts := {
+	"tagline": "Um presente de aniversário para a Elisa",
+	"howto": "Corações partidos avançam pelo caminho até a mamãe.
+Coloque a família no cenário para curá-los com amor:
+cada coração curado vira moeda para chamar mais reforços.
+Não deixe os corações partidos chegarem até a mamãe!",
+	"congrats": "Feliz aniversário, Elisa!
+Com amor: Tiago, Léo e Luna",
+	"unlock_banner": "Surpresa! A Elisa entrou na defesa!",
+	"gameover_title": "Ainda tem coração precisando de amor...",
+	"gameover_msg": "A família inteira está na torcida.
+Respira fundo e tenta de novo!",
+	"victory_title": "Parabéns, Elisa!",
+	"victory_msg": "Você curou todos os corações
+e protegeu a mamãe!
+
+Feliz aniversário!
+Com amor: Tiago, Léo e Luna",
+}
+
+const family_photo := "res://Assets/ui/familia_placeholder.png"

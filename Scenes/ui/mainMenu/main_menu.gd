@@ -1,17 +1,12 @@
 extends Control
-
-var mapSelectContainer : PanelContainer
+# Home screen do Elisa's Defence — fase única, botão Jogar
+# entra direto no jogo.
 
 func _ready():
-	if OS.has_feature("web"):
-		$MenuButtons/VBoxContainer/quitButton.visible = false
+	%Tagline.text = Data.texts["tagline"]
+	%HowtoLabel.text = Data.texts["howto"]
+	%Congrats.text = Data.texts["congrats"]
 
-func _on_quit_button_pressed():
-	get_tree().quit()
-
-func _on_start_button_pressed():
-	if not mapSelectContainer:
-		var mscScene := preload("res://Scenes/ui/mainMenu/select_map_container.tscn")
-		var msc := mscScene.instantiate()
-		mapSelectContainer = msc
-		add_child(msc)
+func _on_play_button_pressed():
+	Globals.selected_map = "elisa"
+	get_tree().change_scene_to_file("res://Scenes/main/main.tscn")

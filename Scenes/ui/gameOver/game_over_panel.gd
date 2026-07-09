@@ -1,8 +1,12 @@
 extends PanelContainer
+# Tela de "morte": foto da família + recado carinhoso para
+# tentar de novo.
 
 func _ready():
+	%TitleLabel.text = Data.texts["gameover_title"]
+	%MsgLabel.text = Data.texts["gameover_msg"]
 	animate_appear()
-	
+
 func animate_appear():
 	var tween = create_tween()
 	tween.tween_property($CenterPanel, "pivot_offset", Vector2(100,100), 0.05)

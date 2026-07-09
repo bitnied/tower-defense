@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://Scenes/maps/baseMap.gd" id="1_elmap"]
+[ext_resource type="Texture2D" path="res://Assets/maps/map_elisa.png" id="2_elbg"]
+[ext_resource type="Texture2D" path="res://Assets/scenario/mamae.png" id="3_elmom"]
+[ext_resource type="Script" path="res://Scenes/maps/EnemySpawner.gd" id="4_elspawn"]
+
+[sub_resource type="Curve2D" id="Curve2D_elisa"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 600, -190, 0, 0, 0, 0, -330, -190, 0, 0, 0, 0, -380, -165, 0, 0, 0, 0, -415, -130, 0, 0, 0, 0, -430, -90, 0, 0, 0, 0, -430, 90, 0, 0, 0, 0, -415, 130, 0, 0, 0, 0, -380, 165, 0, 0, 0, 0, -330, 190, 0, 0, 0, 0, 540, 190)
+}
+point_count = 10
+
+[node name="ElisaMap" type="Node2D"]
+script = ExtResource("1_elmap")
+
+[node name="Background" type="Sprite2D" parent="."]
+texture = ExtResource("2_elbg")
+
+[node name="Mamae" type="Sprite2D" parent="."]
+z_index = 1
+texture_filter = 1
+position = Vector2(556, 186)
+texture = ExtResource("3_elmom")
+
+[node name="PathSpawner" type="Path2D" parent="."]
+curve = SubResource("Curve2D_elisa")
+script = ExtResource("4_elspawn")
+
+[node name="SpawnDelay" type="Timer" parent="PathSpawner"]
+wait_time = 0.9
+one_shot = true
+
+[node name="WaveDelayTimer" type="Timer" parent="PathSpawner"]
+wait_time = 9.0
+one_shot = true
+autostart = true
+
+[node name="Turrets" type="Node2D" parent="."]
+
+[node name="Projectiles" type="Node2D" parent="."]
+
+[node name="Obstacles" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Obstacles"]
+polygon = PackedVector2Array(620, -235, -350, -235, -475, -110, -475, 110, -350, 235, 620, 235, 620, 145, -310, 145, -385, 70, -385, -70, -310, -145, 620, -145)
+
+[connection signal="timeout" from="PathSpawner/SpawnDelay" to="PathSpawner" method="_on_spawn_delay_timeout"]
+[connection signal="timeout" from="PathSpawner/WaveDelayTimer" to="PathSpawner" method="_on_wave_delay_timer_timeout"]

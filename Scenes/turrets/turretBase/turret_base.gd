@@ -3,21 +3,35 @@ class_name Turret
 
 signal turretUpdated
 
+# Spritesheet direcional: 4 frames x 9 linhas.
+# Linhas 0-7 = direções (L, SE, S, SO, O, NO, N, NE), linha 8 = parado.
+const SHEET_COLS := 4
+const SHEET_ROWS := 9
+const IDLE_ROW := 8
+
 var turret_type := "":
 	set(value):
 		turret_type = value
-		$Sprite2D.texture = load(Data.turrets[value]["sprite"])
-		$Sprite2D.scale = Vector2(Data.turrets[value]["scale"],Data.turrets[value]["scale"])
-		rotates = Data.turrets[value]["rotates"]
-		for stat in Data.turrets[value]["stats"].keys():
-			set(stat, Data.turrets[value]["stats"][stat])
+		var cfg: Dictionary = Data.turrets[value]
+		$Sprite2D.texture = load(cfg["sprite"])
+		$Sprite2D.scale = Vector2(cfg["scale"], cfg["scale"])
+		uses_sheet = cfg.get("directional_sheet", false)
+		if uses_sheet:
+			$Sprite2D.hframes = SHEET_COLS
+			$Sprite2D.vframes = SHEET_ROWS
+			$Sprite2D.frame_coords = Vector2i(0, IDLE_ROW)
+		rotates = cfg.get("rotates", false)
+		for stat in cfg["stats"].keys():
+			set(stat, cfg["stats"][stat])
 
 #Deploying
 var deployed := false
 var can_place := false
 var draw_range := false
 #Attacking
-var rotates := true
+var rotates := false
+var uses_sheet := false
+var anim_frame := 0.0
 var current_target = null
 #Stats
 var attack_speed := 1.0:
@@ -31,13 +45,26 @@ var attack_range := 1.0:
 var damage := 1.0
 var turret_level := 1
 
-func _process(_delta):
+func _process(delta):
 	if not deployed:
 		@warning_ignore("standalone_ternary")
 		colliding() if $CollisionArea.has_overlapping_areas() else not_colliding()
+	elif uses_sheet:
+		update_facing(delta)
 	elif rotates:
 		@warning_ignore("standalone_ternary")
 		look_at(current_target.position) if is_instance_valid(current_target) else try_get_closest_target()
+
+func update_facing(delta):
+	if is_instance_valid(current_target):
+		var ang := rad_to_deg((current_target.position - position).angle())
+		var row := posmod(int(round(ang / 45.0)), 8)
+		anim_frame = fmod(anim_frame + delta * maxf(attack_speed, 1.0) * 4.0, float(SHEET_COLS))
+		$Sprite2D.frame_coords = Vector2i(int(anim_frame), row)
+	else:
+		anim_frame = fmod(anim_frame + delta * 3.0, float(SHEET_COLS))
+		$Sprite2D.frame_coords = Vector2i(int(anim_frame), IDLE_ROW)
+		try_get_closest_target()
 
 func _draw():
 	if draw_range:

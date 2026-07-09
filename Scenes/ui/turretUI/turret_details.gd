@@ -16,11 +16,11 @@ func animate_appear():
 	tween.tween_property(self, "position", Vector2(-500,0), 0.3).as_relative()
 
 func set_props():
-	%TurretTexture.texture = load(Data.turrets[turret.turret_type]["sprite"])
+	%TurretTexture.texture = Globals.defender_icon(turret.turret_type)
 	%TurretName.text = Data.turrets[turret.turret_type]["name"]
-	%TurretLevel.text = "Level "+str(turret.turret_level)
-	%UpgradeButton.text = "Upgrade for "+str(get_upgrade_price())
-	%SellButton.text = "Sell for "+str(get_sell_price())
+	%TurretLevel.text = "Nível "+str(turret.turret_level)
+	%UpgradeButton.text = "Melhorar ("+str(get_upgrade_price())+")"
+	%SellButton.text = "Vender ("+str(get_sell_price())+")"
 	for c in %Stats.get_children():
 		c.queue_free()
 	var statLabelScene := preload("res://Scenes/ui/turretUI/stat_label.tscn")
@@ -46,7 +46,7 @@ func get_sell_price():
 
 func check_can_upgrade(_new_gold=0):
 	if turret.turret_level == Data.turrets[turret.turret_type]["max_level"]:
-		%UpgradeButton.text = "Maxed Out"
+		%UpgradeButton.text = "No máximo"
 		%UpgradeButton.disabled = true
 	else:
 		%UpgradeButton.disabled = Globals.currentMap.gold < get_upgrade_price()

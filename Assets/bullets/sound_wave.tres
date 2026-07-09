@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" load_steps=5 format=3]
+
+[ext_resource type="Texture2D" path="res://Assets/bullets/sound_wave.png" id="1_sw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sw0"]
+atlas = ExtResource("1_sw")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sw1"]
+atlas = ExtResource("1_sw")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sw2"]
+atlas = ExtResource("1_sw")
+region = Rect2(64, 0, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sw0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sw1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sw2")
+}],
+"loop": true,
+"name": &"default",
+"speed": 12.0
+}]
