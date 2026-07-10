@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://3ap3on04gj27"]
 
 [ext_resource type="Script" path="res://Scenes/ui/mapCompleted/mapCompleted.gd" id="1_r4qa7"]
-[ext_resource type="Texture2D" path="res://Assets/ui/familia_placeholder.png" id="2_photo"]
+[ext_resource type="Texture2D" path="res://Assets/ui/vitoria.jpg" id="2_photo"]
 
 [node name="MapCompleted" type="PanelContainer"]
 modulate = Color(1, 1, 1, 0)
@@ -34,12 +34,12 @@ theme_override_constants/separation = 10
 [node name="TitleLabel" type="Label" parent="CenterPanel/Margin/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 26
 text = "Parabéns!"
 horizontal_alignment = 1
 
 [node name="Photo" type="TextureRect" parent="CenterPanel/Margin/VBoxContainer"]
-custom_minimum_size = Vector2(300, 250)
+custom_minimum_size = Vector2(216, 270)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
@@ -49,7 +49,7 @@ texture = ExtResource("2_photo")
 unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 18
 text = "Você venceu!"
 horizontal_alignment = 1
 autowrap_mode = 2
@@ -57,16 +57,36 @@ autowrap_mode = 2
 [node name="HSeparator" type="HSeparator" parent="CenterPanel/Margin/VBoxContainer"]
 layout_mode = 2
 
+[node name="SessionLabel" type="Label" parent="CenterPanel/Margin/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(1, 0.84, 0.5, 1)
+text = "+0 pontos de amor"
+horizontal_alignment = 1
+
 [node name="ReplayButton" type="Button" parent="CenterPanel/Margin/VBoxContainer"]
 custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Jogar de novo"
 
-[node name="MainMenuButton" type="Button" parent="CenterPanel/Margin/VBoxContainer"]
+[node name="Row" type="HBoxContainer" parent="CenterPanel/Margin/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="GalleryButton" type="Button" parent="CenterPanel/Margin/VBoxContainer/Row"]
 custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
+size_flags_horizontal = 3
+text = "Galeria"
+
+[node name="MainMenuButton" type="Button" parent="CenterPanel/Margin/VBoxContainer/Row"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Menu"
 
 [connection signal="pressed" from="CenterPanel/Margin/VBoxContainer/ReplayButton" to="." method="_on_retry_button_pressed"]
-[connection signal="pressed" from="CenterPanel/Margin/VBoxContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="CenterPanel/Margin/VBoxContainer/Row/GalleryButton" to="." method="_on_gallery_button_pressed"]
+[connection signal="pressed" from="CenterPanel/Margin/VBoxContainer/Row/MainMenuButton" to="." method="_on_main_menu_button_pressed"]

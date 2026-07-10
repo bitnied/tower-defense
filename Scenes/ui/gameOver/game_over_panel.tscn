@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://efjbh7i3n3nn"]
 
 [ext_resource type="Script" path="res://Scenes/ui/gameOver/game_over_panel.gd" id="1_7egy2"]
-[ext_resource type="Texture2D" path="res://Assets/ui/familia_placeholder.png" id="2_photo"]
+[ext_resource type="Texture2D" path="res://Assets/ui/gameover.jpg" id="2_photo"]
 
 [node name="GameOverPanel" type="PanelContainer"]
 modulate = Color(1, 1, 1, 0)
@@ -40,7 +40,7 @@ text = "Game Over"
 horizontal_alignment = 1
 
 [node name="Photo" type="TextureRect" parent="CenterPanel/Margin/VBoxContainer"]
-custom_minimum_size = Vector2(280, 233)
+custom_minimum_size = Vector2(216, 270)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
@@ -58,16 +58,36 @@ autowrap_mode = 2
 [node name="HSeparator" type="HSeparator" parent="CenterPanel/Margin/VBoxContainer"]
 layout_mode = 2
 
+[node name="SessionLabel" type="Label" parent="CenterPanel/Margin/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(1, 0.84, 0.5, 1)
+text = "+0 pontos de amor"
+horizontal_alignment = 1
+
 [node name="RetryButton" type="Button" parent="CenterPanel/Margin/VBoxContainer"]
 custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Tentar de novo"
 
-[node name="MainMenuButton" type="Button" parent="CenterPanel/Margin/VBoxContainer"]
+[node name="Row" type="HBoxContainer" parent="CenterPanel/Margin/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="GalleryButton" type="Button" parent="CenterPanel/Margin/VBoxContainer/Row"]
 custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
+size_flags_horizontal = 3
+text = "Galeria"
+
+[node name="MainMenuButton" type="Button" parent="CenterPanel/Margin/VBoxContainer/Row"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Menu"
 
 [connection signal="pressed" from="CenterPanel/Margin/VBoxContainer/RetryButton" to="." method="_on_retry_button_pressed"]
-[connection signal="pressed" from="CenterPanel/Margin/VBoxContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="CenterPanel/Margin/VBoxContainer/Row/GalleryButton" to="." method="_on_gallery_button_pressed"]
+[connection signal="pressed" from="CenterPanel/Margin/VBoxContainer/Row/MainMenuButton" to="." method="_on_main_menu_button_pressed"]

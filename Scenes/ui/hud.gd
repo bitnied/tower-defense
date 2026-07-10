@@ -68,13 +68,14 @@ func _refresh_play_button(_a = 0, _b = 0):
 	var spawner = _spawner()
 	var waiting: bool = spawner == null or spawner.is_waiting_for_wave()
 	if waiting:
+		# entre ondas: play para começar já
 		%PlayButton.icon = load("res://Assets/ui/icon_play.png")
 		%PlayButton.text = ""
 		%PlayButton.self_modulate = Color.WHITE
 	else:
-		%PlayButton.icon = load("res://Assets/ui/icon_fast.png")
-		%PlayButton.text = "2x" if fast else "1x"
-		# dourado quando o 2x está LIGADO
+		# durante a onda: só o texto x1/x2 (dourado quando ligado)
+		%PlayButton.icon = null
+		%PlayButton.text = "x2" if fast else "x1"
 		%PlayButton.self_modulate = Color(1.0, 0.84, 0.35) if fast else Color.WHITE
 
 # ---------- pause ----------

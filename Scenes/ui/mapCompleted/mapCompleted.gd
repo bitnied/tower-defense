@@ -4,8 +4,11 @@ extends PanelContainer
 func _ready():
 	Engine.time_scale = 1.0
 	Sfx.play("victory", -2.0)
+	Progress.add_points(50)
+	Progress.save()
 	%TitleLabel.text = Data.texts["victory_title"]
 	%MsgLabel.text = Data.texts["victory_msg"]
+	%SessionLabel.text = "+%d pontos de amor" % Progress.session_points
 	animate_appear()
 
 func animate_appear():
@@ -21,3 +24,7 @@ func _on_retry_button_pressed():
 
 func _on_main_menu_button_pressed():
 	get_tree().change_scene_to_file("res://Scenes/ui/mainMenu/mainMenu.tscn")
+
+func _on_gallery_button_pressed():
+	Sfx.play("click", -10.0)
+	get_tree().change_scene_to_file("res://Scenes/ui/gallery/gallery.tscn")

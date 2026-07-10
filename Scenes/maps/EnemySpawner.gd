@@ -95,8 +95,10 @@ func check_wave_clear():
 				and not Globals.currentMap.gameOver:
 			# onda perfeita: nenhum coração chegou na mamãe
 			Globals.currentMap.gold += 10
+			Progress.add_points(5)
 			if is_instance_valid(Globals.hud):
 				Globals.hud.show_banner("Onda perfeita! +10", 1.6)
+		Progress.save()
 		if not current_wave == max_waves:
 			Globals.waveCleared.emit($WaveDelayTimer.wait_time)
 			$WaveDelayTimer.start()

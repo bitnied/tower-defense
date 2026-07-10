@@ -1,6 +1,7 @@
 extends Node2D
 
 func _ready():
+	Progress.new_session()
 	Globals.mainNode = self
 	var selectedMapScene := load(Data.maps[Globals.selected_map]["scene"])
 	var map = selectedMapScene.instantiate()

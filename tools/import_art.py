@@ -203,6 +203,47 @@ tile = fit_cell(slice_el(B(1478, 632, 1995, 1112)), 64, 62)
 tile.save(f"{ASSETS}/defenders/locked.png")
 print("locked ok")
 
+# ---------------- 2b. Telas de fim (torcida / vitória) ----------------
+for src, dst in [("Gameover.jpeg", "gameover.jpg"), ("Vitoria.jpeg", "vitoria.jpg")]:
+    img = Image.open(f"{ART}/{src}").convert("RGB")
+    sc = 720 / img.height
+    img = img.resize((round(img.width * sc), 720), Image.LANCZOS)
+    img.save(f"{ASSETS}/ui/{dst}", quality=88)
+    print("end screen ok:", dst)
+
+# ---------------- 2c. Galeria de conquistas ----------------
+# Ordena alfabeticamente, com Final.jpeg SEMPRE por último. Gera a
+# lista em Scenes/main/GalleryList.gd (ordem = ordem de desbloqueio).
+import re as _re, unicodedata
+gal_src = f"{ART}/Galeria"
+gal_dst = f"{ASSETS}/gallery"
+os.makedirs(gal_dst, exist_ok=True)
+def slug(name):
+    n = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
+    n = _re.sub(r"[^A-Za-z0-9]+", "_", n).strip("_").lower()
+    return n[:48]
+files = [f for f in os.listdir(gal_src)
+         if f.lower().endswith((".jpg", ".jpeg", ".png")) and not f.startswith(".")]
+finals = [f for f in files if slug(os.path.splitext(f)[0]) == "final"]
+rest = sorted([f for f in files if f not in finals], key=lambda f: slug(f))
+ordered = rest + finals
+manifest = []
+for i, f in enumerate(ordered):
+    img = Image.open(f"{gal_src}/{f}").convert("RGB")
+    sc = 640 / img.height
+    img = img.resize((round(img.width * sc), 640), Image.LANCZOS)
+    out_name = "g%02d_%s.jpg" % (i + 1, slug(os.path.splitext(f)[0]))
+    img.save(f"{gal_dst}/{out_name}", quality=85)
+    manifest.append(out_name)
+with open(f"{ROOT}/Scenes/main/GalleryList.gd", "w") as fh:
+    fh.write("# GERADO por tools/import_art.py — não editar à mão.\n")
+    fh.write("# Ordem = ordem de desbloqueio (Final sempre por último).\n")
+    fh.write("const IMAGES := [\n")
+    for m in manifest:
+        fh.write('\t"%s",\n' % m)
+    fh.write("]\n")
+print("galeria ok:", len(manifest), "imagens")
+
 # ---------------- 3. Mapa ----------------
 m = Image.open(f"{ART}/Stage map.jpeg").convert("RGB")
 s = 1152 / m.width

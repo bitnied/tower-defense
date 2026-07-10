@@ -92,6 +92,9 @@ func attack():
 			var collider = a.get_parent()
 			if collider.is_in_group("enemy"):
 				collider.get_damage(damage)
+				# o raio de amor CONGELA o coração (fica mais lento)
+				if collider.has_method("apply_slow"):
+					collider.apply_slow(0.45, 1.0)
 	if is_instance_valid(current_target):
 		if can_fire:
 			can_fire = false

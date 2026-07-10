@@ -51,6 +51,7 @@ func defender_icon(key: String) -> Texture2D:
 	return tex
 
 func restart_current_level():
+	Progress.new_session()
 	var currentLevelScene := load(currentMap.scene_file_path)
 	currentMap.queue_free()
 	var newMap = currentLevelScene.instantiate()

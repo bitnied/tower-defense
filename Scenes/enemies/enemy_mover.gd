@@ -24,6 +24,15 @@ var speed := 1.0
 var is_destroyed := false
 var is_boss := false
 
+# congelamento (raio da Luna): reduz a velocidade por um tempo
+var slow_factor := 1.0
+var slow_timer := 0.0
+
+func apply_slow(factor: float, duration: float):
+	slow_factor = factor
+	slow_timer = duration
+	$Sprite2D.self_modulate = Color(0.62, 0.82, 1.0)
+
 # corações andam levemente acima do centro da estrada para não
 # encostar na base das casas
 const RIDE_OFFSET := -14.0
@@ -34,10 +43,15 @@ func _ready():
 	v_offset = RIDE_OFFSET
 
 func _process(delta):
+	if slow_timer > 0.0:
+		slow_timer -= delta
+		if slow_timer <= 0.0:
+			slow_factor = 1.0
+			$Sprite2D.self_modulate = Color.WHITE
 	if state == State.walking:
 		# Movimento por delta: independente de framerate (iPads 120Hz)
 		# e respeita Engine.time_scale (botão 2x).
-		progress_ratio += 0.03 * speed * delta
+		progress_ratio += 0.03 * speed * slow_factor * delta
 		if progress_ratio >= 1:
 			finished_path()
 			return
@@ -124,18 +138,40 @@ func healed_animation():
 	$Sprite2D.frame = 0
 	$Sprite2D.flip_v = false
 	Sfx.play("heal", -9.0)
+	Progress.add_points(10 if is_boss else 1)
 	spawn_reward_label()
 	if is_boss:
 		spawn_heart_rain()
+	$Sprite2D.self_modulate = Color.WHITE
+	# o coração curado voa feliz até a mamãe (Elisa)
 	var start: Vector2 = $Sprite2D.global_position
+	var guardian: Node2D = Globals.currentMap.get_node_or_null("Mamae")
+	var target: Vector2 = start + Vector2(0, -60)
+	if guardian != null:
+		target = guardian.global_position + Vector2(0, -30)
+	var mid := Vector2(lerpf(start.x, target.x, 0.45),
+		minf(start.y, target.y) - 90.0)
 	var tween := create_tween()
-	tween.set_parallel()
-	tween.tween_property($Sprite2D, "global_position", start + Vector2(0, -46), 0.7) \
+	# pulinho de alegria + voo em arco até a Elisa
+	tween.tween_property($Sprite2D, "scale", $Sprite2D.scale * 1.3, 0.16) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property($Sprite2D, "global_position", mid, 0.34) \
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.tween_property($Sprite2D, "scale", $Sprite2D.scale * 1.35, 0.7)
-	tween.tween_property($Sprite2D, "modulate:a", 0.0, 0.45).set_delay(0.3)
-	tween.set_parallel(false)
+	tween.tween_property($Sprite2D, "global_position", target, 0.3) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property($Sprite2D, "scale", $Sprite2D.scale * 0.55, 0.3)
+	tween.tween_callback(func(): _arrive_at_guardian(guardian))
+	tween.tween_property($Sprite2D, "modulate:a", 0.0, 0.12)
 	tween.tween_callback(queue_free)
+
+func _arrive_at_guardian(guardian: Node2D):
+	if guardian == null:
+		return
+	# a Elisa "recebe" o coração com um pulsinho carinhoso
+	var tween := guardian.create_tween()
+	tween.tween_property(guardian, "scale", Vector2(1.08, 1.08), 0.08)
+	tween.tween_property(guardian, "scale", Vector2(1, 1), 0.2) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 # clímax do chefão: chuva de coraçõezinhos curados
 func spawn_heart_rain():

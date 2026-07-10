@@ -15,3 +15,7 @@ func _on_play_button_pressed():
 func _on_start_game():
 	Globals.selected_map = "elisa"
 	get_tree().change_scene_to_file("res://Scenes/main/main.tscn")
+
+func _on_gallery_button_pressed():
+	Sfx.play("click", -10.0)
+	get_tree().change_scene_to_file("res://Scenes/ui/gallery/gallery.tscn")

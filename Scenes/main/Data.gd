@@ -47,18 +47,18 @@ const turrets := {
 	},
 	"luna": {
 		"stats": {
-			"damage": 2.6,
+			"damage": 1.2,
 			"attack_speed": 0.7,
-			"attack_range": 220.0,
+			"attack_range": 170.0,
 			"ray_duration": 1.2,
-			"ray_length": 240.0,
+			"ray_length": 160.0,
 		},
 		"upgrades": {
-			"damage": {"amount": 1.6, "multiplies": false},
+			"damage": {"amount": 0.8, "multiplies": false},
 			"ray_duration": {"amount": 1.3, "multiplies": true},
 		},
 		"name": "Luna",
-		"subtitle": "Coração com as mãos: raio de amor",
+		"subtitle": "Raio de amor que congela os corações",
 		"cost": 55,
 		"upgrade_cost": 35,
 		"max_level": 3,

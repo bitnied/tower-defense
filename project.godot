@@ -24,6 +24,7 @@ config/icon="res://icon.svg"
 Globals="*res://Scenes/main/Globals.gd"
 Data="*res://Scenes/main/Data.gd"
 Sfx="*res://Scenes/main/Sfx.gd"
+Progress="*res://Scenes/main/Progress.gd"
 
 [display]
 
