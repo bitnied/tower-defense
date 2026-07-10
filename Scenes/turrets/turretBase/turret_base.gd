@@ -23,7 +23,7 @@ var turret_type := "":
 		show_idle()
 		rotates = cfg.get("rotates", false)
 		for stat in cfg["stats"].keys():
-			set(stat, cfg["stats"][stat])
+			set(stat, Tuning.value(value, stat, cfg["stats"][stat]))
 
 #Deploying
 var deployed := false
@@ -124,7 +124,11 @@ func attack_punch():
 
 func _draw():
 	if draw_range:
-		draw_circle(Vector2(0,0), attack_range, "3ccd50a9", false, 1, true)
+		# alcance real, bem discreto
+		draw_circle(Vector2(0, 0), attack_range, Color(0.24, 0.8, 0.31, 0.16), false, 1.5, true)
+		# anel de seleção abraçando o personagem
+		draw_circle(Vector2(0, -30.0 * sprite_scale), 34.0 * sprite_scale + 6.0,
+			Color(1.0, 0.92, 0.5, 0.85), false, 3.0, true)
 	# aura de evolução: rosa no nível 2, dourada no nível 3
 	if deployed and turret_level >= 2:
 		var glow_col := Color(1.0, 0.55, 0.75, 0.12) if turret_level == 2 \

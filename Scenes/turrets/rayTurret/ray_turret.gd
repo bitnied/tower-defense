@@ -94,7 +94,8 @@ func attack():
 				collider.get_damage(damage)
 				# o raio de amor CONGELA o coração (fica mais lento)
 				if collider.has_method("apply_slow"):
-					collider.apply_slow(0.45, 1.0)
+					collider.apply_slow(Tuning.value("luna", "slow_factor", 0.45),
+				Tuning.value("luna", "slow_duration", 1.0))
 	if is_instance_valid(current_target):
 		if can_fire:
 			can_fire = false

@@ -19,14 +19,14 @@ extends Node
 const turrets := {
 	"tiago": {
 		"stats": {
-			"damage": 4.0,
+			"damage": 2.0,
 			"attack_speed": 1.2,
 			"attack_range": 170.0,
 			"bulletSpeed": 260.0,
 			"bulletPierce": 2,
 		},
 		"upgrades": {
-			"damage": {"amount": 3.0, "multiplies": false},
+			"damage": {"amount": 1.5, "multiplies": false},
 			"attack_speed": {"amount": 1.4, "multiplies": true},
 		},
 		"name": "Tiago",
@@ -47,14 +47,14 @@ const turrets := {
 	},
 	"luna": {
 		"stats": {
-			"damage": 1.2,
+			"damage": 0.24,
 			"attack_speed": 0.7,
 			"attack_range": 170.0,
 			"ray_duration": 1.2,
 			"ray_length": 160.0,
 		},
 		"upgrades": {
-			"damage": {"amount": 0.8, "multiplies": false},
+			"damage": {"amount": 0.2, "multiplies": false},
 			"ray_duration": {"amount": 1.3, "multiplies": true},
 		},
 		"name": "Luna",
@@ -172,7 +172,7 @@ const bullets := {
 const enemies := {
 	"coracaoRachado": {
 		"stats": {
-			"hp": 10.0,
+			"hp": 7.0,
 			"speed": 0.85,
 			"baseDamage": 1.0,
 			"goldYield": 3.0,
@@ -182,7 +182,7 @@ const enemies := {
 	},
 	"coracaoPartido": {
 		"stats": {
-			"hp": 22.0,
+			"hp": 18.0,
 			"speed": 0.68,
 			"baseDamage": 2.0,
 			"goldYield": 5.0,
@@ -192,7 +192,7 @@ const enemies := {
 	},
 	"coracaoDespedacado": {
 		"stats": {
-			"hp": 45.0,
+			"hp": 40.0,
 			"speed": 0.52,
 			"baseDamage": 3.0,
 			"goldYield": 8.0,
@@ -200,11 +200,24 @@ const enemies := {
 		"difficulty": 2.6,
 		"sprite": "res://Assets/enemies/heart_shattered.png",
 	},
+	# Coração-meteoro: despenca do céu no meio do caminho (curva do U),
+	# racha o chão e segue andando. difficulty 98 = fora do sorteio.
+	"coracaoMeteoro": {
+		"stats": {
+			"hp": 55.0,
+			"speed": 0.6,
+			"baseDamage": 4.0,
+			"goldYield": 10.0,
+			},
+		"difficulty": 98.0,
+		"sprite": "res://Assets/enemies/heart_shattered.png",
+		"scale": 1.35,
+	},
 	# Chefão da onda final: um coração gigante partido, lento e
 	# cheio de dor. difficulty 99 = nunca entra no sorteio normal.
 	"coracaoGigante": {
 		"stats": {
-			"hp": 560.0,
+			"hp": 520.0,
 			"speed": 0.3,
 			"baseDamage": 10.0,
 			"goldYield": 40.0,
@@ -227,7 +240,7 @@ const maps := {
 		"bg": "res://Assets/maps/map_elisa.png",
 		"scene": "res://Scenes/maps/map_elisa.tscn",
 		"baseHp": 10,
-		"startingGold": 45,
+		"startingGold": 50,
 		"spawner_settings":
 			{
 			"difficulty": {"initial": 1.0, "increase": 1.22, "multiplies": true},
@@ -237,7 +250,9 @@ const maps := {
 			"special_waves": {"10": {"boss": "coracaoGigante", "escort": 14}},
 			# ondas em que um fantasma rouba-defesas aparece
 			# (repetir a onda = mais de um fantasma)
-			"ghost_waves": [4, 6, 8, 9],
+			"ghost_waves": [5, 7, 9],
+			# ondas em que um coração-meteoro cai do céu no meio do U
+			"meteor_waves": [6, 8, 10],
 			},
 	},
 }

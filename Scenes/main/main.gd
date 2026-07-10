@@ -7,3 +7,12 @@ func _ready():
 	var map = selectedMapScene.instantiate()
 	map.map_type = Globals.selected_map
 	add_child(map)
+	_update_zoom()
+	get_viewport().size_changed.connect(_update_zoom)
+
+# Aproxima a câmera até a arte do mapa cobrir a tela inteira
+# (sem faixas pretas nas bordas, principalmente no celular).
+func _update_zoom():
+	var vs: Vector2 = get_viewport_rect().size
+	var z: float = maxf(vs.x / 1152.0, vs.y / 685.0)
+	$Camera2D.zoom = Vector2(z, z)

@@ -9,6 +9,7 @@ var map_type := "":
 
 var difficulty := {}
 var ghost_waves := []
+var meteor_waves := []
 var spawnable_enemies := []
 var max_waves := 3
 var special_waves := {}
@@ -79,14 +80,30 @@ func _on_wave_delay_timer_timeout():
 	if special.has("boss"):
 		current_wave_spawn_count = int(special.get("escort", 10)) + 1
 	leaked_this_wave = 0
+	# corações-meteoro caem do céu no meio da onda; eles contam na
+	# cota da onda mas chegam pelos timers (não pelo SpawnDelay)
+	var n_meteors := meteor_waves.count(current_wave)
+	current_wave_spawn_count += n_meteors
+	enemies_spawned_this_wave += n_meteors
 	# ondas finais spawnam mais rápido (mais pressão)
 	$SpawnDelay.wait_time = clampf(0.95 - current_wave * 0.045, 0.5, 0.95)
 	Globals.waveStarted.emit(current_wave, current_wave_spawn_count)
 	$SpawnDelay.start()
-	# fantasmas entram pela direita alguns segundos depois
+	for i in range(n_meteors):
+		get_tree().create_timer(6.0 + i * 7.0).timeout.connect(spawn_meteor)
+	# fantasmas chegam alguns segundos depois, por qualquer borda
 	var n_ghosts := ghost_waves.count(current_wave)
 	for i in range(n_ghosts):
 		get_tree().create_timer(4.0 + i * 6.0).timeout.connect(spawn_ghost)
+
+func spawn_meteor():
+	if not is_instance_valid(Globals.currentMap) or Globals.currentMap.gameOver:
+		return
+	var enemyScene := preload("res://Scenes/enemies/enemy_mover.tscn")
+	var enemy = enemyScene.instantiate()
+	enemy.enemy_type = "coracaoMeteoro"
+	add_child(enemy)
+	enemy.begin_sky_drop()
 
 func spawn_ghost():
 	if not is_instance_valid(Globals.currentMap) or Globals.currentMap.gameOver:
@@ -94,7 +111,16 @@ func spawn_ghost():
 	var ghostScene := preload("res://Scenes/enemies/ghost.tscn")
 	var ghost := ghostScene.instantiate()
 	Globals.currentMap.add_child(ghost)
-	ghost.position = Vector2(700, randf_range(-110, 110))
+	# entra por uma borda aleatória da tela (qualquer ângulo)
+	var vp := Globals.currentMap.get_viewport()
+	var cam := vp.get_camera_2d()
+	var zoom_f: float = cam.zoom.x if cam != null else 1.0
+	var half: Vector2 = vp.get_visible_rect().size / (2.0 * zoom_f)
+	match randi() % 4:
+		0: ghost.position = Vector2(randf_range(-half.x, half.x), -half.y - 60.0)
+		1: ghost.position = Vector2(half.x + 60.0, randf_range(-half.y, half.y))
+		2: ghost.position = Vector2(randf_range(-half.x, half.x), half.y + 60.0)
+		_: ghost.position = Vector2(-half.x - 60.0, randf_range(-half.y, half.y))
 
 func enemy_destroyed():
 	killed_this_wave += 1

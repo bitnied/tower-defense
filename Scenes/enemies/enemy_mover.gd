@@ -37,10 +37,13 @@ func apply_slow(factor: float, duration: float):
 # encostar na base das casas
 const RIDE_OFFSET := -14.0
 
+var guardian_ref: Node2D
+
 @onready var spawner := get_parent() as EnemyPath
 func _ready():
 	add_to_group("enemy")
 	v_offset = RIDE_OFFSET
+	guardian_ref = Globals.currentMap.get_node_or_null("Mamae")
 
 func _process(delta):
 	if slow_timer > 0.0:
@@ -53,6 +56,11 @@ func _process(delta):
 		# e respeita Engine.time_scale (botão 2x).
 		progress_ratio += 0.03 * speed * slow_factor * delta
 		if progress_ratio >= 1:
+			finished_path()
+			return
+		# ataca a Elisa assim que chega JUNTO dela (não só no fim)
+		if is_instance_valid(guardian_ref) \
+				and global_position.distance_to(guardian_ref.global_position) < 58.0:
 			finished_path()
 			return
 		#Flip
@@ -184,6 +192,74 @@ func _arrive_at_guardian(guardian: Node2D):
 	tween.tween_property(guardian, "scale", Vector2(1.08, 1.08), 0.08)
 	tween.tween_property(guardian, "scale", Vector2(1, 1), 0.2) \
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+# --------- coração-meteoro: cai do céu na curva do U ---------
+func begin_sky_drop():
+	state = State.stopped
+	progress_ratio = 0.5
+	$Area/CollisionShape2D.set_deferred("disabled", true)
+	var land: Vector2 = $Sprite2D.global_position
+	var shadow := Sprite2D.new()
+	shadow.texture = load("res://Assets/vfx/shadow.png")
+	shadow.modulate.a = 0.0
+	shadow.scale = Vector2(0.3, 0.3)
+	Globals.currentMap.add_child(shadow)
+	shadow.global_position = land + Vector2(0, 16)
+	$Sprite2D.top_level = true
+	$Sprite2D.global_rotation = 0.0
+	$Sprite2D.global_position = land + Vector2(0, -440)
+	var tween := create_tween()
+	tween.set_parallel()
+	tween.tween_property($Sprite2D, "global_position", land, 0.85) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween.tween_property(shadow, "modulate:a", 0.55, 0.75)
+	tween.tween_property(shadow, "scale", Vector2(1, 1), 0.85)
+	tween.set_parallel(false)
+	tween.tween_callback(func(): _land_impact(shadow))
+
+func _land_impact(shadow: Sprite2D):
+	shadow.queue_free()
+	Sfx.play("impact", -3.0)
+	var crack := Sprite2D.new()
+	crack.texture = load("res://Assets/vfx/crack.png")
+	Globals.currentMap.add_child(crack)
+	crack.global_position = $Sprite2D.global_position + Vector2(0, 14)
+	var crack_tw := crack.create_tween()
+	crack_tw.tween_interval(2.2)
+	crack_tw.tween_property(crack, "modulate:a", 0.0, 1.0)
+	crack_tw.tween_callback(crack.queue_free)
+	var dust := CPUParticles2D.new()
+	dust.one_shot = true
+	dust.emitting = true
+	dust.amount = 18
+	dust.lifetime = 0.6
+	dust.spread = 180.0
+	dust.gravity = Vector2(0, -18)
+	dust.initial_velocity_min = 30.0
+	dust.initial_velocity_max = 80.0
+	dust.scale_amount_min = 2.5
+	dust.scale_amount_max = 5.0
+	dust.color = Color(0.55, 0.42, 0.32)
+	Globals.currentMap.add_child(dust)
+	dust.global_position = $Sprite2D.global_position + Vector2(0, 10)
+	dust.finished.connect(dust.queue_free)
+	var cam := get_viewport().get_camera_2d()
+	if cam:
+		var shake := cam.create_tween()
+		shake.tween_property(cam, "offset", Vector2(0, 5), 0.05)
+		shake.tween_property(cam, "offset", Vector2(0, -4), 0.05)
+		shake.tween_property(cam, "offset", Vector2.ZERO, 0.08)
+	var s0: Vector2 = $Sprite2D.scale
+	var tween := create_tween()
+	tween.tween_property($Sprite2D, "scale", s0 * Vector2(1.35, 0.6), 0.09)
+	tween.tween_property($Sprite2D, "scale", s0, 0.22) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_callback(func():
+		$Sprite2D.top_level = false
+		$Sprite2D.position = Vector2.ZERO
+		$Sprite2D.rotation = 0.0
+		$Area/CollisionShape2D.set_deferred("disabled", false)
+		state = State.walking)
 
 # clímax do chefão: chuva de coraçõezinhos curados
 func spawn_heart_rain():

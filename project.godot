@@ -25,6 +25,7 @@ Globals="*res://Scenes/main/Globals.gd"
 Data="*res://Scenes/main/Data.gd"
 Sfx="*res://Scenes/main/Sfx.gd"
 Progress="*res://Scenes/main/Progress.gd"
+Tuning="*res://Scenes/main/Tuning.gd"
 
 [display]
 
@@ -50,4 +51,4 @@ LeftClick={
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
-environment/defaults/default_clear_color=Color(0.101961, 0.113725, 0.121569, 1)
+environment/defaults/default_clear_color=Color(0.168627, 0.301961, 0.14902, 1)

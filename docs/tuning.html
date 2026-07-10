@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elisa TD — Ajustes</title>
+<style>
+  :root { --rosa:#FF5F8F; --vinho:#8E4A5E; --fundo:#F7E1EA; --ouro:#E8B923; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:16px; background:var(--fundo); color:#3c1622;
+         font-family:-apple-system, "Segoe UI", sans-serif; }
+  h1 { font-size:22px; margin:4px 0 2px; }
+  p.sub { margin:0 0 14px; font-size:13px; opacity:.75; }
+  .card { background:#fff; border-radius:14px; padding:12px 14px; margin-bottom:12px;
+          box-shadow:0 2px 6px rgba(142,74,94,.18); }
+  .card h2 { margin:0 0 8px; font-size:17px; color:var(--vinho); }
+  .row { display:flex; align-items:center; justify-content:space-between;
+         padding:4px 0; gap:10px; }
+  .row label { font-size:14px; flex:1; }
+  .row input { width:110px; padding:7px 9px; font-size:15px; text-align:right;
+               border:2px solid #e7c3cf; border-radius:9px; background:#fff8fa; }
+  .row input:focus { outline:none; border-color:var(--rosa); }
+  .btns { display:flex; gap:10px; margin-top:6px; }
+  button { flex:1; padding:14px; font-size:16px; font-weight:bold; border:none;
+           border-radius:12px; cursor:pointer; }
+  #save { background:var(--rosa); color:#fff; }
+  #reset { background:#e7c3cf; color:#5c2433; }
+  .note { font-size:12px; opacity:.7; margin-top:10px; text-align:center; }
+  .active { background:var(--ouro); color:#4a3200; border-radius:10px; padding:8px 12px;
+            font-size:13px; margin-bottom:12px; display:none; }
+</style>
+</head>
+<body>
+<h1>Elisa TD — Ajustes de teste</h1>
+<p class="sub">Mude os atributos, salve e jogue. Vale só neste navegador.</p>
+<div class="active" id="active">Ajustes personalizados ATIVOS neste navegador.</div>
+<div id="cards"></div>
+<div class="btns">
+  <button id="save">Salvar e jogar</button>
+  <button id="reset">Restaurar padrão</button>
+</div>
+<p class="note">Os valores padrão do jogo aparecem quando não há ajuste salvo.</p>
+<script>
+const LABELS = {
+  damage: "Cura (dano)", attack_speed: "Ataques por segundo",
+  attack_range: "Alcance", bulletSpeed: "Velocidade do carinho",
+  bulletPierce: "Alvos por tiro", cost: "Custo",
+  ray_length: "Alcance do raio", ray_duration: "Duração do raio (s)",
+  slow_factor: "Fator de congelamento (0-1)", slow_duration: "Duração do congelamento (s)",
+};
+const DEFAULTS = {
+  tiago: { damage:2, attack_speed:1.2, attack_range:170, bulletSpeed:260, bulletPierce:2, cost:30 },
+  luna:  { damage:0.24, attack_speed:0.7, attack_range:170, ray_length:160, ray_duration:1.2,
+           slow_factor:0.45, slow_duration:1.0, cost:55 },
+  leo:   { damage:12, attack_speed:0.9, attack_range:180, bulletSpeed:300, bulletPierce:1, cost:85 },
+  elisa: { damage:24, attack_speed:1.0, attack_range:220, bulletSpeed:190, bulletPierce:3, cost:130 },
+};
+const NAMES = { tiago:"Tiago (violão)", luna:"Luna (raio congelante)",
+                leo:"Leo (beijos)", elisa:"Elisa (corações dourados)" };
+let saved = {};
+try { saved = JSON.parse(localStorage.getItem('etd_tuning')) || {}; } catch(e) {}
+if (Object.keys(saved).length) document.getElementById('active').style.display = 'block';
+
+const cards = document.getElementById('cards');
+for (const who in DEFAULTS) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = '<h2>' + NAMES[who] + '</h2>';
+  for (const stat in DEFAULTS[who]) {
+    const cur = (saved[who] && saved[who][stat] !== undefined)
+      ? saved[who][stat] : DEFAULTS[who][stat];
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = '<label>' + (LABELS[stat] || stat) + '</label>' +
+      '<input type="number" step="any" inputmode="decimal" id="' + who + '__' + stat +
+      '" value="' + cur + '">';
+    card.appendChild(row);
+  }
+  cards.appendChild(card);
+}
+
+document.getElementById('save').onclick = () => {
+  const out = {};
+  for (const who in DEFAULTS) {
+    for (const stat in DEFAULTS[who]) {
+      const v = parseFloat(document.getElementById(who + '__' + stat).value);
+      if (isNaN(v)) continue;
+      if (v !== DEFAULTS[who][stat]) {   // guarda só o que mudou
+        (out[who] = out[who] || {})[stat] = v;
+      }
+    }
+  }
+  if (Object.keys(out).length) localStorage.setItem('etd_tuning', JSON.stringify(out));
+  else localStorage.removeItem('etd_tuning');
+  location.href = 'index.html';
+};
+document.getElementById('reset').onclick = () => {
+  localStorage.removeItem('etd_tuning');
+  location.reload();
+};
+</script>
+</body>
+</html>

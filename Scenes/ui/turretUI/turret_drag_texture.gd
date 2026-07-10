@@ -4,6 +4,7 @@ var turretType := ""
 
 var grabbing := false
 var placeholder = null
+var grab_start := Vector2.ZERO
 
 func _ready():
 	Globals.goldChanged.connect(check_can_purchase)
@@ -28,12 +29,14 @@ func start_grab():
 	if is_instance_valid(placeholder):
 		return
 	grabbing = true
+	grab_start = get_global_mouse_position()
 	create_placeholder()
 	update_placeholder_position()
 
 func update_placeholder_position():
 	if is_instance_valid(placeholder):
-		placeholder.position = get_global_mouse_position() - get_viewport_rect().size / 2
+		# posição no MUNDO (respeita o zoom da câmera)
+		placeholder.global_position = placeholder.get_global_mouse_position()
 
 func end_grab():
 	grabbing = false
@@ -43,6 +46,14 @@ func end_grab():
 	update_placeholder_position()
 	var ph = placeholder
 	placeholder = null
+	# toque sem arrastar (ou soltar em cima do painel) = cancela,
+	# sem gastar nada
+	var moved: float = get_global_mouse_position().distance_to(grab_start)
+	var over_panel: bool = get_global_mouse_position().x \
+		> get_viewport_rect().size.x - 158.0
+	if moved < 24.0 or over_panel:
+		ph.queue_free()
+		return
 	# posicionamento livre: pode construir em qualquer lugar do cenário
 	if check_can_purchase(Globals.currentMap.gold):
 		var price := Globals.defender_cost(turretType)

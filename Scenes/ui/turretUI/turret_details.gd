@@ -26,7 +26,10 @@ func set_props():
 	var statLabelScene := preload("res://Scenes/ui/turretUI/stat_label.tscn")
 	for stat in Data.turrets[turret.turret_type]["stats"].keys():
 		var statLabel := statLabelScene.instantiate()
-		statLabel.text = Data.stats[stat]["name"]+" "+str(round(turret.get(stat)))
+		# mostra casas decimais só quando existem (1.2 não vira "1.0")
+		var v: float = snappedf(float(turret.get(stat)), 0.05)
+		var v_txt := str(int(v)) if fmod(v, 1.0) == 0.0 else str(v)
+		statLabel.text = Data.stats[stat]["name"]+" "+v_txt
 		%Stats.add_child(statLabel)
 
 func _on_upgrade_button_pressed():

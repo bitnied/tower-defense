@@ -11,7 +11,7 @@ const FRAME_FRONT := 0
 const FRAME_SIDE := 1
 const FRAME_BACK := 2
 
-var hp := 260.0
+var hp := 130.0
 var reward := 12
 enum State {seeking, grabbing, carrying, leaving}
 var state := State.seeking
@@ -95,7 +95,8 @@ func _steal():
 	Sfx.play("gameover", -10.0)
 	home_spot = target.global_position
 	target.deployed = false
-	target.set_process(false)
+	# congela a vítima por completo (timers de ataque inclusive)
+	target.process_mode = Node.PROCESS_MODE_DISABLED
 	target.get_node("Sprite2D").position.x = 0
 	target.reparent(self)
 	# levanta a vítima num arco suave (pendurada embaixo dele)
@@ -109,10 +110,11 @@ func _steal():
 		Globals.hud.show_banner("O fantasma levou %s!" % Data.turrets[target.turret_type]["name"], 1.8)
 
 func _leave(delta):
-	$Sprite2D.frame = FRAME_SIDE
+	# de costas, fugindo para cima no DOBRO da velocidade
+	$Sprite2D.frame = FRAME_BACK
 	$Sprite2D.flip_h = false
-	global_position += Vector2(1.1, -0.12) * SPEED * delta
-	if global_position.x > 760.0:
+	global_position += Vector2(0, -2.0) * SPEED * delta
+	if global_position.y < -520.0:
 		queue_free()
 
 func get_damage(amount):
@@ -138,7 +140,7 @@ func _banish():
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		back.tween_callback(func():
 			target.deployed = true
-			target.set_process(true))
+			target.process_mode = Node.PROCESS_MODE_INHERIT)
 	Globals.currentMap.gold += reward
 	Progress.add_points(3)
 	Sfx.play("heal", -6.0)
