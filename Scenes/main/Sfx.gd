@@ -9,7 +9,7 @@ const SFX := {
 	"upgrade": "res://Assets/audio/sfx_upgrade.ogg",
 	"hit": "res://Assets/audio/sfx_hit.ogg",
 	"click": "res://Assets/audio/sfx_click.ogg",
-	"unlock": "res://Assets/audio/sfx_unlock.ogg",
+	"unlock": "res://Assets/audio/sfx_unlock.mp3",
 	"victory": "res://Assets/audio/sfx_victory.ogg",
 	"gameover": "res://Assets/audio/sfx_gameover.ogg",
 	"atk_tiago": "res://Assets/audio/sfx_atk_tiago.ogg",

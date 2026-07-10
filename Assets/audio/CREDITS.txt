@@ -1,2 +1,4 @@
 Music: "Happy Clappy Loop" (CC0) - opengameart.org/content/happy-clappy-loop
 SFX/jingles: Kenney.nl interface-sounds & music-jingles (CC0)
+
+sfx_unlock.mp3: power-up sintetizado (arpejo ascendente), criado para este jogo
