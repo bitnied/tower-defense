@@ -12,7 +12,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lnqmy")
 
-[node name="Bg" type="TextureRect" parent="."]
+[node name="BgFill" type="TextureRect" parent="."]
+self_modulate = Color(0.75, 0.68, 0.75, 1)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -23,17 +24,28 @@ expand_mode = 1
 stretch_mode = 6
 texture = ExtResource("2_jl1fa")
 
+[node name="Bg" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+texture = ExtResource("2_jl1fa")
+
 [node name="BottomBox" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 7
-anchor_left = 0.22
+anchor_left = 0.5
 anchor_top = 1.0
-anchor_right = 0.22
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -215.0
-offset_top = -122.0
-offset_right = 215.0
-offset_bottom = -14.0
+offset_left = -280.0
+offset_top = -104.0
+offset_right = 280.0
+offset_bottom = -12.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 8
@@ -50,20 +62,25 @@ text = "Parabéns!"
 [node name="PlayWrap" type="CenterContainer" parent="BottomBox"]
 layout_mode = 2
 
-[node name="Buttons" type="HBoxContainer" parent="BottomBox/PlayWrap"]
+[node name="PlayButton" type="Button" parent="BottomBox/PlayWrap"]
 layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="PlayButton" type="Button" parent="BottomBox/PlayWrap/Buttons"]
-custom_minimum_size = Vector2(220, 58)
-layout_mode = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 24
 text = "Jogar"
 
-[node name="GalleryButton" type="Button" parent="BottomBox/PlayWrap/Buttons"]
-custom_minimum_size = Vector2(150, 58)
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
+[node name="GalleryButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -140.0
+offset_top = -62.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 19
 text = "Galeria"
 
 [node name="HowtoDialog" type="Control" parent="."]
@@ -133,6 +150,6 @@ horizontal_alignment = 1
 autowrap_mode = 2
 text = "Como jogar"
 
-[connection signal="pressed" from="BottomBox/PlayWrap/Buttons/PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="BottomBox/PlayWrap/Buttons/GalleryButton" to="." method="_on_gallery_button_pressed"]
+[connection signal="pressed" from="BottomBox/PlayWrap/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="GalleryButton" to="." method="_on_gallery_button_pressed"]
 [connection signal="pressed" from="HowtoDialog/Center/Panel/Margin/VBox/TitleRow/CloseButton" to="." method="_on_start_game"]

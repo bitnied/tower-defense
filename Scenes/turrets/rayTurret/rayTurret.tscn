@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dr0ndem12yexg" path="res://Assets/bullets/Pixel.png" id="4_fjepc"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_aicnu"]
-radius = 14.0
+radius = 36.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kae7m"]
 radius = 230.11
@@ -70,6 +70,7 @@ collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea"]
+position = Vector2(0, -34)
 shape = SubResource("CircleShape2D_aicnu")
 
 [node name="DetectionArea" type="Area2D" parent="."]

@@ -112,8 +112,13 @@ func _refresh_viewer():
 	var entry: Dictionary = Progress.images()[current]
 	%BigImage.texture = load("res://Assets/gallery/" + _thumb_of(entry))
 	%WatchButton.visible = entry["kind"] == "video"
-	%PrevButton.visible = _step_from(current, -1) != -1
-	%NextButton.visible = _step_from(current, 1) != -1
+	# invisível (mas ocupando o espaço) para a imagem não pular
+	var has_prev := _step_from(current, -1) != -1
+	var has_next := _step_from(current, 1) != -1
+	%PrevButton.disabled = not has_prev
+	%PrevButton.modulate.a = 1.0 if has_prev else 0.0
+	%NextButton.disabled = not has_next
+	%NextButton.modulate.a = 1.0 if has_next else 0.0
 
 # próximo índice DESBLOQUEADO na direção dir; -1 se não houver
 func _step_from(idx: int, dir: int) -> int:
