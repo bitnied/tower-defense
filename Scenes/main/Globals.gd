@@ -33,6 +33,22 @@ func _check_unlocks(wave_count, _enemy_count):
 			unlocked_defenders.append(key)
 			defenderUnlocked.emit(key)
 
+# quantas cópias deste defensor já estão em campo
+func deployed_count(key: String) -> int:
+	if not is_instance_valid(turretsNode):
+		return 0
+	var n := 0
+	for t in turretsNode.get_children():
+		if "turret_type" in t and t.turret_type == key and t.deployed:
+			n += 1
+	return n
+
+# preço atual: cada cópia do MESMO defensor custa 35% a mais
+# (composto) — chamar reforço repetido fica caro; diversifique!
+func defender_cost(key: String) -> int:
+	var base: int = Data.turrets[key]["cost"]
+	return roundi(base * pow(1.35, deployed_count(key)))
+
 func is_defender_locked(key: String) -> bool:
 	return Data.turrets[key].get("locked", false) and not unlocked_defenders.has(key)
 

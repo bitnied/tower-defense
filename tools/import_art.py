@@ -224,25 +224,53 @@ def slug(name):
     return n[:48]
 files = [f for f in os.listdir(gal_src)
          if f.lower().endswith((".jpg", ".jpeg", ".png")) and not f.startswith(".")]
+videos = [f for f in os.listdir(gal_src)
+          if f.lower().endswith((".mov", ".mp4")) and not f.startswith(".")]
 finals = [f for f in files if slug(os.path.splitext(f)[0]) == "final"]
 rest = sorted([f for f in files if f not in finals], key=lambda f: slug(f))
-ordered = rest + finals
-manifest = []
-for i, f in enumerate(ordered):
+# ordem: imagens, depois VÍDEO (penúltimo), depois Final
+manifest = []   # lista de dicts: {"id", "kind", "file"/"thumb"+"src"}
+idx = 0
+for f in rest:
+    idx += 1
     img = Image.open(f"{gal_src}/{f}").convert("RGB")
     sc = 640 / img.height
     img = img.resize((round(img.width * sc), 640), Image.LANCZOS)
-    out_name = "g%02d_%s.jpg" % (i + 1, slug(os.path.splitext(f)[0]))
+    out_name = "g%02d_%s.jpg" % (idx, slug(os.path.splitext(f)[0]))
     img.save(f"{gal_dst}/{out_name}", quality=85)
-    manifest.append(out_name)
+    manifest.append({"id": out_name, "kind": "img", "file": out_name})
+import subprocess
+for f in sorted(videos):
+    idx += 1
+    vslug = slug(os.path.splitext(f)[0])
+    mp4 = f"{ROOT}/docs/gallery_video.mp4"   # fora do pck; servido junto
+    if not os.path.exists(mp4) or os.path.getmtime(mp4) < os.path.getmtime(f"{gal_src}/{f}"):
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", f"{gal_src}/{f}",
+                        "-vf", "scale=-2:720", "-c:v", "libx264", "-preset", "fast",
+                        "-crf", "25", "-c:a", "aac", "-b:a", "128k",
+                        "-movflags", "+faststart", mp4], check=True)
+    thumb_name = "g%02d_%s_thumb.jpg" % (idx, vslug)
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "2", "-i", mp4,
+                    "-frames:v", "1", "-q:v", "4", f"{gal_dst}/{thumb_name}"], check=True)
+    manifest.append({"id": thumb_name, "kind": "video",
+                     "thumb": thumb_name, "src": "gallery_video.mp4"})
+for f in finals:
+    idx += 1
+    img = Image.open(f"{gal_src}/{f}").convert("RGB")
+    sc = 640 / img.height
+    img = img.resize((round(img.width * sc), 640), Image.LANCZOS)
+    out_name = "g%02d_%s.jpg" % (idx, slug(os.path.splitext(f)[0]))
+    img.save(f"{gal_dst}/{out_name}", quality=85)
+    manifest.append({"id": out_name, "kind": "img", "file": out_name})
 with open(f"{ROOT}/Scenes/main/GalleryList.gd", "w") as fh:
     fh.write("# GERADO por tools/import_art.py — não editar à mão.\n")
-    fh.write("# Ordem = ordem de desbloqueio (Final sempre por último).\n")
+    fh.write("# Ordem = desbloqueio (vídeo penúltimo, Final por último).\n")
     fh.write("const IMAGES := [\n")
     for m in manifest:
-        fh.write('\t"%s",\n' % m)
+        parts = ", ".join('"%s": "%s"' % (k, v) for k, v in m.items())
+        fh.write("\t{%s},\n" % parts)
     fh.write("]\n")
-print("galeria ok:", len(manifest), "imagens")
+print("galeria ok:", len(manifest), "itens (com vídeo:", len(videos), ")")
 
 # ---------------- 3. Mapa ----------------
 m = Image.open(f"{ART}/Stage map.jpeg").convert("RGB")

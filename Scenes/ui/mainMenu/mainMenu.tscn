@@ -26,13 +26,13 @@ texture = ExtResource("2_jl1fa")
 [node name="BottomBox" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 7
-anchor_left = 0.5
+anchor_left = 0.22
 anchor_top = 1.0
-anchor_right = 0.5
+anchor_right = 0.22
 anchor_bottom = 1.0
-offset_left = -330.0
-offset_top = -118.0
-offset_right = 330.0
+offset_left = -215.0
+offset_top = -122.0
+offset_right = 215.0
 offset_bottom = -14.0
 grow_horizontal = 2
 grow_vertical = 0
@@ -55,7 +55,7 @@ layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="PlayButton" type="Button" parent="BottomBox/PlayWrap/Buttons"]
-custom_minimum_size = Vector2(250, 58)
+custom_minimum_size = Vector2(220, 58)
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "Jogar"

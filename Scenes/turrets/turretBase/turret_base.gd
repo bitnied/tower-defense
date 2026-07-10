@@ -71,6 +71,7 @@ var attack_range := 1.0:
 		$DetectionArea/CollisionShape2D.shape.radius = value
 var damage := 1.0
 var turret_level := 1
+var paid_cost := 0
 
 func _process(delta):
 	if not deployed:

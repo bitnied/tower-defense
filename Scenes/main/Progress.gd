@@ -35,9 +35,14 @@ func unlocked_count() -> int:
 func unseen_unlocked() -> Array:
 	var out := []
 	for i in range(images().size()):
-		if is_unlocked(i) and not seen.has(images()[i]):
+		if is_unlocked(i) and not seen.has(images()[i]["id"]):
 			out.append(i)
 	return out
+
+# libera tudo (atalho secreto de teste na galeria)
+func unlock_all():
+	total_points = maxi(total_points, threshold(images().size()))
+	save()
 
 func mark_seen(image_name: String):
 	if not seen.has(image_name):

@@ -15,6 +15,12 @@ var can_purchase := false:
 
 func _ready():
 	Globals.defenderUnlocked.connect(_on_defender_unlocked)
+	Globals.goldChanged.connect(_on_gold_changed)
+
+func _on_gold_changed(_g):
+	# o preço sobe a cada cópia construída
+	if turret_type != "" and not Globals.is_defender_locked(turret_type):
+		$VBox/CostRow/CostLabel.text = str(Globals.defender_cost(turret_type))
 
 # o card inteiro serve de alça de arrasto (não só o retrato)
 func _gui_input(event):
@@ -40,7 +46,7 @@ func refresh_icon():
 			$VBox/CostRow/CostLabel.text = "Onda %d" % int(cfg.get("unlock_wave", 1))
 	else:
 		$VBox/TextureRect.texture = Globals.defender_icon(turret_type)
-		$VBox/CostRow/CostLabel.text = str(cfg["cost"])
+		$VBox/CostRow/CostLabel.text = str(Globals.defender_cost(turret_type))
 		$LockIcon.visible = false
 
 func _on_defender_unlocked(key):

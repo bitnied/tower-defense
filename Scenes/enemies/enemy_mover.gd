@@ -76,6 +76,7 @@ func attack_guardian_animation():
 	remove_from_group("enemy")
 	$Area/CollisionShape2D.set_deferred("disabled", true)
 	$AnimationPlayer.stop()
+	_detach_sprite_upright()
 	var guardian: Node2D = Globals.currentMap.get_node_or_null("Mamae")
 	if guardian == null:
 		queue_free()
@@ -143,6 +144,7 @@ func healed_animation():
 	if is_boss:
 		spawn_heart_rain()
 	$Sprite2D.self_modulate = Color.WHITE
+	_detach_sprite_upright()
 	# o coração curado voa feliz até a mamãe (Elisa)
 	var start: Vector2 = $Sprite2D.global_position
 	var guardian: Node2D = Globals.currentMap.get_node_or_null("Mamae")
@@ -163,6 +165,16 @@ func healed_animation():
 	tween.tween_callback(func(): _arrive_at_guardian(guardian))
 	tween.tween_property($Sprite2D, "modulate:a", 0.0, 0.12)
 	tween.tween_callback(queue_free)
+
+# solta o sprite da rotação do PathFollow2D para animar sempre
+# de pé (na estrada de baixo ele ficava de cabeça para baixo)
+func _detach_sprite_upright():
+	var gp: Vector2 = $Sprite2D.global_position
+	$Sprite2D.top_level = true
+	$Sprite2D.global_position = gp
+	$Sprite2D.global_rotation = 0.0
+	$Sprite2D.flip_v = false
+	$Sprite2D.flip_h = false
 
 func _arrive_at_guardian(guardian: Node2D):
 	if guardian == null:

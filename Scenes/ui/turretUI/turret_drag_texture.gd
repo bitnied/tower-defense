@@ -45,7 +45,9 @@ func end_grab():
 	placeholder = null
 	# posicionamento livre: pode construir em qualquer lugar do cenário
 	if check_can_purchase(Globals.currentMap.gold):
-		Globals.currentMap.gold -= Data.turrets[turretType]["cost"]
+		var price := Globals.defender_cost(turretType)
+		Globals.currentMap.gold -= price
+		ph.paid_cost = price
 		ph.build()
 	else:
 		ph.queue_free()
@@ -63,7 +65,7 @@ func check_can_purchase(newGold):
 		if Globals.is_defender_locked(turretType):
 			owner.can_purchase = false
 			return false
-		if newGold >= Data.turrets[turretType]["cost"]:
+		if newGold >= Globals.defender_cost(turretType):
 			owner.can_purchase = true
 			return true
 		owner.can_purchase = false

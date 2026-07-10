@@ -33,7 +33,7 @@ func spawn_new_enemy():
 		enemy.enemy_type = spawnable_enemies.pick_random()
 		# corações ficam mais "machucados" a cada onda (+6% de cura
 		# necessária por onda)
-		enemy.hp *= 1.0 + 0.06 * (current_wave - 1)
+		enemy.hp *= 1.0 + 0.08 * (current_wave - 1)
 	add_child(enemy)
 	enemies_spawned_this_wave += 1
 
@@ -94,10 +94,10 @@ func check_wave_clear():
 		if leaked_this_wave == 0 and is_instance_valid(Globals.currentMap) \
 				and not Globals.currentMap.gameOver:
 			# onda perfeita: nenhum coração chegou na mamãe
-			Globals.currentMap.gold += 10
+			Globals.currentMap.gold += 8
 			Progress.add_points(5)
 			if is_instance_valid(Globals.hud):
-				Globals.hud.show_banner("Onda perfeita! +10", 1.6)
+				Globals.hud.show_banner("Onda perfeita! +8", 1.6)
 		Progress.save()
 		if not current_wave == max_waves:
 			Globals.waveCleared.emit($WaveDelayTimer.wait_time)
