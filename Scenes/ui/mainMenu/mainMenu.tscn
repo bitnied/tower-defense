@@ -50,13 +50,17 @@ text = "Parabéns!"
 [node name="PlayWrap" type="CenterContainer" parent="BottomBox"]
 layout_mode = 2
 
-[node name="PlayButton" type="Button" parent="BottomBox/PlayWrap"]
+[node name="Buttons" type="HBoxContainer" parent="BottomBox/PlayWrap"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PlayButton" type="Button" parent="BottomBox/PlayWrap/Buttons"]
 custom_minimum_size = Vector2(250, 58)
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "Jogar"
 
-[node name="GalleryButton" type="Button" parent="BottomBox/PlayWrap"]
+[node name="GalleryButton" type="Button" parent="BottomBox/PlayWrap/Buttons"]
 custom_minimum_size = Vector2(150, 58)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
@@ -129,6 +133,6 @@ horizontal_alignment = 1
 autowrap_mode = 2
 text = "Como jogar"
 
-[connection signal="pressed" from="BottomBox/PlayWrap/PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="BottomBox/PlayWrap/GalleryButton" to="." method="_on_gallery_button_pressed"]
+[connection signal="pressed" from="BottomBox/PlayWrap/Buttons/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="BottomBox/PlayWrap/Buttons/GalleryButton" to="." method="_on_gallery_button_pressed"]
 [connection signal="pressed" from="HowtoDialog/Center/Panel/Margin/VBox/TitleRow/CloseButton" to="." method="_on_start_game"]
