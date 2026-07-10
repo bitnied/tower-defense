@@ -43,11 +43,11 @@ func deployed_count(key: String) -> int:
 			n += 1
 	return n
 
-# preço atual: cada cópia do MESMO defensor custa 35% a mais
+# preço atual: cada cópia do MESMO defensor custa 45% a mais
 # (composto) — chamar reforço repetido fica caro; diversifique!
 func defender_cost(key: String) -> int:
 	var base: int = Data.turrets[key]["cost"]
-	return roundi(base * pow(1.35, deployed_count(key)))
+	return roundi(base * pow(1.45, deployed_count(key)))
 
 func is_defender_locked(key: String) -> bool:
 	return Data.turrets[key].get("locked", false) and not unlocked_defenders.has(key)

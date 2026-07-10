@@ -41,6 +41,16 @@ func _on_restart_pressed():
 	Globals.restart_current_level()
 	queue_free()
 
+func _on_gallery_pressed():
+	# abre a galeria por cima do jogo pausado; fechar volta para cá
+	Sfx.play("click", -10.0)
+	var layer := CanvasLayer.new()
+	layer.layer = 20
+	var gallery := preload("res://Scenes/ui/gallery/gallery.tscn").instantiate()
+	gallery.overlay_mode = true
+	layer.add_child(gallery)
+	get_tree().root.add_child(layer)
+
 func _on_menu_pressed():
 	get_tree().paused = false
 	Engine.time_scale = 1.0

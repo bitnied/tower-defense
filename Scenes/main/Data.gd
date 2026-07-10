@@ -235,6 +235,9 @@ const maps := {
 			"wave_spawn_count": 6,
 			# onda final: coração gigante + escolta
 			"special_waves": {"10": {"boss": "coracaoGigante", "escort": 14}},
+			# ondas em que um fantasma rouba-defesas aparece
+			# (repetir a onda = mais de um fantasma)
+			"ghost_waves": [4, 6, 8, 9],
 			},
 	},
 }

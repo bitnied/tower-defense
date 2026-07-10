@@ -119,6 +119,11 @@ custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 text = "Recomeçar"
 
+[node name="GalleryButton" type="Button" parent="Center/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "Galeria"
+
 [node name="MenuButton" type="Button" parent="Center/Panel/Margin/VBox"]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
@@ -127,6 +132,7 @@ text = "Menu"
 [connection signal="pressed" from="Center/Panel/Margin/VBox/ContinueButton" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="Center/Panel/Margin/VBox/RestartButton" to="." method="_on_restart_pressed"]
 [connection signal="pressed" from="Center/Panel/Margin/VBox/MenuButton" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="Center/Panel/Margin/VBox/GalleryButton" to="." method="_on_gallery_pressed"]
 [connection signal="toggled" from="Center/Panel/Margin/VBox/MusicRow/MusicMute" to="." method="_on_music_mute_toggled"]
 [connection signal="toggled" from="Center/Panel/Margin/VBox/SfxRow/SfxMute" to="." method="_on_sfx_mute_toggled"]
 [connection signal="value_changed" from="Center/Panel/Margin/VBox/MusicRow/MusicSlider" to="." method="_on_music_volume_changed"]

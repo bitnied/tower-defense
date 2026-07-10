@@ -9,9 +9,14 @@ const CARD_H := 224
 var cards: Array[PanelContainer] = []
 var current := -1        # índice do item aberto no viewer
 var secret_taps: Array[float] = []
+# aberta por cima do jogo pausado (via menu de pause)?
+var overlay_mode := false
 
 func _ready():
-	Engine.time_scale = 1.0
+	if overlay_mode:
+		$Top/Bar/BackButton.text = "Voltar"
+	else:
+		Engine.time_scale = 1.0
 	var imgs: Array = Progress.images()
 	var new_ones: Array = Progress.unseen_unlocked()
 	%PointsLabel.text = "%d pontos de amor" % Progress.total_points
@@ -158,19 +163,47 @@ func _on_watch_pressed():
 	  if (document.getElementById('etd-video-wrap')) return;
 	  var w = document.createElement('div');
 	  w.id = 'etd-video-wrap';
-	  w.style.cssText = 'position:fixed;inset:0;background:rgba(20,5,12,0.93);z-index:1000;display:flex;align-items:center;justify-content:center;';
+	  w.style.cssText = 'position:fixed;inset:0;background:rgba(20,5,12,0.93);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;';
 	  var v = document.createElement('video');
 	  v.src = 'gallery_video.mp4';
-	  v.controls = true;
 	  v.autoplay = true;
 	  v.playsInline = true;
-	  v.style.cssText = 'max-width:92vw;max-height:86vh;border-radius:12px;';
+	  v.preload = 'auto';
+	  v.style.cssText = 'max-width:92vw;max-height:74vh;border-radius:12px;';
+	  var bar = document.createElement('div');
+	  bar.style.cssText = 'display:flex;align-items:center;gap:12px;background:#8E4A5E;padding:10px 16px;border-radius:14px;width:min(92vw,560px);';
+	  var btn = document.createElement('button');
+	  btn.textContent = '||';
+	  btn.style.cssText = 'font-size:18px;width:52px;height:40px;border-radius:10px;border:none;background:#FF5F8F;color:#fff;font-weight:bold;';
+	  var line = document.createElement('input');
+	  line.type = 'range'; line.min = 0; line.max = 1000; line.value = 0; line.step = 1;
+	  line.style.cssText = 'flex:1;accent-color:#FF5F8F;height:26px;';
+	  var tm = document.createElement('span');
+	  tm.textContent = '0:00';
+	  tm.style.cssText = 'color:#fff;font-family:sans-serif;font-size:14px;min-width:44px;text-align:right;';
+	  var fmt = function(t){ t=Math.floor(t||0); return Math.floor(t/60)+':'+String(t%60).padStart(2,'0'); };
+	  var drag = false;
+	  v.addEventListener('timeupdate', function(){
+	    if (!drag && v.duration) line.value = v.currentTime / v.duration * 1000;
+	    tm.textContent = fmt(v.currentTime);
+	  });
+	  line.addEventListener('input', function(){
+	    drag = true;
+	    if (v.duration) { v.currentTime = line.value / 1000 * v.duration; tm.textContent = fmt(v.currentTime); }
+	  });
+	  line.addEventListener('change', function(){ drag = false; });
+	  btn.onclick = function(){
+	    if (v.paused) { v.play(); btn.textContent = '||'; }
+	    else { v.pause(); btn.textContent = '>'; }
+	  };
+	  v.addEventListener('play', function(){ btn.textContent = '||'; });
+	  v.addEventListener('pause', function(){ btn.textContent = '>'; });
 	  var x = document.createElement('button');
 	  x.textContent = 'X';
 	  x.style.cssText = 'position:absolute;top:14px;right:18px;font-size:24px;padding:8px 18px;border-radius:12px;border:none;background:#FF5F8F;color:#fff;font-weight:bold;';
 	  x.onclick = function(){ v.pause(); w.remove(); };
-	  w.appendChild(v);
-	  w.appendChild(x);
+	  bar.appendChild(btn); bar.appendChild(line); bar.appendChild(tm);
+	  w.appendChild(v); w.appendChild(bar); w.appendChild(x);
 	  document.body.appendChild(w);
 	})();
 	"""
@@ -182,4 +215,8 @@ func Globals_print_warning():
 
 func _on_back_pressed():
 	Sfx.play("click", -10.0)
-	get_tree().change_scene_to_file("res://Scenes/ui/mainMenu/mainMenu.tscn")
+	if overlay_mode:
+		# volta para o jogo pausado (o menu de pause continua lá)
+		get_parent().queue_free()
+	else:
+		get_tree().change_scene_to_file("res://Scenes/ui/mainMenu/mainMenu.tscn")

@@ -111,6 +111,22 @@ g = fit_cell(g, 96, 92, bottom_anchor=True)
 g.save(f"{ASSETS}/scenario/elisa_atacada.png")
 print("guardia ok")
 
+# fantasma (rouba defesas): 3 células [frente, perfil, costas]
+gh = Image.open(f"{ART}/Characters/Fantasma.png")
+gw, ghh = gh.size
+gcw = gw // 3
+gframes = []
+for i in range(3):
+    c = key_magenta(gh.crop((i * gcw, 0, (i + 1) * gcw, ghh)))
+    c = autocrop(c)
+    gframes.append(fit_cell(c, 84, 80))
+gout = Image.new("RGBA", (84 * 3, 84), (0, 0, 0, 0))
+for i, f in enumerate(gframes):
+    gout.paste(f, (i * 84, 0), f)
+gout.save(f"{ASSETS}/enemies/fantasma_sheet.png")
+print("fantasma ok")
+
+
 # ---------------- 2. Elementos ----------------
 EL = Image.open(f"{ART}/corações - projéteis - cadeado.jpeg").convert("RGB")
 

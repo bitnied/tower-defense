@@ -8,6 +8,7 @@ var map_type := "":
 			set(config, Data.maps[val]["spawner_settings"][config])
 
 var difficulty := {}
+var ghost_waves := []
 var spawnable_enemies := []
 var max_waves := 3
 var special_waves := {}
@@ -82,6 +83,18 @@ func _on_wave_delay_timer_timeout():
 	$SpawnDelay.wait_time = clampf(0.95 - current_wave * 0.045, 0.5, 0.95)
 	Globals.waveStarted.emit(current_wave, current_wave_spawn_count)
 	$SpawnDelay.start()
+	# fantasmas entram pela direita alguns segundos depois
+	var n_ghosts := ghost_waves.count(current_wave)
+	for i in range(n_ghosts):
+		get_tree().create_timer(4.0 + i * 6.0).timeout.connect(spawn_ghost)
+
+func spawn_ghost():
+	if not is_instance_valid(Globals.currentMap) or Globals.currentMap.gameOver:
+		return
+	var ghostScene := preload("res://Scenes/enemies/ghost.tscn")
+	var ghost := ghostScene.instantiate()
+	Globals.currentMap.add_child(ghost)
+	ghost.position = Vector2(700, randf_range(-110, 110))
 
 func enemy_destroyed():
 	killed_this_wave += 1
