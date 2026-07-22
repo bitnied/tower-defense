@@ -2,6 +2,11 @@ extends Node2D
 
 func _ready():
 	Progress.new_session()
+	# a partir da primeira partida a home não abre mais as
+	# instruções automaticamente (ficam no botão [?])
+	if not Progress.played_once:
+		Progress.played_once = true
+		Progress.save()
 	Globals.mainNode = self
 	var selectedMapScene := load(Data.maps[Globals.selected_map]["scene"])
 	var map = selectedMapScene.instantiate()

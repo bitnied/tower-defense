@@ -40,12 +40,21 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -296.0
-offset_top = -192.0
+offset_top = -276.0
 offset_right = -16.0
 offset_bottom = -16.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_constants/separation = 12
+
+[node name="HelpButton" type="Button" parent="RightBox"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_font_sizes/font_size = 40
+text = "?"
 
 [node name="GalleryButton" type="Button" parent="RightBox"]
 unique_name_in_owner = true
@@ -143,6 +152,7 @@ horizontal_alignment = 1
 autowrap_mode = 2
 text = "Como jogar"
 
+[connection signal="pressed" from="RightBox/HelpButton" to="." method="_on_help_button_pressed"]
 [connection signal="pressed" from="RightBox/PlayButton" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="RightBox/GalleryButton" to="." method="_on_gallery_button_pressed"]
-[connection signal="pressed" from="HowtoDialog/Center/Panel/Margin/VBox/TitleRow/CloseButton" to="." method="_on_start_game"]
+[connection signal="pressed" from="HowtoDialog/Center/Panel/Margin/VBox/TitleRow/CloseButton" to="." method="_on_howto_closed"]

@@ -52,6 +52,40 @@ autowrap_mode = 2
 text = "Parabéns!"
 horizontal_alignment = 1
 
+[node name="StarsRow" type="HBoxContainer" parent="CenterPanel/Margin/HBox/RightBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 10
+
+[node name="Star1" type="TextureRect" parent="CenterPanel/Margin/HBox/RightBox/StarsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Star2" type="TextureRect" parent="CenterPanel/Margin/HBox/RightBox/StarsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Star3" type="TextureRect" parent="CenterPanel/Margin/HBox/RightBox/StarsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DiffLabel" type="Label" parent="CenterPanel/Margin/HBox/RightBox/StarsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1, 1, 1, 0.75)
+text = "Médio"
+
 [node name="MsgLabel" type="Label" parent="CenterPanel/Margin/HBox/RightBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 0)

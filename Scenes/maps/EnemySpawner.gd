@@ -6,6 +6,25 @@ var map_type := "":
 		map_type = val
 		for config in Data.maps[val]["spawner_settings"].keys():
 			set(config, Data.maps[val]["spawner_settings"][config])
+		_apply_difficulty()
+
+# sobrepõe as configurações do mapa com a dificuldade escolhida
+# (Fácil / Médio / Vida Real) — ver Data.difficulties
+var hp_per_wave := 0.08
+var hp_mult := 1.0
+var boss_escort := 14
+var spawn_wait_mult := 1.0
+
+func _apply_difficulty():
+	var d: Dictionary = Globals.difficulty_cfg()
+	difficulty = difficulty.duplicate()
+	difficulty["increase"] = d.get("increase", difficulty["increase"])
+	ghost_waves = d.get("ghost_waves", ghost_waves).duplicate()
+	meteor_waves = d.get("meteor_waves", meteor_waves).duplicate()
+	hp_per_wave = d.get("hp_per_wave", 0.08)
+	hp_mult = d.get("hp_mult", 1.0)
+	boss_escort = d.get("escort", 14)
+	spawn_wait_mult = d.get("spawn_wait_mult", 1.0)
 
 var difficulty := {}
 var ghost_waves := []
@@ -44,12 +63,13 @@ func spawn_new_enemy():
 	var special: Dictionary = special_waves.get(str(current_wave), {})
 	if not boss_spawned and special.has("boss"):
 		enemy.enemy_type = special["boss"]
+		enemy.hp *= hp_mult
 		boss_spawned = true
 	else:
 		enemy.enemy_type = spawnable_enemies.pick_random()
-		# corações ficam mais "machucados" a cada onda (+6% de cura
-		# necessária por onda)
-		enemy.hp *= 1.0 + 0.08 * (current_wave - 1)
+		# corações ficam mais "machucados" a cada onda; o quanto
+		# depende da dificuldade escolhida
+		enemy.hp *= hp_mult * (1.0 + hp_per_wave * (current_wave - 1))
 	add_child(enemy)
 	enemies_spawned_this_wave += 1
 
@@ -100,15 +120,17 @@ func _on_wave_delay_timer_timeout():
 	spawnable_enemies = get_spawnable_enemies()
 	var special: Dictionary = special_waves.get(str(current_wave), {})
 	if special.has("boss"):
-		current_wave_spawn_count = int(special.get("escort", 10)) + 1
+		current_wave_spawn_count = boss_escort + 1
 	leaked_this_wave = 0
 	# corações-meteoro caem do céu no meio da onda; eles contam na
 	# cota da onda mas chegam pelos timers (não pelo SpawnDelay)
 	var n_meteors := meteor_waves.count(current_wave)
 	current_wave_spawn_count += n_meteors
 	enemies_spawned_this_wave += n_meteors
-	# ondas finais spawnam mais rápido (mais pressão)
-	$SpawnDelay.wait_time = clampf(0.95 - current_wave * 0.045, 0.5, 0.95)
+	# ondas finais spawnam mais rápido (mais pressão); a dificuldade
+	# acelera ou alivia o ritmo
+	$SpawnDelay.wait_time = clampf(0.95 - current_wave * 0.045, 0.5, 0.95) \
+		* spawn_wait_mult
 	Globals.waveStarted.emit(current_wave, current_wave_spawn_count)
 	$SpawnDelay.start()
 	for i in range(n_meteors):
@@ -124,6 +146,7 @@ func spawn_meteor():
 	var enemyScene := preload("res://Scenes/enemies/enemy_mover.tscn")
 	var enemy = enemyScene.instantiate()
 	enemy.enemy_type = "coracaoMeteoro"
+	enemy.hp *= hp_mult
 	add_child(enemy)
 	enemy.begin_sky_drop()
 

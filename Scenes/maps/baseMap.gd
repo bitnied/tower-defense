@@ -3,9 +3,11 @@ extends Node2D
 var map_type := "":
 	set(val):
 		map_type = val
-		baseHP = Data.maps[val]["baseHp"]
-		baseMaxHp = Data.maps[val]["baseHp"]
-		gold = Data.maps[val]["startingGold"]
+		# vida e ouro vêm da dificuldade escolhida na home
+		var diff: Dictionary = Globals.difficulty_cfg()
+		baseHP = diff.get("baseHp", Data.maps[val]["baseHp"])
+		baseMaxHp = baseHP
+		gold = diff.get("startingGold", Data.maps[val]["startingGold"])
 		$PathSpawner.map_type = val
 
 var gameOver := false

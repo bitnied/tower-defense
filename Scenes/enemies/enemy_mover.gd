@@ -34,8 +34,14 @@ func apply_slow(factor: float, duration: float):
 	$Sprite2D.self_modulate = Color(0.62, 0.82, 1.0)
 
 # corações andam levemente acima do centro da estrada para não
-# encostar na base das casas
-const RIDE_OFFSET := -14.0
+# encostar na base das casas. Na estrada de BAIXO (volta do U) o
+# eixo local do path fica invertido: lá o offset precisa ser
+# positivo (e um pouco maior) para o coração continuar ACIMA da
+# estrada, sem invadir as casas.
+const RIDE_OFFSET := -14.0        # braço de cima
+const RIDE_OFFSET_BOTTOM := 24.0  # braço de baixo (eixo invertido)
+var ride := RIDE_OFFSET
+var bob := 0.0  # pulinho da animação de cura (soma ao ride)
 
 var guardian_ref: Node2D
 
@@ -67,7 +73,12 @@ func _process(delta):
 		var angle = int(rotation_degrees) % 360
 		if angle > 180:
 			angle -= 360
-		$Sprite2D.flip_v = abs(angle) > 90
+		var flipped: bool = abs(angle) > 90
+		$Sprite2D.flip_v = flipped
+		# desliza suavemente para o offset do braço atual da estrada
+		ride = move_toward(ride,
+			RIDE_OFFSET_BOTTOM if flipped else RIDE_OFFSET, 120.0 * delta)
+		v_offset = ride + bob
 
 func finished_path():
 	if is_destroyed:
@@ -129,13 +140,13 @@ func get_damage(amount):
 
 func healing_hit_animation():
 	var tween := create_tween()
-	tween.tween_property(self, "v_offset", RIDE_OFFSET, 0.05)
+	tween.tween_property(self, "bob", 0.0, 0.05)
 	tween.tween_property(self, "modulate", Color(0.65, 1.0, 0.8), 0.1)
 	tween.tween_property(self, "modulate", Color.WHITE, 0.3)
 	tween.set_parallel()
-	tween.tween_property(self, "v_offset", RIDE_OFFSET - 5, 0.2)
+	tween.tween_property(self, "bob", -5.0, 0.2)
 	tween.set_parallel(false)
-	tween.tween_property(self, "v_offset", RIDE_OFFSET, 0.2)
+	tween.tween_property(self, "bob", 0.0, 0.2)
 
 func healed_animation():
 	state = State.stopped

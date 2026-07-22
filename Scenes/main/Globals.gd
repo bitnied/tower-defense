@@ -13,6 +13,11 @@ signal defenderUnlocked(defender_key)
 
 # Fase única do presente
 var selected_map := "elisa"
+# dificuldade escolhida na home (ver Data.difficulties)
+var selected_difficulty := "medio"
+
+func difficulty_cfg() -> Dictionary:
+	return Data.difficulties[selected_difficulty]
 var mainNode : Node2D
 var turretsNode : Node2D
 var projectilesNode : Node2D

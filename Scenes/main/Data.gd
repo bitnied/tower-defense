@@ -258,6 +258,63 @@ const maps := {
 }
 
 # --------------------------------------------------------------
+# DIFICULDADES — o "Médio" é o jogo original; Fácil e Vida Real
+# são variações em cima dele. Cada chave sobrepõe os valores do
+# mapa/spawner na hora de começar a partida:
+#   baseHp/startingGold  → vida da mamãe e ouro inicial
+#   increase             → crescimento da quantidade por onda
+#   hp_per_wave          → +% de cura necessária por onda
+#   hp_mult              → multiplicador global de hp (inclui boss
+#                          e meteoros)
+#   ghost_waves/meteor_waves/escort → eventos e escolta do chefão
+#   spawn_wait_mult      → ritmo de entrada dos corações
+# --------------------------------------------------------------
+const difficulties := {
+	"facil": {
+		"name": "Fácil",
+		"subtitle": "Amor no modo tranquilo",
+		"baseHp": 14,
+		"startingGold": 65,
+		"increase": 1.16,
+		"hp_per_wave": 0.05,
+		"hp_mult": 0.85,
+		"ghost_waves": [6, 9],
+		"meteor_waves": [7, 10],
+		"escort": 10,
+		"spawn_wait_mult": 1.15,
+	},
+	"medio": {
+		"name": "Médio",
+		"subtitle": "O desafio clássico",
+		"baseHp": 10,
+		"startingGold": 50,
+		"increase": 1.22,
+		"hp_per_wave": 0.08,
+		"hp_mult": 1.0,
+		"ghost_waves": [5, 7, 9],
+		"meteor_waves": [6, 8, 10],
+		"escort": 14,
+		"spawn_wait_mult": 1.0,
+	},
+	"vida_real": {
+		"name": "Vida Real",
+		"subtitle": "Tipo criar dois filhos",
+		"baseHp": 7,
+		"startingGold": 45,
+		"increase": 1.28,
+		"hp_per_wave": 0.11,
+		"hp_mult": 1.2,
+		"ghost_waves": [3, 5, 7, 9, 10],
+		"meteor_waves": [4, 6, 8, 10],
+		"escort": 16,
+		"spawn_wait_mult": 0.85,
+	},
+}
+
+# ordem de exibição na modal de escolha
+const difficulty_order := ["facil", "medio", "vida_real"]
+
+# --------------------------------------------------------------
 # TEXTOS DO JOGO — edite à vontade os recados para a Elisa.
 # --------------------------------------------------------------
 const texts := {

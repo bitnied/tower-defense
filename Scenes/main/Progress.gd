@@ -9,6 +9,13 @@ var total_points := 0
 var session_points := 0
 # nomes de imagens cuja revelação o jogador já viu na galeria
 var seen: PackedStringArray = PackedStringArray()
+# já jogou pelo menos uma partida? (a modal de instruções só
+# aparece automaticamente na primeira vez)
+var played_once := false
+# já venceu pelo menos uma vez? (libera a escolha de dificuldade)
+var won_once := false
+# melhor resultado (0-3 estrelas) por dificuldade
+var stars := {"facil": 0, "medio": 0, "vida_real": 0}
 
 func _ready():
 	load_save()
@@ -42,6 +49,15 @@ func unseen_unlocked() -> Array:
 # libera tudo (atalho secreto de teste na galeria)
 func unlock_all():
 	total_points = maxi(total_points, threshold(images().size()))
+	won_once = true
+	played_once = true
+	save()
+
+# vitória: guarda o melhor número de estrelas da dificuldade
+func record_victory(diff_key: String, n_stars: int):
+	won_once = true
+	if stars.has(diff_key):
+		stars[diff_key] = maxi(stars[diff_key], n_stars)
 	save()
 
 func mark_seen(image_name: String):
@@ -59,6 +75,9 @@ func save():
 	var cfg := ConfigFile.new()
 	cfg.set_value("progress", "total_points", total_points)
 	cfg.set_value("progress", "seen", seen)
+	cfg.set_value("progress", "played_once", played_once)
+	cfg.set_value("progress", "won_once", won_once)
+	cfg.set_value("progress", "stars", stars)
 	cfg.save(SAVE_PATH)
 
 func load_save():
@@ -67,3 +86,8 @@ func load_save():
 		return
 	total_points = int(cfg.get_value("progress", "total_points", 0))
 	seen = PackedStringArray(cfg.get_value("progress", "seen", PackedStringArray()))
+	played_once = bool(cfg.get_value("progress", "played_once", total_points > 0))
+	won_once = bool(cfg.get_value("progress", "won_once", false))
+	var s: Dictionary = cfg.get_value("progress", "stars", {})
+	for k in stars.keys():
+		stars[k] = int(s.get(k, 0))
