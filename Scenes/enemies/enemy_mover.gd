@@ -73,8 +73,10 @@ func finished_path():
 	if is_destroyed:
 		return
 	is_destroyed = true
-	spawner.enemy_destroyed()
+	# o vazamento precisa entrar ANTES do abate: se este for o último
+	# coração da onda, o check de "onda perfeita" roda no enemy_destroyed
 	spawner.enemy_leaked()
+	spawner.enemy_destroyed()
 	Globals.currentMap.get_base_damage(baseDamage)
 	attack_guardian_animation()
 

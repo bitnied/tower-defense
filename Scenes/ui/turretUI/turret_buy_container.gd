@@ -35,7 +35,7 @@ func refresh_icon():
 		return
 	var cfg: Dictionary = Data.turrets[turret_type]
 	if Globals.is_defender_locked(turret_type):
-		$LockIcon.visible = true
+		%LockIcon.visible = true
 		if cfg.get("mystery", false):
 			# surpresa não revelada (Elisa): só um "?"
 			$HBox/TextureRect.texture = load(Data.locked_icon)
@@ -53,7 +53,7 @@ func refresh_icon():
 		$HBox/CostRow/CoinIcon.visible = true
 		$HBox/CostRow/CostLabel.add_theme_font_size_override("font_size", 38)
 		$HBox/CostRow/CostLabel.text = str(Globals.defender_cost(turret_type))
-		$LockIcon.visible = false
+		%LockIcon.visible = false
 
 func _on_defender_unlocked(key):
 	if key != turret_type:
