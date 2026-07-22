@@ -35,7 +35,8 @@ func _on_play_button_pressed():
 		_refresh_stars()
 		diff_dialog.visible = true
 	else:
-		_start_game("medio")
+		# antes da primeira vitória, joga sempre no Fácil
+		_start_game("facil")
 
 func _on_help_button_pressed():
 	Sfx.play("click", -10.0)
@@ -46,7 +47,8 @@ func _on_howto_closed():
 	Sfx.play("click", -10.0)
 	%HowtoDialog.visible = false
 	if howto_starts_game:
-		_start_game("medio")
+		# primeira partida da vida: nível Fácil
+		_start_game("facil")
 
 func _start_game(diff_key: String):
 	Globals.selected_difficulty = diff_key
