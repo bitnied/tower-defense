@@ -4,11 +4,10 @@ var next_wait_time := 0
 var waited := 0
 var open_details_pane : PanelContainer
 
-# Velocidades do jogo: o padrão já começa acelerado (2x).
-# O botão mostra ⏩ até o primeiro toque, depois cicla 3x → 1x → 2x.
-const SPEEDS := [1.0, 2.0, 3.0]
-var speed_idx := 1
-var speed_touched := false
+# Velocidades do jogo: o 1x novo já é acelerado (time_scale 2).
+# O botão mostra o nível atual e cicla 1x → 2x → 3x.
+const SPEEDS := [2.0, 3.0, 4.0]
+var speed_idx := 0
 
 func _ready():
 	Globals.hud = self
@@ -62,7 +61,6 @@ func _on_play_button_pressed():
 		spawner.start_next_wave_early()
 	else:
 		speed_idx = (speed_idx + 1) % SPEEDS.size()
-		speed_touched = true
 		Engine.time_scale = SPEEDS[speed_idx]
 	_refresh_play_button()
 
@@ -79,13 +77,8 @@ func _refresh_play_button(_a = 0, _b = 0):
 		%PlayButton.icon = load("res://Assets/ui/icon_play.png")
 		%PlayButton.text = ""
 		%PlayButton.self_modulate = Color.WHITE
-	elif not speed_touched:
-		# durante a onda, antes do primeiro toque: setinhas de acelerar
-		%PlayButton.icon = load("res://Assets/ui/icon_ff.png")
-		%PlayButton.text = ""
-		%PlayButton.self_modulate = Color.WHITE
 	else:
-		# depois do toque: nível atual (3x dourado)
+		# durante a onda: nível atual (3x dourado)
 		%PlayButton.icon = null
 		%PlayButton.text = "%dx" % (speed_idx + 1)
 		%PlayButton.self_modulate = Color(1.0, 0.84, 0.35) if speed_idx == 2 			else Color.WHITE
@@ -129,8 +122,7 @@ func show_banner(message: String, hold := 2.6):
 	banner_tween.tween_callback(func(): banner.visible = false)
 
 func reset():
-	speed_idx = 1
-	speed_touched = false
+	speed_idx = 0
 	Engine.time_scale = SPEEDS[speed_idx]
 	_refresh_play_button()
 	if is_instance_valid(open_details_pane):

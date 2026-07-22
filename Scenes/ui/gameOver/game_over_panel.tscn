@@ -47,7 +47,9 @@ theme_override_constants/separation = 12
 [node name="TitleLabel" type="Label" parent="CenterPanel/Margin/HBox/RightBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 52
+custom_minimum_size = Vector2(400, 0)
+theme_override_font_sizes/font_size = 46
+autowrap_mode = 2
 text = "Game Over"
 horizontal_alignment = 1
 
