@@ -3,7 +3,12 @@ extends Control
 var next_wait_time := 0
 var waited := 0
 var open_details_pane : PanelContainer
-var fast := false
+
+# Velocidades do jogo: o padrão já começa acelerado (2x).
+# O botão mostra ⏩ até o primeiro toque, depois cicla 3x → 1x → 2x.
+const SPEEDS := [1.0, 2.0, 3.0]
+var speed_idx := 1
+var speed_touched := false
 
 func _ready():
 	Globals.hud = self
@@ -13,6 +18,7 @@ func _ready():
 	Globals.waveCleared.connect(show_wave_timer)
 	Globals.enemyDestroyed.connect(update_enemy_count)
 	Globals.defenderUnlocked.connect(_on_defender_unlocked)
+	Engine.time_scale = SPEEDS[speed_idx]
 	_refresh_play_button()
 
 func max_waves() -> int:
@@ -55,8 +61,9 @@ func _on_play_button_pressed():
 	if spawner and spawner.is_waiting_for_wave():
 		spawner.start_next_wave_early()
 	else:
-		fast = not fast
-		Engine.time_scale = 2.0 if fast else 1.0
+		speed_idx = (speed_idx + 1) % SPEEDS.size()
+		speed_touched = true
+		Engine.time_scale = SPEEDS[speed_idx]
 	_refresh_play_button()
 
 func _spawner():
@@ -72,11 +79,16 @@ func _refresh_play_button(_a = 0, _b = 0):
 		%PlayButton.icon = load("res://Assets/ui/icon_play.png")
 		%PlayButton.text = ""
 		%PlayButton.self_modulate = Color.WHITE
+	elif not speed_touched:
+		# durante a onda, antes do primeiro toque: setinhas de acelerar
+		%PlayButton.icon = load("res://Assets/ui/icon_ff.png")
+		%PlayButton.text = ""
+		%PlayButton.self_modulate = Color.WHITE
 	else:
-		# durante a onda: só o texto x1/x2 (dourado quando ligado)
+		# depois do toque: nível atual (3x dourado)
 		%PlayButton.icon = null
-		%PlayButton.text = "x2" if fast else "x1"
-		%PlayButton.self_modulate = Color(1.0, 0.84, 0.35) if fast else Color.WHITE
+		%PlayButton.text = "%dx" % (speed_idx + 1)
+		%PlayButton.self_modulate = Color(1.0, 0.84, 0.35) if speed_idx == 2 			else Color.WHITE
 
 # ---------- pause ----------
 
@@ -117,8 +129,9 @@ func show_banner(message: String, hold := 2.6):
 	banner_tween.tween_callback(func(): banner.visible = false)
 
 func reset():
-	fast = false
-	Engine.time_scale = 1.0
+	speed_idx = 1
+	speed_touched = false
+	Engine.time_scale = SPEEDS[speed_idx]
 	_refresh_play_button()
 	if is_instance_valid(open_details_pane):
 		open_details_pane.turret.close_details_pane()

@@ -21,6 +21,19 @@ var current_wave := 0
 var enemies_spawned_this_wave := 0
 var killed_this_wave := 0
 var leaked_this_wave := 0
+var boss_spawned := false
+var base_wave_wait := 9.0
+
+func _ready():
+	base_wave_wait = $WaveDelayTimer.wait_time
+
+# corações ainda vivos na estrada (ignora os já curados/animando)
+func hearts_on_road() -> int:
+	var n := 0
+	for c in get_children():
+		if c is PathFollow2D and not c.is_destroyed:
+			n += 1
+	return n
 
 func enemy_leaked():
 	leaked_this_wave += 1
@@ -29,8 +42,9 @@ func spawn_new_enemy():
 	var enemyScene := preload("res://Scenes/enemies/enemy_mover.tscn")
 	var enemy = enemyScene.instantiate()
 	var special: Dictionary = special_waves.get(str(current_wave), {})
-	if enemies_spawned_this_wave == 0 and special.has("boss"):
+	if not boss_spawned and special.has("boss"):
 		enemy.enemy_type = special["boss"]
+		boss_spawned = true
 	else:
 		enemy.enemy_type = spawnable_enemies.pick_random()
 		# corações ficam mais "machucados" a cada onda (+6% de cura
@@ -69,8 +83,16 @@ func start_next_wave_early():
 		_on_wave_delay_timer_timeout()
 
 func _on_wave_delay_timer_timeout():
+	# nunca começa a onda seguinte com corações ainda na estrada
+	# (eles sumiriam "do nada" no meio da troca de contadores)
+	if hearts_on_road() > 0:
+		$WaveDelayTimer.wait_time = 1.0
+		$WaveDelayTimer.start()
+		return
+	$WaveDelayTimer.wait_time = base_wave_wait
 	#Move to next wave
 	current_wave += 1
+	boss_spawned = false
 	killed_this_wave = 0
 	enemies_spawned_this_wave = 0
 	current_difficulty = get_current_difficulty()
