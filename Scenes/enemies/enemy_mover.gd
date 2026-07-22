@@ -208,6 +208,7 @@ func begin_sky_drop():
 	$Sprite2D.top_level = true
 	$Sprite2D.global_rotation = 0.0
 	$Sprite2D.global_position = land + Vector2(0, -440)
+	Sfx.play("fall", -14.0)
 	var tween := create_tween()
 	tween.set_parallel()
 	tween.tween_property($Sprite2D, "global_position", land, 0.85) \
@@ -219,7 +220,7 @@ func begin_sky_drop():
 
 func _land_impact(shadow: Sprite2D):
 	shadow.queue_free()
-	Sfx.play("impact", -3.0)
+	Sfx.play("impact", -4.0)
 	var crack := Sprite2D.new()
 	crack.texture = load("res://Assets/vfx/crack.png")
 	Globals.currentMap.add_child(crack)

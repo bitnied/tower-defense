@@ -3,6 +3,7 @@ extends Control
 # diálogo depois do Jogar; fechar o diálogo (X ou Vamos!) inicia o jogo.
 
 func _ready():
+	Sfx.stop_music(0.3)
 	Engine.time_scale = 1.0
 	%Congrats.text = Data.texts["congrats"]
 	%Title.text = Data.texts["howto_title"]

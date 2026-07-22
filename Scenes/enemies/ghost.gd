@@ -23,6 +23,7 @@ var home_spot := Vector2.ZERO   # onde a vítima estava (para devolver)
 
 func _ready():
 	add_to_group("enemy")
+	Sfx.play("ghost", -13.0)
 	if is_instance_valid(Globals.hud):
 		Globals.hud.show_banner("Uh! Um fantasma quer levar a família!", 2.0)
 

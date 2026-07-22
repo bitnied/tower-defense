@@ -14,9 +14,12 @@ var overlay_mode := false
 
 func _ready():
 	if overlay_mode:
+		# galeria por cima do jogo pausado: silencia sem perder a posição
+		Sfx.set_music_paused(true)
 		$Top/Bar/BackButton.text = "Voltar"
 	else:
 		Engine.time_scale = 1.0
+		Sfx.stop_music(0.3)
 	var imgs: Array = Progress.images()
 	var new_ones: Array = Progress.unseen_unlocked()
 	%PointsLabel.text = "%d pontos de amor" % Progress.total_points
@@ -217,6 +220,7 @@ func _on_back_pressed():
 	Sfx.play("click", -10.0)
 	if overlay_mode:
 		# volta para o jogo pausado (o menu de pause continua lá)
+		Sfx.set_music_paused(false)
 		get_parent().queue_free()
 	else:
 		get_tree().change_scene_to_file("res://Scenes/ui/mainMenu/mainMenu.tscn")

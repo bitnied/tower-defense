@@ -217,7 +217,7 @@ func upgrade_turret():
 
 # pulinho + faíscas douradas ao evoluir
 func celebrate_upgrade():
-	Sfx.play("upgrade")
+	Sfx.play("upgrade", -10.0)
 	attack_punch()
 	queue_redraw()
 	var p := CPUParticles2D.new()

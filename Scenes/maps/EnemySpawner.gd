@@ -135,6 +135,7 @@ func check_wave_clear():
 			# onda perfeita: nenhum coração chegou na mamãe
 			Globals.currentMap.gold += 8
 			Progress.add_points(5)
+			Sfx.play("upgrade", -12.0)
 			if is_instance_valid(Globals.hud):
 				Globals.hud.show_banner("Onda perfeita! +8", 1.6)
 		Progress.save()

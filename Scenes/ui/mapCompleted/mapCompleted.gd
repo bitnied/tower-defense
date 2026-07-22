@@ -3,6 +3,7 @@ extends PanelContainer
 
 func _ready():
 	Engine.time_scale = 1.0
+	Sfx.stop_music(0.4)
 	Sfx.play("victory", -2.0)
 	Progress.add_points(50)
 	Progress.save()

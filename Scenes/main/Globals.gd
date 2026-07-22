@@ -68,6 +68,7 @@ func defender_icon(key: String) -> Texture2D:
 
 func restart_current_level():
 	Progress.new_session()
+	Sfx.play_music()
 	var currentLevelScene := load(currentMap.scene_file_path)
 	currentMap.queue_free()
 	var newMap = currentLevelScene.instantiate()

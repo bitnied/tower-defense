@@ -4,6 +4,7 @@ extends PanelContainer
 
 func _ready():
 	Engine.time_scale = 1.0
+	Sfx.stop_music(0.4)
 	Sfx.play("gameover", -4.0)
 	Progress.save()
 	%TitleLabel.text = Data.texts["gameover_title"]

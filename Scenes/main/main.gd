@@ -7,6 +7,7 @@ func _ready():
 	var map = selectedMapScene.instantiate()
 	map.map_type = Globals.selected_map
 	add_child(map)
+	Sfx.play_music()
 	_update_zoom()
 	get_viewport().size_changed.connect(_update_zoom)
 

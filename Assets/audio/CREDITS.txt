@@ -1,4 +1,11 @@
-Music: "Happy Clappy Loop" (CC0) - opengameart.org/content/happy-clappy-loop
+Music: "Happy Clappy Loop (substituída)" (CC0) - opengameart.org/content/happy-clappy-loop
 SFX/jingles: Kenney.nl interface-sounds & music-jingles (CC0)
 
 sfx_unlock.mp3: power-up sintetizado (arpejo ascendente), criado para este jogo
+
+
+Musica do gameplay: "My Bonnie Lies Over The Ocean" (instrumental),
+arquivo fornecido pela familia (uso pessoal no presente).
+Loop sem emendas criado com crossfade de 1.8s.
+SFX sintetizados (impacto, queda, raio da Luna, fantasma): gerados
+proceduralmente para este projeto (dominio publico).

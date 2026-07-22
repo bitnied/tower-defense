@@ -101,7 +101,7 @@ func attack():
 			can_fire = false
 			ray_enabled = true
 			attack_punch()
-			Sfx.play(Data.turrets[turret_type].get("attack_sfx", "click"), -18.0)
+			Sfx.play(Data.turrets[turret_type].get("attack_sfx", "click"), -16.0)
 			origin_sparks.emitting = true
 			impact_sparks.emitting = true
 			$RayDuration.start()

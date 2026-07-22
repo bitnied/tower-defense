@@ -57,6 +57,7 @@ func check_can_upgrade(_new_gold=0):
 
 
 func _on_sell_button_pressed():
+	Sfx.play("heal", -10.0)
 	queue_free()
 	Globals.currentMap.gold += get_sell_price()
 	turret.queue_free()
