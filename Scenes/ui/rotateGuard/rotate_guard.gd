@@ -1,12 +1,17 @@
 extends CanvasLayer
-# Aviso "gire o celular": em mobile (web) segurando o aparelho em pé,
-# cobre a tela e pausa o jogo até virar para a horizontal.
+# Aviso "gire o celular" (só mobile web): o jogo pede paisagem,
+# mas a galeria standalone pede RETRATO (fotos verticais).
+# Cobre a tela e pausa até a orientação ficar certa.
 # Para testar no desktop: abrir o jogo com ?forcerotate na URL.
+
+const GALLERY_SCENE := "res://Scenes/ui/gallery/gallery.tscn"
 
 var overlay: Control
 var phone: Panel
+var label: Label
 var was_paused := false
 var force_debug := false
+var showing_wants_portrait := false
 
 func _ready():
 	layer = 100
@@ -14,6 +19,10 @@ func _ready():
 	force_debug = _has_debug_flag()
 	_build_overlay()
 	get_viewport().size_changed.connect(_refresh)
+	_refresh()
+
+func _process(_delta):
+	# a orientação desejada muda ao entrar/sair da galeria
 	_refresh()
 
 func _is_mobile_web() -> bool:
@@ -28,15 +37,28 @@ func _has_debug_flag() -> bool:
 	var search = JavaScriptBridge.eval("window.location.search", true)
 	return search is String and search.contains("forcerotate")
 
+# A galeria aberta como cena própria (menu / fim de jogo) é vertical.
+# Aberta por cima do pause, o jogo continua em paisagem.
+func _wants_portrait() -> bool:
+	var cs := get_tree().current_scene
+	return cs != null and cs.scene_file_path == GALLERY_SCENE
+
 func _refresh():
 	var vs := get_viewport().get_visible_rect().size
 	var portrait: bool = vs.y > vs.x
-	var should_show: bool = portrait and (_is_mobile_web() or force_debug)
-	if should_show == overlay.visible:
+	var wants_portrait := _wants_portrait()
+	var wrong_orientation: bool = portrait != wants_portrait
+	var should_show: bool = wrong_orientation and (_is_mobile_web() or force_debug)
+	if should_show == overlay.visible \
+			and (not should_show or wants_portrait == showing_wants_portrait):
 		return
 	if should_show:
-		was_paused = get_tree().paused
-		get_tree().paused = true
+		if not overlay.visible:
+			was_paused = get_tree().paused
+			get_tree().paused = true
+		showing_wants_portrait = wants_portrait
+		label.text = "Gire o celular para ver a galeria!" if wants_portrait \
+			else "Gire o celular para jogar!"
 		overlay.visible = true
 		_animate_phone()
 	else:
@@ -78,7 +100,7 @@ func _build_overlay():
 	phone.add_theme_stylebox_override("panel", sb)
 	phone_wrap.add_child(phone)
 
-	var label := Label.new()
+	label = Label.new()
 	label.text = "Gire o celular para jogar!"
 	label.add_theme_font_size_override("font_size", 52)
 	label.add_theme_color_override("font_outline_color", Color(0.3, 0.08, 0.16))
@@ -94,11 +116,14 @@ func _animate_phone():
 	if phone_tween and phone_tween.is_running():
 		phone_tween.kill()
 	phone.pivot_offset = phone.custom_minimum_size / 2.0
-	phone.rotation = 0.0
+	# jogo: em pé -> deitado | galeria: deitado -> em pé
+	var from_rot := 0.0 if not showing_wants_portrait else -PI / 2.0
+	var to_rot := -PI / 2.0 if not showing_wants_portrait else 0.0
+	phone.rotation = from_rot
 	phone_tween = create_tween().set_loops()
 	phone_tween.tween_interval(0.6)
-	phone_tween.tween_property(phone, "rotation", -PI / 2.0, 0.7) \
+	phone_tween.tween_property(phone, "rotation", to_rot, 0.7) \
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	phone_tween.tween_interval(0.9)
-	phone_tween.tween_property(phone, "rotation", 0.0, 0.5) \
+	phone_tween.tween_property(phone, "rotation", from_rot, 0.5) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)

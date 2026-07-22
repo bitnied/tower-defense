@@ -3,8 +3,9 @@ extends Control
 # Pontos de Amor acumulados entre partidas. No viewer dá para navegar
 # com setas entre os itens desbloqueados. Segredo de teste: E E E.
 
-const CARD_W := 200
-const CARD_H := 266
+# paisagem: 4 colunas de 200x266 | retrato (celular): 3 colunas maiores
+var card_w := 200.0
+var card_h := 266.0
 
 var cards: Array[PanelContainer] = []
 var current := -1        # índice do item aberto no viewer
@@ -20,6 +21,8 @@ func _ready():
 	else:
 		Engine.time_scale = 1.0
 		Sfx.stop_music(0.3)
+	_layout_grid()
+	get_viewport().size_changed.connect(_layout_grid)
 	var imgs: Array = Progress.images()
 	var new_ones: Array = Progress.unseen_unlocked()
 	%PointsLabel.text = "%d pontos de amor" % Progress.total_points
@@ -46,9 +49,74 @@ func _unhandled_key_input(event):
 			get_tree().reload_current_scene()
 
 # ---------- grid ----------
+func _layout_grid():
+	var portrait := _is_portrait()
+	%Grid.columns = 3 if portrait else 4
+	card_w = 300.0 if portrait else 200.0
+	card_h = 400.0 if portrait else 266.0
+	for card in cards:
+		card.custom_minimum_size = Vector2(card_w, card_h)
+	_layout_viewer_buttons()
+	_layout_full()
+
+func _is_portrait() -> bool:
+	var vs := get_viewport_rect().size
+	return vs.y > vs.x
+
+# posiciona um Control por âncoras pontuais + retângulo em px
+func _place(c: Control, ax: float, ay: float, x0: float, y0: float, x1: float, y1: float):
+	c.anchor_left = ax
+	c.anchor_right = ax
+	c.anchor_top = ay
+	c.anchor_bottom = ay
+	c.offset_left = x0
+	c.offset_top = y0
+	c.offset_right = x1
+	c.offset_bottom = y1
+
+# Botões do viewer nunca cobrem a foto:
+# desktop (paisagem) ficam ao lado; celular (retrato) acima/abaixo.
+func _layout_viewer_buttons():
+	if _is_portrait():
+		# tela cheia embaixo da foto; Assistir (vídeo) acima
+		_place(%FullButton, 0.5, 1.0, -39, 14, 39, 82)
+		_place(%WatchButton, 0.5, 0.0, -120, -80, 120, -14)
+	else:
+		# tela cheia à direita (abaixo do X); Assistir à esquerda no topo
+		_place(%FullButton, 1.0, 0.0, 12, 84, 90, 152)
+		_place(%WatchButton, 0.0, 0.0, -214, 0, -14, 56)
+
+# Tela cheia: a imagem ocupa o miolo; controles nas bordas livres.
+func _layout_full():
+	var img: TextureRect = %FullImage
+	if _is_portrait():
+		img.anchor_left = 0.0
+		img.anchor_top = 0.0
+		img.anchor_right = 1.0
+		img.anchor_bottom = 1.0
+		img.offset_left = 10
+		img.offset_top = 116
+		img.offset_right = -10
+		img.offset_bottom = -168
+		_place(%MinimizeButton, 0.5, 0.0, -42, 18, 42, 102)
+		_place(%FullPrev, 0.5, 1.0, -168, -150, -48, -38)
+		_place(%FullNext, 0.5, 1.0, 48, -150, 168, -38)
+	else:
+		img.anchor_left = 0.0
+		img.anchor_top = 0.0
+		img.anchor_right = 1.0
+		img.anchor_bottom = 1.0
+		img.offset_left = 136
+		img.offset_top = 10
+		img.offset_right = -136
+		img.offset_bottom = -10
+		_place(%MinimizeButton, 1.0, 0.0, -110, 18, -26, 102)
+		_place(%FullPrev, 0.0, 0.5, 14, -56, 122, 56)
+		_place(%FullNext, 1.0, 0.5, -122, -56, -14, 56)
+
 func _make_card(idx: int, entry: Dictionary, is_new: bool) -> PanelContainer:
 	var card := PanelContainer.new()
-	card.custom_minimum_size = Vector2(CARD_W, CARD_H)
+	card.custom_minimum_size = Vector2(card_w, card_h)
 	if Progress.is_unlocked(idx):
 		var tex := TextureRect.new()
 		tex.texture = load("res://Assets/gallery/" + _thumb_of(entry))
@@ -99,7 +167,7 @@ func _animate_reveals(new_ones: Array):
 	var delay := 0.35
 	for i in new_ones:
 		var card := cards[i]
-		card.pivot_offset = Vector2(CARD_W, CARD_H) / 2.0
+		card.pivot_offset = Vector2(card_w, card_h) / 2.0
 		var tex: TextureRect = card.get_child(0)
 		var tween := create_tween()
 		tween.tween_interval(delay)
@@ -118,7 +186,9 @@ func _open_viewer(idx: int):
 
 func _refresh_viewer():
 	var entry: Dictionary = Progress.images()[current]
-	%BigImage.texture = load("res://Assets/gallery/" + _thumb_of(entry))
+	var tex := load("res://Assets/gallery/" + _thumb_of(entry))
+	%BigImage.texture = tex
+	%FullImage.texture = tex
 	%WatchButton.visible = entry["kind"] == "video"
 	# invisível (mas ocupando o espaço) para a imagem não pular
 	var has_prev := _step_from(current, -1) != -1
@@ -127,6 +197,10 @@ func _refresh_viewer():
 	%PrevButton.modulate.a = 1.0 if has_prev else 0.0
 	%NextButton.disabled = not has_next
 	%NextButton.modulate.a = 1.0 if has_next else 0.0
+	%FullPrev.disabled = not has_prev
+	%FullPrev.modulate.a = 1.0 if has_prev else 0.35
+	%FullNext.disabled = not has_next
+	%FullNext.modulate.a = 1.0 if has_next else 0.35
 
 # próximo índice DESBLOQUEADO na direção dir; -1 se não houver
 func _step_from(idx: int, dir: int) -> int:
@@ -154,6 +228,44 @@ func _on_next_pressed():
 
 func _on_viewer_close():
 	%Viewer.visible = false
+
+# ---------- tela cheia ----------
+var swipe_start := Vector2.ZERO
+
+func _on_full_button_pressed():
+	_open_fullscreen()
+
+# tocar na imagem grande também abre a tela cheia
+func _on_big_image_gui_input(event):
+	if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT \
+			and event.pressed) or (event is InputEventScreenTouch and event.pressed):
+		_open_fullscreen()
+
+func _open_fullscreen():
+	Sfx.play("click", -10.0)
+	_refresh_viewer()
+	%Viewer.visible = false
+	%FullViewer.visible = true
+
+func _on_minimize_pressed():
+	Sfx.play("click", -10.0)
+	# volta para a visualização anterior (viewer com moldura)
+	%FullViewer.visible = false
+	%Viewer.visible = true
+
+# swipe esquerda/direita navega entre as fotos
+# (no navegador o toque vira evento de mouse, então basta tratar mouse)
+func _on_full_viewer_gui_input(event):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			swipe_start = event.position
+		else:
+			var d: Vector2 = event.position - swipe_start
+			if absf(d.x) > 70.0 and absf(d.x) > absf(d.y):
+				if d.x < 0:
+					_on_next_pressed()
+				else:
+					_on_prev_pressed()
 
 # ---------- vídeo (player HTML5 nativo por cima do canvas) ----------
 func _on_watch_pressed():

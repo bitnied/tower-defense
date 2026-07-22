@@ -5,7 +5,8 @@ extends Control
 func _ready():
 	Sfx.stop_music(0.3)
 	Engine.time_scale = 1.0
-	%Congrats.text = Data.texts["congrats"]
+	# Galeria só aparece depois da primeira imagem desbloqueada
+	%GalleryButton.visible = Progress.is_unlocked(0)
 	%Title.text = Data.texts["howto_title"]
 	%HowtoLabel.text = Data.texts["howto"]
 

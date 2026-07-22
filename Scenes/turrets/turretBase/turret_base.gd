@@ -19,6 +19,10 @@ var turret_type := "":
 			idle_tex = load(cfg["idle"])
 		sprite_scale = cfg["scale"]
 		$Sprite2D.scale = Vector2(sprite_scale, sprite_scale)
+		# círculo de clique acompanha o tamanho do personagem
+		# (escala o nó, não o shape — o shape é compartilhado entre instâncias)
+		$CollisionArea/CollisionShape2D.scale = Vector2(sprite_scale, sprite_scale)
+		$CollisionArea/CollisionShape2D.position = Vector2(0, -34.0 * sprite_scale)
 		uses_sheet = cfg.get("directional_sheet", false)
 		show_idle()
 		rotates = cfg.get("rotates", false)
@@ -134,9 +138,10 @@ func _draw():
 		var glow_col := Color(1.0, 0.55, 0.75, 0.12) if turret_level == 2 \
 			else Color(1.0, 0.82, 0.35, 0.14)
 		for i in range(3):
-			var r := 24.0 + i * 8.0 + sin(bob_t * 3.0) * 2.5
+			var r := (24.0 + i * 8.0 + sin(bob_t * 3.0) * 2.5) * sprite_scale
 			var a := glow_col.a * (1.0 - i * 0.3)
-			draw_circle(Vector2(0, -32), r, Color(glow_col.r, glow_col.g, glow_col.b, a))
+			draw_circle(Vector2(0, -32.0 * sprite_scale), r,
+				Color(glow_col.r, glow_col.g, glow_col.b, a))
 
 func set_placeholder():
 	modulate = Color("6eff297a")
