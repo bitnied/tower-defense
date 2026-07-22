@@ -10,10 +10,10 @@
 [ext_resource type="Texture2D" path="res://Assets/ui/icon_play.png" id="7_play"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_side"]
-content_margin_left = 8.0
-content_margin_top = 10.0
-content_margin_right = 8.0
-content_margin_bottom = 10.0
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
 bg_color = Color(0.556863, 0.290196, 0.368627, 0.97)
 border_width_left = 4
 border_color = Color(0.360784, 0.180392, 0.239216, 1)
@@ -42,8 +42,8 @@ layout_mode = 1
 anchors_preset = 0
 offset_left = 14.0
 offset_top = 12.0
-offset_right = 400.0
-offset_bottom = 58.0
+offset_right = 620.0
+offset_bottom = 88.0
 theme_override_constants/separation = 10
 
 [node name="LifePill" type="PanelContainer" parent="UI/HUD/TopLeft"]
@@ -54,7 +54,7 @@ layout_mode = 2
 theme_override_constants/separation = 6
 
 [node name="Icon" type="TextureRect" parent="UI/HUD/TopLeft/LifePill/HBox"]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
@@ -63,7 +63,7 @@ texture = ExtResource("4_life")
 [node name="HPLabel" type="Label" parent="UI/HUD/TopLeft/LifePill/HBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 40
 text = "10/10"
 
 [node name="CoinPill" type="PanelContainer" parent="UI/HUD/TopLeft"]
@@ -74,7 +74,7 @@ layout_mode = 2
 theme_override_constants/separation = 6
 
 [node name="Icon" type="TextureRect" parent="UI/HUD/TopLeft/CoinPill/HBox"]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
@@ -83,7 +83,7 @@ texture = ExtResource("5_coin")
 [node name="GoldLabel" type="Label" parent="UI/HUD/TopLeft/CoinPill/HBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 40
 text = "60"
 
 [node name="SidePanel" type="PanelContainer" parent="UI/HUD"]
@@ -92,7 +92,7 @@ anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -158.0
+offset_left = -264.0
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_side")
@@ -114,22 +114,23 @@ theme_override_constants/separation = 0
 [node name="WaveLabel" type="Label" parent="UI/HUD/SidePanel/VBox/WaveRow/WavePill"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 28
 text = "Onda 1/10"
 clip_text = true
 
 [node name="RemainLabel" type="Label" parent="UI/HUD/SidePanel/VBox/WaveRow/WavePill"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 22
 text = ""
 clip_text = true
 
 [node name="PauseButton" type="Button" parent="UI/HUD/SidePanel/VBox/WaveRow"]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 icon = ExtResource("6_gear")
 icon_alignment = 1
+expand_icon = true
 
 [node name="Turrets" type="VBoxContainer" parent="UI/HUD/SidePanel/VBox"]
 unique_name_in_owner = true
@@ -145,10 +146,11 @@ size_flags_vertical = 3
 
 [node name="PlayButton" type="Button" parent="UI/HUD/SidePanel/VBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 62)
+custom_minimum_size = Vector2(0, 88)
 layout_mode = 2
 icon = ExtResource("7_play")
 icon_alignment = 1
+expand_icon = true
 
 [node name="WaveWaitTimer" type="Timer" parent="UI/HUD"]
 
@@ -159,18 +161,19 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -320.0
-offset_top = 90.0
-offset_right = 320.0
-offset_bottom = 150.0
+offset_left = -520.0
+offset_top = 80.0
+offset_right = 520.0
+offset_bottom = 250.0
 grow_horizontal = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.839216, 0.235294, 0.419608, 1)
-theme_override_constants/outline_size = 12
-theme_override_font_sizes/font_size = 36
+theme_override_constants/outline_size = 16
+theme_override_font_sizes/font_size = 60
 text = "Surpresa!"
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 2
 
 [connection signal="timeout" from="UI/HUD/WaveWaitTimer" to="UI/HUD" method="_on_wave_wait_timer_timeout"]
 [connection signal="pressed" from="UI/HUD/SidePanel/VBox/WaveRow/PauseButton" to="UI/HUD" method="_on_pause_button_pressed"]

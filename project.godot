@@ -26,6 +26,7 @@ Data="*res://Scenes/main/Data.gd"
 Sfx="*res://Scenes/main/Sfx.gd"
 Progress="*res://Scenes/main/Progress.gd"
 Tuning="*res://Scenes/main/Tuning.gd"
+RotateGuard="*res://Scenes/ui/rotateGuard/rotate_guard.gd"
 
 [display]
 
@@ -36,7 +37,7 @@ window/handheld/orientation=4
 [gui]
 
 theme/custom="res://Assets/ui/theme.tres"
-theme/default_font_size=22
+theme/default_font_size=44
 
 [input]
 

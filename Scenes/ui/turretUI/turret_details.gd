@@ -45,7 +45,7 @@ func get_sell_price():
 	var total_cost = turret.paid_cost if turret.paid_cost > 0 		else Data.turrets[turret.turret_type]["cost"]
 	for i in range(turret.turret_level):
 		total_cost += i*Data.turrets[turret.turret_type]["upgrade_cost"]
-	return round(total_cost * sell_modifier)
+	return int(round(total_cost * sell_modifier))
 
 func check_can_upgrade(_new_gold=0):
 	if turret.turret_level == Data.turrets[turret.turret_type]["max_level"]:

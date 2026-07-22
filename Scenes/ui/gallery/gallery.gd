@@ -3,8 +3,8 @@ extends Control
 # Pontos de Amor acumulados entre partidas. No viewer dá para navegar
 # com setas entre os itens desbloqueados. Segredo de teste: E E E.
 
-const CARD_W := 168
-const CARD_H := 224
+const CARD_W := 200
+const CARD_H := 266
 
 var cards: Array[PanelContainer] = []
 var current := -1        # índice do item aberto no viewer
@@ -58,7 +58,7 @@ func _make_card(idx: int, entry: Dictionary, is_new: bool) -> PanelContainer:
 		if entry["kind"] == "video":
 			var play := Label.new()
 			play.text = "▶"
-			play.add_theme_font_size_override("font_size", 44)
+			play.add_theme_font_size_override("font_size", 64)
 			play.add_theme_color_override("font_outline_color", Color(0.3, 0.05, 0.15))
 			play.add_theme_constant_override("outline_size", 10)
 			play.set_anchors_preset(Control.PRESET_CENTER)
@@ -77,14 +77,14 @@ func _make_card(idx: int, entry: Dictionary, is_new: bool) -> PanelContainer:
 		card.add_child(box)
 		var lock := TextureRect.new()
 		lock.texture = load("res://Assets/ui/icon_lock.png")
-		lock.custom_minimum_size = Vector2(40, 40)
+		lock.custom_minimum_size = Vector2(56, 56)
 		lock.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		lock.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		box.add_child(lock)
 		var lbl := Label.new()
 		lbl.text = "%d pts" % Progress.threshold(idx + 1)
 		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		lbl.add_theme_font_size_override("font_size", 17)
+		lbl.add_theme_font_size_override("font_size", 30)
 		lbl.modulate = Color(1, 1, 1, 0.8)
 		box.add_child(lbl)
 	return card

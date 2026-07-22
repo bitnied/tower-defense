@@ -15,7 +15,7 @@ script = ExtResource("1_7egy2")
 
 [node name="CenterPanel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(400, 200)
+custom_minimum_size = Vector2(900, 520)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -23,71 +23,80 @@ size_flags_vertical = 4
 [node name="Margin" type="MarginContainer" parent="CenterPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 22
-theme_override_constants/margin_top = 16
+theme_override_constants/margin_top = 18
 theme_override_constants/margin_right = 22
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_bottom = 18
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterPanel/Margin"]
+[node name="HBox" type="HBoxContainer" parent="CenterPanel/Margin"]
 layout_mode = 2
-size_flags_vertical = 4
-theme_override_constants/separation = 10
+theme_override_constants/separation = 26
 
-[node name="TitleLabel" type="Label" parent="CenterPanel/Margin/VBoxContainer"]
-unique_name_in_owner = true
+[node name="Photo" type="TextureRect" parent="CenterPanel/Margin/HBox"]
+custom_minimum_size = Vector2(380, 476)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Game Over"
-horizontal_alignment = 1
-
-[node name="Photo" type="TextureRect" parent="CenterPanel/Margin/VBoxContainer"]
-custom_minimum_size = Vector2(216, 270)
-layout_mode = 2
+size_flags_vertical = 3
 expand_mode = 1
 stretch_mode = 5
 texture = ExtResource("2_photo")
 
-[node name="MsgLabel" type="Label" parent="CenterPanel/Margin/VBoxContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(340, 0)
+[node name="RightBox" type="VBoxContainer" parent="CenterPanel/Margin/HBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 19
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="CenterPanel/Margin/HBox/RightBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 52
+text = "Game Over"
+horizontal_alignment = 1
+
+[node name="MsgLabel" type="Label" parent="CenterPanel/Margin/HBox/RightBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
 text = "Tente de novo!"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="HSeparator" type="HSeparator" parent="CenterPanel/Margin/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="CenterPanel/Margin/HBox/RightBox"]
 layout_mode = 2
 
-[node name="SessionLabel" type="Label" parent="CenterPanel/Margin/VBoxContainer"]
+[node name="SessionLabel" type="Label" parent="CenterPanel/Margin/HBox/RightBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 17
+theme_override_font_sizes/font_size = 30
 theme_override_colors/font_color = Color(1, 0.84, 0.5, 1)
 text = "+0 pontos de amor"
 horizontal_alignment = 1
 
-[node name="RetryButton" type="Button" parent="CenterPanel/Margin/VBoxContainer"]
-custom_minimum_size = Vector2(0, 54)
+[node name="Spacer" type="Control" parent="CenterPanel/Margin/HBox/RightBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+size_flags_vertical = 3
+
+[node name="RetryButton" type="Button" parent="CenterPanel/Margin/HBox/RightBox"]
+custom_minimum_size = Vector2(0, 88)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
 text = "Tentar de novo"
 
-[node name="Row" type="HBoxContainer" parent="CenterPanel/Margin/VBoxContainer"]
+[node name="Row" type="HBoxContainer" parent="CenterPanel/Margin/HBox/RightBox"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
 
-[node name="GalleryButton" type="Button" parent="CenterPanel/Margin/VBoxContainer/Row"]
-custom_minimum_size = Vector2(0, 46)
+[node name="GalleryButton" type="Button" parent="CenterPanel/Margin/HBox/RightBox/Row"]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Galeria"
 
-[node name="MainMenuButton" type="Button" parent="CenterPanel/Margin/VBoxContainer/Row"]
-custom_minimum_size = Vector2(0, 46)
+[node name="MainMenuButton" type="Button" parent="CenterPanel/Margin/HBox/RightBox/Row"]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Menu"
 
-[connection signal="pressed" from="CenterPanel/Margin/VBoxContainer/RetryButton" to="." method="_on_retry_button_pressed"]
-[connection signal="pressed" from="CenterPanel/Margin/VBoxContainer/Row/GalleryButton" to="." method="_on_gallery_button_pressed"]
-[connection signal="pressed" from="CenterPanel/Margin/VBoxContainer/Row/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="CenterPanel/Margin/HBox/RightBox/RetryButton" to="." method="_on_retry_button_pressed"]
+[connection signal="pressed" from="CenterPanel/Margin/HBox/RightBox/Row/GalleryButton" to="." method="_on_gallery_button_pressed"]
+[connection signal="pressed" from="CenterPanel/Margin/HBox/RightBox/Row/MainMenuButton" to="." method="_on_main_menu_button_pressed"]

@@ -286,7 +286,7 @@ func spawn_reward_label():
 	var label := Label.new()
 	label.text = "+%d" % int(goldYield)
 	label.z_index = 5
-	label.add_theme_font_size_override("font_size", 20)
+	label.add_theme_font_size_override("font_size", 28)
 	label.add_theme_color_override("font_color", Color("d63c6b"))
 	label.add_theme_color_override("font_outline_color", Color.WHITE)
 	label.add_theme_constant_override("outline_size", 6)

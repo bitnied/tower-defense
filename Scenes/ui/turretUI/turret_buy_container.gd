@@ -5,7 +5,7 @@ extends PanelContainer
 var turret_type := "":
 	set(value):
 		turret_type = value
-		$VBox/TextureRect.turretType = value
+		$HBox/TextureRect.turretType = value
 		refresh_icon()
 
 var can_purchase := false:
@@ -20,13 +20,13 @@ func _ready():
 func _on_gold_changed(_g):
 	# o preço sobe a cada cópia construída
 	if turret_type != "" and not Globals.is_defender_locked(turret_type):
-		$VBox/CostRow/CostLabel.text = str(Globals.defender_cost(turret_type))
+		$HBox/CostRow/CostLabel.text = str(Globals.defender_cost(turret_type))
 
 # o card inteiro serve de alça de arrasto (não só o retrato)
 func _gui_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT \
 			and event.pressed:
-		var drag: TextureRect = $VBox/TextureRect
+		var drag: TextureRect = $HBox/TextureRect
 		if drag.check_can_purchase(Globals.currentMap.gold):
 			drag.start_grab()
 
@@ -38,15 +38,21 @@ func refresh_icon():
 		$LockIcon.visible = true
 		if cfg.get("mystery", false):
 			# surpresa não revelada (Elisa): só um "?"
-			$VBox/TextureRect.texture = load(Data.locked_icon)
-			$VBox/CostRow/CostLabel.text = "?"
+			$HBox/TextureRect.texture = load(Data.locked_icon)
+			$HBox/CostRow/CoinIcon.visible = true
+			$HBox/CostRow/CostLabel.add_theme_font_size_override("font_size", 38)
+			$HBox/CostRow/CostLabel.text = "?"
 		else:
 			# reforço a caminho: retrato + onda em que chega
-			$VBox/TextureRect.texture = Globals.defender_icon(turret_type)
-			$VBox/CostRow/CostLabel.text = "Onda %d" % int(cfg.get("unlock_wave", 1))
+			$HBox/TextureRect.texture = Globals.defender_icon(turret_type)
+			$HBox/CostRow/CoinIcon.visible = false
+			$HBox/CostRow/CostLabel.add_theme_font_size_override("font_size", 28)
+			$HBox/CostRow/CostLabel.text = "Onda %d" % int(cfg.get("unlock_wave", 1))
 	else:
-		$VBox/TextureRect.texture = Globals.defender_icon(turret_type)
-		$VBox/CostRow/CostLabel.text = str(Globals.defender_cost(turret_type))
+		$HBox/TextureRect.texture = Globals.defender_icon(turret_type)
+		$HBox/CostRow/CoinIcon.visible = true
+		$HBox/CostRow/CostLabel.add_theme_font_size_override("font_size", 38)
+		$HBox/CostRow/CostLabel.text = str(Globals.defender_cost(turret_type))
 		$LockIcon.visible = false
 
 func _on_defender_unlocked(key):
@@ -54,7 +60,7 @@ func _on_defender_unlocked(key):
 		return
 	refresh_icon()
 	if is_instance_valid(Globals.currentMap):
-		$VBox/TextureRect.check_can_purchase(Globals.currentMap.gold)
+		$HBox/TextureRect.check_can_purchase(Globals.currentMap.gold)
 	unlock_pop()
 
 func unlock_pop():

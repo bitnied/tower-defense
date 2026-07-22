@@ -49,8 +49,10 @@ func end_grab():
 	# toque sem arrastar (ou soltar em cima do painel) = cancela,
 	# sem gastar nada
 	var moved: float = get_global_mouse_position().distance_to(grab_start)
-	var over_panel: bool = get_global_mouse_position().x \
-		> get_viewport_rect().size.x - 158.0
+	var side := find_parent("SidePanel") as Control
+	var panel_left: float = side.get_global_rect().position.x if side \
+		else get_viewport_rect().size.x - 264.0
+	var over_panel: bool = get_global_mouse_position().x > panel_left
 	if moved < 24.0 or over_panel:
 		ph.queue_free()
 		return

@@ -6,10 +6,10 @@
 [ext_resource type="Texture2D" path="res://Assets/ui/icon_lock.png" id="4_lock"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
 bg_color = Color(0.658824, 0.352941, 0.439216, 1)
 border_width_left = 3
 border_width_top = 3
@@ -22,39 +22,42 @@ corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
 [node name="TurretBuyContainer" type="PanelContainer"]
-custom_minimum_size = Vector2(120, 104)
+custom_minimum_size = Vector2(240, 104)
 theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 script = ExtResource("1_7686v")
 
-[node name="VBox" type="VBoxContainer" parent="."]
+[node name="HBox" type="HBoxContainer" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 10
 
-[node name="TextureRect" type="TextureRect" parent="VBox"]
+[node name="TextureRect" type="TextureRect" parent="HBox"]
 texture_filter = 1
-custom_minimum_size = Vector2(64, 64)
+custom_minimum_size = Vector2(84, 84)
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_vertical = 4
 mouse_filter = 0
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("2_8yuvs")
 
-[node name="CostRow" type="HBoxContainer" parent="VBox"]
+[node name="CostRow" type="HBoxContainer" parent="HBox"]
 layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/separation = 4
+size_flags_horizontal = 3
+size_flags_vertical = 4
+alignment = 1
+theme_override_constants/separation = 8
 
-[node name="CoinIcon" type="TextureRect" parent="VBox/CostRow"]
-custom_minimum_size = Vector2(18, 18)
+[node name="CoinIcon" type="TextureRect" parent="HBox/CostRow"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
+size_flags_vertical = 4
 expand_mode = 1
 stretch_mode = 5
 texture = ExtResource("3_coin")
 
-[node name="CostLabel" type="Label" parent="VBox/CostRow"]
+[node name="CostLabel" type="Label" parent="HBox/CostRow"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 38
 text = "30"
 
 [node name="CantBuy" type="ColorRect" parent="."]
@@ -64,9 +67,9 @@ color = Color(0.15, 0.1, 0.14, 0.5)
 
 [node name="LockIcon" type="TextureRect" parent="."]
 visible = false
-custom_minimum_size = Vector2(30, 30)
+custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 0
 size_flags_vertical = 4
 expand_mode = 1
 stretch_mode = 5
