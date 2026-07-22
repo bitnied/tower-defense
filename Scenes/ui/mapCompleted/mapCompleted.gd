@@ -29,11 +29,17 @@ func _ready():
 	animate_appear()
 
 func animate_appear():
+	# espera o layout real e, se o painel for maior que a tela
+	# (título longo, janela baixa), encolhe até caber inteiro
+	await get_tree().process_frame
+	var vs: Vector2 = get_viewport_rect().size
+	var fit: float = minf(1.0,
+		minf(vs.x / $CenterPanel.size.x, vs.y / $CenterPanel.size.y))
+	$CenterPanel.pivot_offset = $CenterPanel.size / 2.0
+	$CenterPanel.scale = Vector2(0.1, 0.1)
 	var tween = create_tween()
-	tween.tween_property($CenterPanel, "pivot_offset", Vector2(100,100), 0.05)
-	tween.tween_property($CenterPanel, "scale", Vector2(0.1,0.1), 0.05)
 	tween.tween_property(self, "modulate", Color.WHITE, 0.3)
-	tween.tween_property($CenterPanel, "scale", Vector2(1,1), 0.5)
+	tween.tween_property($CenterPanel, "scale", Vector2(fit, fit), 0.5)
 
 func _on_retry_button_pressed():
 	Globals.restart_current_level()

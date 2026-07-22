@@ -15,7 +15,7 @@ script = ExtResource("1_7egy2")
 
 [node name="CenterPanel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(900, 520)
+custom_minimum_size = Vector2(980, 520)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -42,12 +42,12 @@ texture = ExtResource("2_photo")
 [node name="RightBox" type="VBoxContainer" parent="CenterPanel/Margin/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 10
 
 [node name="TitleLabel" type="Label" parent="CenterPanel/Margin/HBox/RightBox"]
 unique_name_in_owner = true
 layout_mode = 2
-custom_minimum_size = Vector2(400, 0)
+custom_minimum_size = Vector2(480, 0)
 theme_override_font_sizes/font_size = 46
 autowrap_mode = 2
 text = "Game Over"
@@ -55,7 +55,7 @@ horizontal_alignment = 1
 
 [node name="MsgLabel" type="Label" parent="CenterPanel/Margin/HBox/RightBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(400, 0)
+custom_minimum_size = Vector2(480, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "Tente de novo!"
@@ -78,7 +78,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="RetryButton" type="Button" parent="CenterPanel/Margin/HBox/RightBox"]
-custom_minimum_size = Vector2(0, 88)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Tentar de novo"
@@ -88,13 +88,13 @@ layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="GalleryButton" type="Button" parent="CenterPanel/Margin/HBox/RightBox/Row"]
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Galeria"
 
 [node name="MainMenuButton" type="Button" parent="CenterPanel/Margin/HBox/RightBox/Row"]
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Menu"
