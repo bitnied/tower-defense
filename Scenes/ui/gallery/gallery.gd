@@ -1,14 +1,14 @@
 extends Control
 # Galeria do Amor: imagens (e um vídeo) da família, desbloqueadas com
-# Pontos de Amor acumulados entre partidas. No viewer dá para navegar
-# com setas entre os itens desbloqueados. Segredo de teste: E E E.
+# Pontos de Amor acumulados entre partidas. Tocar numa foto abre direto
+# em tela cheia; swipe com "snap" navega entre elas. Segredo: E E E.
 
 # paisagem: 4 colunas de 200x266 | retrato (celular): 3 colunas maiores
 var card_w := 200.0
 var card_h := 266.0
 
 var cards: Array[PanelContainer] = []
-var current := -1        # índice do item aberto no viewer
+var current := -1        # índice do item aberto em tela cheia
 var secret_taps: Array[float] = []
 # aberta por cima do jogo pausado (via menu de pause)?
 var overlay_mode := false
@@ -56,7 +56,6 @@ func _layout_grid():
 	card_h = 400.0 if portrait else 266.0
 	for card in cards:
 		card.custom_minimum_size = Vector2(card_w, card_h)
-	_layout_viewer_buttons()
 	_layout_full()
 
 func _is_portrait() -> bool:
@@ -74,54 +73,31 @@ func _place(c: Control, ax: float, ay: float, x0: float, y0: float, x1: float, y
 	c.offset_right = x1
 	c.offset_bottom = y1
 
-# Botões do viewer nunca cobrem a foto:
-# desktop (paisagem) ficam ao lado; celular (retrato) acima/abaixo.
-func _layout_viewer_buttons():
-	if _is_portrait():
-		# tela cheia embaixo da foto; Assistir (vídeo) acima
-		_place(%FullButton, 0.5, 1.0, -39, 14, 39, 82)
-		_place(%WatchButton, 0.5, 0.0, -120, -80, 120, -14)
-	else:
-		# tela cheia à direita (abaixo do X); Assistir à esquerda no topo
-		_place(%FullButton, 1.0, 0.0, 12, 84, 90, 152)
-		_place(%WatchButton, 0.0, 0.0, -214, 0, -14, 56)
-
-# Tela cheia: a imagem ocupa o miolo; controles nas bordas livres.
+# Tela cheia: a imagem ocupa o miolo; controles nas bordas livres
+# (X no topo-direito é fixo na cena; setas mudam com a orientação).
 func _layout_full():
-	var img: TextureRect = %FullImage
 	if _is_portrait():
-		img.anchor_left = 0.0
-		img.anchor_top = 0.0
-		img.anchor_right = 1.0
-		img.anchor_bottom = 1.0
-		img.offset_left = 10
-		img.offset_top = 116
-		img.offset_right = -10
-		img.offset_bottom = -168
-		_place(%MinimizeButton, 0.5, 0.0, -42, 18, 42, 102)
+		img_base = [10.0, 116.0, -10.0, -168.0]
 		_place(%FullPrev, 0.5, 1.0, -168, -150, -48, -38)
 		_place(%FullNext, 0.5, 1.0, 48, -150, 168, -38)
 	else:
-		img.anchor_left = 0.0
-		img.anchor_top = 0.0
-		img.anchor_right = 1.0
-		img.anchor_bottom = 1.0
-		img.offset_left = 136
-		img.offset_top = 10
-		img.offset_right = -136
-		img.offset_bottom = -10
-		_place(%MinimizeButton, 1.0, 0.0, -110, 18, -26, 102)
+		img_base = [136.0, 10.0, -136.0, -10.0]
 		_place(%FullPrev, 0.0, 0.5, 14, -56, 122, 56)
 		_place(%FullNext, 1.0, 0.5, -122, -56, -14, 56)
+	_apply_swipe_visual(swipe_offset)
 
 func _make_card(idx: int, entry: Dictionary, is_new: bool) -> PanelContainer:
 	var card := PanelContainer.new()
 	card.custom_minimum_size = Vector2(card_w, card_h)
+	# PASS: o toque também chega ao ScrollContainer (senão a rolagem
+	# por arrasto trava no celular)
+	card.mouse_filter = Control.MOUSE_FILTER_PASS
 	if Progress.is_unlocked(idx):
 		var tex := TextureRect.new()
 		tex.texture = load("res://Assets/gallery/" + _thumb_of(entry))
 		tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		card.add_child(tex)
 		if entry["kind"] == "video":
 			var play := Label.new()
@@ -135,19 +111,18 @@ func _make_card(idx: int, entry: Dictionary, is_new: bool) -> PanelContainer:
 			card.add_child(play)
 		if is_new:
 			tex.modulate = Color(0.25, 0.18, 0.22)
-		card.gui_input.connect(func(event):
-			if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT \
-					and event.pressed) or (event is InputEventScreenTouch and event.pressed):
-				_open_viewer(idx))
+		card.gui_input.connect(_card_input.bind(card, idx))
 	else:
 		var box := VBoxContainer.new()
 		box.alignment = BoxContainer.ALIGNMENT_CENTER
+		box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		card.add_child(box)
 		var lock := TextureRect.new()
 		lock.texture = load("res://Assets/ui/icon_lock.png")
 		lock.custom_minimum_size = Vector2(56, 56)
 		lock.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		lock.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		lock.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		box.add_child(lock)
 		var lbl := Label.new()
 		lbl.text = "%d pts" % Progress.threshold(idx + 1)
@@ -156,6 +131,17 @@ func _make_card(idx: int, entry: Dictionary, is_new: bool) -> PanelContainer:
 		lbl.modulate = Color(1, 1, 1, 0.8)
 		box.add_child(lbl)
 	return card
+
+# toque curto abre; arrasto (rolagem da lista) não abre nada
+func _card_input(event, card: PanelContainer, idx: int):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			card.set_meta("press_pos", event.position)
+		elif card.has_meta("press_pos"):
+			var moved: float = (event.position - card.get_meta("press_pos")).length()
+			card.remove_meta("press_pos")
+			if moved < 30.0:
+				_open_full(idx)
 
 func _thumb_of(entry: Dictionary) -> String:
 	return entry["thumb"] if entry["kind"] == "video" else entry["file"]
@@ -177,26 +163,32 @@ func _animate_reveals(new_ones: Array):
 		tween.tween_property(card, "scale", Vector2(1, 1), 0.25)
 		delay += 0.4
 
-# ---------- viewer com navegação ----------
-func _open_viewer(idx: int):
+# ---------- tela cheia ----------
+var img_base := [0.0, 0.0, 0.0, 0.0]   # offsets base da imagem (l, t, r, b)
+var swipe_offset := 0.0
+var drag_active := false
+var drag_from := Vector2.ZERO
+var swipe_tween: Tween
+
+func _open_full(idx: int):
 	Sfx.play("click", -10.0)
 	current = idx
-	_refresh_viewer()
-	%Viewer.visible = true
+	swipe_offset = 0.0
+	_refresh_full()
+	_apply_swipe_visual(0.0)
+	%FullViewer.visible = true
 
-func _refresh_viewer():
+func _on_close_full_pressed():
+	Sfx.play("click", -10.0)
+	%FullViewer.visible = false
+
+func _refresh_full():
 	var entry: Dictionary = Progress.images()[current]
-	var tex := load("res://Assets/gallery/" + _thumb_of(entry))
-	%BigImage.texture = tex
-	%FullImage.texture = tex
+	%FullImage.texture = load("res://Assets/gallery/" + _thumb_of(entry))
 	%WatchButton.visible = entry["kind"] == "video"
-	# invisível (mas ocupando o espaço) para a imagem não pular
+	# esmaecida (mas ocupando o espaço) para os botões não pularem
 	var has_prev := _step_from(current, -1) != -1
 	var has_next := _step_from(current, 1) != -1
-	%PrevButton.disabled = not has_prev
-	%PrevButton.modulate.a = 1.0 if has_prev else 0.0
-	%NextButton.disabled = not has_next
-	%NextButton.modulate.a = 1.0 if has_next else 0.0
 	%FullPrev.disabled = not has_prev
 	%FullPrev.modulate.a = 1.0 if has_prev else 0.35
 	%FullNext.disabled = not has_next
@@ -212,60 +204,98 @@ func _step_from(idx: int, dir: int) -> int:
 		i += dir
 	return -1
 
+# setas usam a mesma animação de snap do swipe
 func _on_prev_pressed():
-	var i := _step_from(current, -1)
-	if i != -1:
-		Sfx.play("click", -12.0)
-		current = i
-		_refresh_viewer()
+	_snap_advance(-1)
 
 func _on_next_pressed():
-	var i := _step_from(current, 1)
-	if i != -1:
-		Sfx.play("click", -12.0)
-		current = i
-		_refresh_viewer()
+	_snap_advance(1)
 
-func _on_viewer_close():
-	%Viewer.visible = false
+func _snap_advance(dir: int):
+	if swipe_tween and swipe_tween.is_running():
+		return
+	if _step_from(current, dir) == -1:
+		return
+	Sfx.play("click", -12.0)
+	_animate_snap(dir)
 
-# ---------- tela cheia ----------
-var swipe_start := Vector2.ZERO
+# ---------- swipe orgânico com snap ----------
+func _slide_w() -> float:
+	return get_viewport_rect().size.x
 
-func _on_full_button_pressed():
-	_open_fullscreen()
-
-# tocar na imagem grande também abre a tela cheia
-func _on_big_image_gui_input(event):
-	if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT \
-			and event.pressed) or (event is InputEventScreenTouch and event.pressed):
-		_open_fullscreen()
-
-func _open_fullscreen():
-	Sfx.play("click", -10.0)
-	_refresh_viewer()
-	%Viewer.visible = false
-	%FullViewer.visible = true
-
-func _on_minimize_pressed():
-	Sfx.play("click", -10.0)
-	# volta para a visualização anterior (viewer com moldura)
-	%FullViewer.visible = false
-	%Viewer.visible = true
-
-# swipe esquerda/direita navega entre as fotos
-# (no navegador o toque vira evento de mouse, então basta tratar mouse)
 func _on_full_viewer_gui_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
-			swipe_start = event.position
-		else:
-			var d: Vector2 = event.position - swipe_start
-			if absf(d.x) > 70.0 and absf(d.x) > absf(d.y):
-				if d.x < 0:
-					_on_next_pressed()
-				else:
-					_on_prev_pressed()
+			if swipe_tween and swipe_tween.is_running():
+				return
+			drag_active = true
+			drag_from = event.position
+		elif drag_active:
+			drag_active = false
+			_end_swipe(event.position.x - drag_from.x)
+	elif event is InputEventMouseMotion and drag_active:
+		_drag_swipe(event.position.x - drag_from.x)
+
+# a foto segue o dedo; na borda (sem vizinha) resiste como elástico
+func _drag_swipe(dx: float):
+	var has_neighbor := _step_from(current, 1 if dx < 0 else -1) != -1
+	_apply_swipe_visual(dx if has_neighbor else dx * 0.3)
+
+func _end_swipe(dx: float):
+	var th := minf(150.0, _slide_w() * 0.18)
+	var dir := 0
+	if dx < -th and _step_from(current, 1) != -1:
+		dir = 1
+	elif dx > th and _step_from(current, -1) != -1:
+		dir = -1
+	if dir == 0:
+		_animate_back()
+	else:
+		Sfx.play("click", -12.0)
+		_animate_snap(dir)
+
+func _animate_back():
+	swipe_tween = create_tween()
+	swipe_tween.tween_method(_apply_swipe_visual, swipe_offset, 0.0, 0.2) \
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	swipe_tween.tween_callback(_refresh_full)
+
+func _animate_snap(dir: int):
+	var to := -_slide_w() if dir == 1 else _slide_w()
+	swipe_tween = create_tween()
+	swipe_tween.tween_method(_apply_swipe_visual, swipe_offset, to, 0.24) \
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	swipe_tween.tween_callback(func():
+		current = _step_from(current, dir)
+		_refresh_full()
+		_apply_swipe_visual(0.0))
+
+# aplica o deslocamento: a foto atual desliza e a vizinha entra do lado
+func _apply_swipe_visual(off: float):
+	swipe_offset = off
+	var img: TextureRect = %FullImage
+	img.offset_left = img_base[0] + off
+	img.offset_top = img_base[1]
+	img.offset_right = img_base[2] + off
+	img.offset_bottom = img_base[3]
+	var side: TextureRect = %FullImageSide
+	if absf(off) < 1.0:
+		side.visible = false
+		return
+	# botão de play não acompanha o slide: some durante o gesto
+	%WatchButton.visible = false
+	var target := _step_from(current, 1) if off < 0 else _step_from(current, -1)
+	if target == -1:
+		side.visible = false
+		return
+	var entry: Dictionary = Progress.images()[target]
+	side.texture = load("res://Assets/gallery/" + _thumb_of(entry))
+	var shift := off + (_slide_w() if off < 0 else -_slide_w())
+	side.offset_left = img_base[0] + shift
+	side.offset_top = img_base[1]
+	side.offset_right = img_base[2] + shift
+	side.offset_bottom = img_base[3]
+	side.visible = true
 
 # ---------- vídeo (player HTML5 nativo por cima do canvas) ----------
 func _on_watch_pressed():

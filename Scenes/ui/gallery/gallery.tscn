@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://Scenes/ui/gallery/gallery.gd" id="1_gal"]
-[ext_resource type="Texture2D" path="res://Assets/ui/icon_fullscreen.png" id="2_fsic"]
-[ext_resource type="Texture2D" path="res://Assets/ui/icon_minimize.png" id="3_mnic"]
+[ext_resource type="Texture2D" path="res://Assets/ui/icon_close.png" id="2_clic"]
 
 [node name="Gallery" type="Control"]
 process_mode = 3
@@ -73,102 +72,15 @@ horizontal_scroll_mode = 0
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 1
 
 [node name="Grid" type="GridContainer" parent="Scroll/CenterWrap"]
 unique_name_in_owner = true
 layout_mode = 2
+mouse_filter = 1
 columns = 4
 theme_override_constants/h_separation = 14
 theme_override_constants/v_separation = 14
-
-[node name="Viewer" type="Control" parent="."]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Dim" type="ColorRect" parent="Viewer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.08, 0.02, 0.05, 0.82)
-
-[node name="BigCenter" type="CenterContainer" parent="Viewer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Row" type="HBoxContainer" parent="Viewer/BigCenter"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="PrevButton" type="Button" parent="Viewer/BigCenter/Row"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(92, 108)
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_font_sizes/font_size = 52
-text = "<"
-
-[node name="ImgWrap" type="Control" parent="Viewer/BigCenter/Row"]
-custom_minimum_size = Vector2(400, 534)
-layout_mode = 2
-
-[node name="BigImage" type="TextureRect" parent="Viewer/BigCenter/Row/ImgWrap"]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="CloseButton" type="Button" parent="Viewer/BigCenter/Row/ImgWrap"]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = 12.0
-offset_top = -10.0
-offset_right = 80.0
-offset_bottom = 58.0
-grow_horizontal = 0
-theme_override_font_sizes/font_size = 34
-text = "X"
-
-[node name="WatchButton" type="Button" parent="Viewer/BigCenter/Row/ImgWrap"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-theme_override_font_sizes/font_size = 30
-text = "Assistir"
-
-[node name="FullButton" type="Button" parent="Viewer/BigCenter/Row/ImgWrap"]
-unique_name_in_owner = true
-layout_mode = 1
-icon = ExtResource("2_fsic")
-icon_alignment = 1
-expand_icon = true
-
-[node name="NextButton" type="Button" parent="Viewer/BigCenter/Row"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(92, 108)
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_font_sizes/font_size = 52
-text = ">"
 
 [node name="FullViewer" type="Control" parent="."]
 unique_name_in_owner = true
@@ -190,6 +102,19 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.05, 0.01, 0.03, 1)
 
+[node name="FullImageSide" type="TextureRect" parent="FullViewer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
 [node name="FullImage" type="TextureRect" parent="FullViewer"]
 unique_name_in_owner = true
 layout_mode = 1
@@ -202,10 +127,36 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="MinimizeButton" type="Button" parent="FullViewer"]
+[node name="WatchButton" type="Button" parent="FullViewer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = -70.0
+offset_right = 70.0
+offset_bottom = 70.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 60
+text = "▶"
+
+[node name="CloseFull" type="Button" parent="FullViewer"]
 unique_name_in_owner = true
 layout_mode = 1
-icon = ExtResource("3_mnic")
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -104.0
+offset_top = 18.0
+offset_right = -20.0
+offset_bottom = 102.0
+grow_horizontal = 0
+icon = ExtResource("2_clic")
 icon_alignment = 1
 expand_icon = true
 
@@ -222,13 +173,8 @@ theme_override_font_sizes/font_size = 52
 text = ">"
 
 [connection signal="pressed" from="Top/Bar/BackButton" to="." method="_on_back_pressed"]
-[connection signal="gui_input" from="Viewer/BigCenter/Row/ImgWrap/BigImage" to="." method="_on_big_image_gui_input"]
-[connection signal="pressed" from="Viewer/BigCenter/Row/ImgWrap/FullButton" to="." method="_on_full_button_pressed"]
 [connection signal="gui_input" from="FullViewer" to="." method="_on_full_viewer_gui_input"]
-[connection signal="pressed" from="FullViewer/MinimizeButton" to="." method="_on_minimize_pressed"]
+[connection signal="pressed" from="FullViewer/WatchButton" to="." method="_on_watch_pressed"]
+[connection signal="pressed" from="FullViewer/CloseFull" to="." method="_on_close_full_pressed"]
 [connection signal="pressed" from="FullViewer/FullPrev" to="." method="_on_prev_pressed"]
 [connection signal="pressed" from="FullViewer/FullNext" to="." method="_on_next_pressed"]
-[connection signal="pressed" from="Viewer/BigCenter/Row/ImgWrap/CloseButton" to="." method="_on_viewer_close"]
-[connection signal="pressed" from="Viewer/BigCenter/Row/PrevButton" to="." method="_on_prev_pressed"]
-[connection signal="pressed" from="Viewer/BigCenter/Row/NextButton" to="." method="_on_next_pressed"]
-[connection signal="pressed" from="Viewer/BigCenter/Row/ImgWrap/WatchButton" to="." method="_on_watch_pressed"]
