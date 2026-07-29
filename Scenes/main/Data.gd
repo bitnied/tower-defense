@@ -296,18 +296,25 @@ const difficulties := {
 		"escort": 14,
 		"spawn_wait_mult": 1.0,
 	},
+	# ATENÇÃO ao mexer no "increase": ele é exponencial (^onda) e a
+	# quantidade de corações puxa TUDO junto (hp da onda, ritmo de
+	# spawn, corações na tela). Já o ouro que o jogador ganha vira
+	# poder de fogo de forma LOGARÍTMICA (cada cópia do mesmo
+	# defensor custa 45% a mais), então +30% de inimigos NÃO se paga
+	# com +30% de ouro. 1.28 fazia a onda 9 ter 55 corações (o dobro
+	# do HP do Médio) com só +13% de defesa comprável = invencível.
 	"vida_real": {
 		"name": "Vida Real",
 		"subtitle": "Tipo criar dois filhos",
-		"baseHp": 7,
-		"startingGold": 45,
-		"increase": 1.28,
-		"hp_per_wave": 0.11,
-		"hp_mult": 1.2,
-		"ghost_waves": [3, 5, 7, 9, 10],
-		"meteor_waves": [4, 6, 8, 10],
+		"baseHp": 8,
+		"startingGold": 50,
+		"increase": 1.24,
+		"hp_per_wave": 0.095,
+		"hp_mult": 1.16,
+		"ghost_waves": [4, 6, 8, 10],
+		"meteor_waves": [5, 7, 9, 10],
 		"escort": 16,
-		"spawn_wait_mult": 0.85,
+		"spawn_wait_mult": 0.92,
 	},
 }
 
