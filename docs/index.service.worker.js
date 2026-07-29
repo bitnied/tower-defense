@@ -4,7 +4,7 @@
 // Incrementing CACHE_VERSION will kick off the install event and force
 // previously cached resources to be updated from the network.
 /** @type {string} */
-const CACHE_VERSION = '1785292957|1384143';
+const CACHE_VERSION = '1785294828|1409405';
 /** @type {string} */
 const CACHE_PREFIX = 'Elisa TD-sw-cache-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
