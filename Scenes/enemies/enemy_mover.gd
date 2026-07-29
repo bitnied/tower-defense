@@ -42,6 +42,9 @@ func apply_slow(factor: float, duration: float):
 # estrada, sem invadir as casas.
 const RIDE_OFFSET := -14.0        # braço de cima
 const RIDE_OFFSET_BOTTOM := 24.0  # braço de baixo (eixo invertido)
+# o gigante (48px × 2.76 ≈ 132px) precisa subir mais no braço de cima,
+# senão a barriga dele cobre o telhado das casas do centro do cenário
+const RIDE_OFFSET_BOSS := -44.0
 var ride := RIDE_OFFSET
 var bob := 0.0  # pulinho da animação de cura (soma ao ride)
 
@@ -50,7 +53,8 @@ var guardian_ref: Node2D
 @onready var spawner := get_parent() as EnemyPath
 func _ready():
 	add_to_group("enemy")
-	v_offset = RIDE_OFFSET
+	ride = RIDE_OFFSET_BOSS if is_boss else RIDE_OFFSET
+	v_offset = ride
 	guardian_ref = Globals.currentMap.get_node_or_null("Mamae")
 
 func _process(delta):
@@ -78,8 +82,9 @@ func _process(delta):
 		var flipped: bool = abs(angle) > 90
 		$Sprite2D.flip_v = flipped
 		# desliza suavemente para o offset do braço atual da estrada
+		var top_ride: float = RIDE_OFFSET_BOSS if is_boss else RIDE_OFFSET
 		ride = move_toward(ride,
-			RIDE_OFFSET_BOTTOM if flipped else RIDE_OFFSET, 120.0 * delta)
+			RIDE_OFFSET_BOTTOM if flipped else top_ride, 120.0 * delta)
 		v_offset = ride + bob
 
 func finished_path():
@@ -244,7 +249,7 @@ func _land_impact(shadow: Sprite2D):
 	Globals.currentMap.move_child(crack, 1)
 	crack.global_position = $Sprite2D.global_position + Vector2(0, 14)
 	var crack_tw := crack.create_tween()
-	crack_tw.tween_interval(5.0)
+	crack_tw.tween_interval(10.0)
 	crack_tw.tween_property(crack, "modulate:a", 0.0, 0.8)
 	crack_tw.tween_callback(crack.queue_free)
 	var dust := CPUParticles2D.new()

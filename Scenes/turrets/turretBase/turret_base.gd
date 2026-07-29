@@ -198,11 +198,20 @@ func close_details_pane():
 	Globals.hud.open_details_pane.queue_free()
 	Globals.hud.open_details_pane = null
 
+# no celular UM toque chega duas vezes no mesmo frame (InputEventScreenTouch
+# real + InputEventMouseButton emulado); sem este guarda o painel abre e
+# fecha no mesmo instante e o "Melhorar" nunca fica acessível
+var _last_tap_frame := -1
+
 func _on_collision_area_input_event(_viewport, event, _shape_idx):
 	var tapped = (event is InputEventMouseButton \
 		and event.button_index == MOUSE_BUTTON_LEFT and event.pressed) \
 		or (event is InputEventScreenTouch and event.pressed)
 	if deployed and tapped:
+		var frame := Engine.get_process_frames()
+		if frame == _last_tap_frame:
+			return
+		_last_tap_frame = frame
 		if is_instance_valid(Globals.hud.open_details_pane):
 			if Globals.hud.open_details_pane.turret == self:
 				close_details_pane()
