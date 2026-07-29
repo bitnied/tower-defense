@@ -21,8 +21,14 @@ Sempre que alterar o jogo:
 
 ```sh
 "/Applications/Godot.app/Contents/MacOS/Godot" --headless --export-release "Web" docs/index.html
+sed -i '' 's/"orientation":"landscape"/"orientation":"landscape-primary"/' docs/index.manifest.json
 git add -A && git commit -m "Update web build" && git push
 ```
+
+O `sed` força `landscape-primary` no manifest do PWA (o Godot só gera
+"landscape"): no Android instalado, o app já abre deitado com a câmera
+à esquerda. O iPhone não tem API de travar orientação — lá o próprio
+jogo pede para virar o aparelho quando o notch está do lado errado.
 
 ## Notas técnicas
 

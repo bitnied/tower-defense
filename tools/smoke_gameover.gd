@@ -53,5 +53,31 @@ func _run() -> void:
 			panel._on_retry_button_pressed()
 			await process_frame
 			check(not paused, "retry deveria despausar a árvore")
+
+	# ---- meteoro: queda, rachadura no chão e pausa dramática ----
+	# (roda no mapa recriado pelo retry, com a árvore despausada)
+	var map2 = globals.currentMap
+	if map2 != null:
+		var spawner = map2.get_node("PathSpawner")
+		spawner.spawn_meteor()
+		var meteor = null
+		for c in spawner.get_children():
+			if c is PathFollow2D:
+				meteor = c
+		check(meteor != null, "meteoro não spawnou")
+		if meteor != null:
+			# queda 0.85s + squash ~0.3s; em 1.6s ele está na pausa de 1s
+			await create_timer(1.6).timeout
+			var ground = map2.get_child(1)
+			var crack_ok: bool = ground is Sprite2D and ground.texture != null \
+				and String(ground.texture.resource_path).contains("crack")
+			check(crack_ok, "rachadura deveria estar logo acima do Background")
+			check(meteor.state == meteor.State.stopped,
+				"meteoro deveria ficar 1s parado na cratera")
+			check(not meteor.get_node("Area/CollisionShape2D").disabled,
+				"meteoro deveria ser curável já na cratera")
+			await create_timer(1.2).timeout
+			check(meteor.state == meteor.State.walking,
+				"meteoro deveria voltar a andar após a pausa")
 	print("SMOKE_GAMEOVER: ", "OK" if fails == 0 else "FALHOU %d" % fails)
 	quit(0 if fails == 0 else 1)

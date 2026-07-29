@@ -124,6 +124,25 @@ addEventListener('DOMContentLoaded',function(){
 	upd();
 });
 </script>
+<script>
+addEventListener('DOMContentLoaded',function(){
+	// Trava a orientação em paisagem com a camera a esquerda onde a API
+	// existe (Android: PWA instalado ou fullscreen). No iPhone a API nao
+	// existe; la fica o aviso do jogo pedindo para virar o aparelho.
+	var lock=function(){
+		try{
+			if(screen.orientation&&screen.orientation.lock){
+				var p=screen.orientation.lock('landscape-primary');
+				if(p&&p.catch)p.catch(function(){});
+			}
+		}catch(e){}
+	};
+	var standalone=navigator.standalone||matchMedia('(display-mode: standalone),(display-mode: fullscreen)').matches;
+	if(standalone)lock();
+	document.addEventListener('fullscreenchange',function(){if(document.fullscreenElement)lock();});
+	document.addEventListener('webkitfullscreenchange',function(){if(document.webkitFullscreenElement)lock();});
+});
+</script>
 	</head>
 	<body>
 		<canvas id="canvas">
@@ -142,7 +161,7 @@ addEventListener('DOMContentLoaded',function(){
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":12006520,"index.wasm":37685705},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":12008056,"index.wasm":37685705},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 

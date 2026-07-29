@@ -239,10 +239,13 @@ func _land_impact(shadow: Sprite2D):
 	var crack := Sprite2D.new()
 	crack.texture = load("res://Assets/vfx/crack.png")
 	Globals.currentMap.add_child(crack)
+	# logo depois do Background: fica no chão, abaixo do coração e de
+	# qualquer outro sprite que passe por cima
+	Globals.currentMap.move_child(crack, 1)
 	crack.global_position = $Sprite2D.global_position + Vector2(0, 14)
 	var crack_tw := crack.create_tween()
-	crack_tw.tween_interval(2.2)
-	crack_tw.tween_property(crack, "modulate:a", 0.0, 1.0)
+	crack_tw.tween_interval(5.0)
+	crack_tw.tween_property(crack, "modulate:a", 0.0, 0.8)
 	crack_tw.tween_callback(crack.queue_free)
 	var dust := CPUParticles2D.new()
 	dust.one_shot = true
@@ -270,11 +273,17 @@ func _land_impact(shadow: Sprite2D):
 	tween.tween_property($Sprite2D, "scale", s0 * Vector2(1.35, 0.6), 0.09)
 	tween.tween_property($Sprite2D, "scale", s0, 0.22) \
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	# já pode ser curado enquanto "assenta" da queda
 	tween.tween_callback(func():
+		$Area/CollisionShape2D.set_deferred("disabled", false))
+	# fica um segundo parado na cratera antes de andar (drama!)
+	tween.tween_interval(1.0)
+	tween.tween_callback(func():
+		if is_destroyed:
+			return  # curado durante a pausa: não voltar a andar
 		$Sprite2D.top_level = false
 		$Sprite2D.position = Vector2.ZERO
 		$Sprite2D.rotation = 0.0
-		$Area/CollisionShape2D.set_deferred("disabled", false)
 		state = State.walking)
 
 # clímax do chefão: chuva de coraçõezinhos curados

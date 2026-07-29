@@ -3,7 +3,9 @@ extends Node2D
 # caminho mostrando por onde os corações vão entrar, e um anel
 # pulsa no destino (a mamãe). Somem quando a onda começa.
 
-const ENTRY := Vector2(-590, -65)
+# começa bem para dentro da tela: a borda esquerda fica atrás do
+# notch do celular (o caminho entra em x=-600, mas ali não dá pra ver)
+const ENTRY := Vector2(-430, -65)
 const ENTRY_DIR := Vector2.RIGHT
 const DEST := Vector2(-478, 96)
 const SPAN := 140.0
