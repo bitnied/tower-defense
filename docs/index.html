@@ -92,11 +92,36 @@ body {
 		</style>
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
+<link rel="manifest" href="index.manifest.json">
 <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover'>
 <meta name='apple-mobile-web-app-capable' content='yes'>
 <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent'>
 <meta name='mobile-web-app-capable' content='yes'>
-<style>html,body{touch-action:none;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}</style>
+<style>html,body{touch-action:none;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#canvas{position:fixed !important;top:0 !important;left:0 !important}
+#fs-btn{position:fixed;top:calc(6px + env(safe-area-inset-top));right:calc(6px + env(safe-area-inset-right));z-index:10;width:42px;height:42px;font-size:22px;line-height:1;color:#fff;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.4);border-radius:10px;cursor:pointer;display:none}</style>
+<script>
+addEventListener('DOMContentLoaded',function(){
+	var root=document.documentElement;
+	var standalone=navigator.standalone||matchMedia('(display-mode: standalone),(display-mode: fullscreen)').matches;
+	var canFs=root.requestFullscreen||root.webkitRequestFullscreen;
+	if(standalone||!canFs)return;
+	var b=document.createElement('button');
+	b.id='fs-btn';
+	b.textContent='⛶';
+	b.addEventListener('click',function(){
+		try{
+			var p=root.requestFullscreen?root.requestFullscreen({navigationUI:'hide'}):root.webkitRequestFullscreen();
+			if(p&&p.catch)p.catch(function(){});
+		}catch(e){}
+	});
+	document.body.appendChild(b);
+	var upd=function(){b.style.display=(document.fullscreenElement||document.webkitFullscreenElement)?'none':'block';};
+	document.addEventListener('fullscreenchange',upd);
+	document.addEventListener('webkitfullscreenchange',upd);
+	upd();
+});
+</script>
 	</head>
 	<body>
 		<canvas id="canvas">
@@ -115,7 +140,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":11882036,"index.wasm":37685705},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":11882036,"index.wasm":37685705},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 

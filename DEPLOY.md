@@ -30,6 +30,13 @@ git add -A && git commit -m "Update web build" && git push
   (que não envia headers COOP/COEP) e no Safari do iOS.
 - Renderer **GL Compatibility**: obrigatório para web e ideal para GPUs mobile.
 - PWA habilitado: no iPhone/iPad, use **Compartilhar → Adicionar à Tela de Início**
-  para jogar em tela cheia, sem a barra do Safari.
+  para jogar em tela cheia, sem a barra do Safari. No Chrome do iPhone o caminho é
+  o mesmo (menu Compartilhar → Adicionar à Tela de Início).
+- Botão ⛶ (canto superior direito): entra em fullscreen de verdade onde a API
+  existe — iPad, Android e desktop. No iPhone nenhum navegador tem essa API,
+  então o botão não aparece lá; o fullscreen no iPhone é só via Tela de Início.
+- O PWA usa service worker com cache: depois de publicar uma atualização, quem
+  joga pelo ícone da Tela de Início pode precisar fechar e abrir o app 2x para
+  receber a versão nova.
 - Stretch `canvas_items` + aspect `expand`: preenche qualquer proporção de tela
   (iPhone 11/13/17e ~19.5:9, iPad Air ~4.3:3) sem barras pretas.
