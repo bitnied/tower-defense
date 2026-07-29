@@ -1,6 +1,7 @@
 extends Node2D
 
 func _ready():
+	Globals.set_fs_button(false)
 	Progress.new_session()
 	# a partir da primeira partida a home não abre mais as
 	# instruções automaticamente (ficam no botão [?])

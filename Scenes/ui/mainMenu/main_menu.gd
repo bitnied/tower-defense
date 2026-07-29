@@ -16,6 +16,9 @@ const STAR_EMPTY := preload("res://Assets/ui/star_empty.png")
 func _ready():
 	Sfx.stop_music(0.3)
 	Engine.time_scale = 1.0
+	# o ⛶ do navegador só aparece aqui na home (em jogo/galeria ele
+	# cobria botões no canto superior direito)
+	Globals.set_fs_button(true)
 	# Galeria só aparece depois da primeira imagem desbloqueada
 	%GalleryButton.visible = Progress.is_unlocked(0)
 	# [?] só faz sentido depois que as instruções já foram vistas

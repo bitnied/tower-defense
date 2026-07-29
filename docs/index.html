@@ -116,7 +116,9 @@ addEventListener('DOMContentLoaded',function(){
 		}catch(e){}
 	});
 	document.body.appendChild(b);
-	var upd=function(){b.style.display=(document.fullscreenElement||document.webkitFullscreenElement)?'none':'block';};
+	var wanted=true;
+	var upd=function(){b.style.display=(wanted&&!(document.fullscreenElement||document.webkitFullscreenElement))?'block':'none';};
+	window.setFsBtn=function(w){wanted=!!w;upd();};
 	document.addEventListener('fullscreenchange',upd);
 	document.addEventListener('webkitfullscreenchange',upd);
 	upd();
@@ -140,7 +142,7 @@ addEventListener('DOMContentLoaded',function(){
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":12000248,"index.wasm":37685705},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":12002840,"index.wasm":37685705},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 

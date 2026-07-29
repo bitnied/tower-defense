@@ -14,6 +14,7 @@ var secret_taps: Array[float] = []
 var overlay_mode := false
 
 func _ready():
+	Globals.set_fs_button(false)
 	if overlay_mode:
 		# galeria por cima do jogo pausado: silencia sem perder a posição
 		Sfx.set_music_paused(true)
@@ -46,7 +47,16 @@ func _unhandled_key_input(event):
 		if secret_taps.size() >= 3:
 			Progress.unlock_all()
 			Sfx.play("unlock", -4.0)
-			get_tree().reload_current_scene()
+			if overlay_mode:
+				# recarregar a cena atual reiniciaria a PARTIDA por baixo
+				# do overlay; em vez disso recria só a galeria
+				var layer := get_parent()
+				var g = load("res://Scenes/ui/gallery/gallery.tscn").instantiate()
+				g.overlay_mode = true
+				layer.add_child(g)
+				queue_free()
+			else:
+				get_tree().reload_current_scene()
 
 # ---------- grid ----------
 func _layout_grid():
@@ -56,6 +66,13 @@ func _layout_grid():
 	card_h = 400.0 if portrait else 266.0
 	for card in cards:
 		card.custom_minimum_size = Vector2(card_w, card_h)
+	# barra do topo e grid abaixo da área do notch/barra de status
+	var ins := Globals.web_safe_insets()
+	$Top.offset_top = ins["top"]
+	$Top.offset_bottom = 112.0 + ins["top"]
+	$Top.add_theme_constant_override("margin_left", 16 + int(ins["left"]))
+	$Top.add_theme_constant_override("margin_right", 16 + int(ins["right"]))
+	$Scroll.offset_top = 120.0 + ins["top"]
 	_layout_full()
 
 func _is_portrait() -> bool:
@@ -74,17 +91,46 @@ func _place(c: Control, ax: float, ay: float, x0: float, y0: float, x1: float, y
 	c.offset_bottom = y1
 
 # Tela cheia: a imagem ocupa o miolo; controles nas bordas livres
-# (X no topo-direito é fixo na cena; setas mudam com a orientação).
+# (setas mudam com a orientação; o X é posicionado sobre o canto
+# superior direito da PRÓPRIA imagem em _place_close).
 func _layout_full():
+	var ins := Globals.web_safe_insets()
 	if _is_portrait():
-		img_base = [10.0, 116.0, -10.0, -168.0]
-		_place(%FullPrev, 0.5, 1.0, -168, -150, -48, -38)
-		_place(%FullNext, 0.5, 1.0, 48, -150, 168, -38)
+		img_base = [10.0, 116.0, -10.0, -168.0 - ins["bottom"]]
+		_place(%FullPrev, 0.5, 1.0, -168, -150 - ins["bottom"], -48, -38 - ins["bottom"])
+		_place(%FullNext, 0.5, 1.0, 48, -150 - ins["bottom"], 168, -38 - ins["bottom"])
 	else:
-		img_base = [136.0, 10.0, -136.0, -10.0]
-		_place(%FullPrev, 0.0, 0.5, 14, -56, 122, 56)
-		_place(%FullNext, 1.0, 0.5, -122, -56, -14, 56)
+		img_base = [136.0 + ins["left"], 10.0, -136.0 - ins["right"], -10.0]
+		_place(%FullPrev, 0.0, 0.5, 14 + ins["left"], -56, 122 + ins["left"], 56)
+		_place(%FullNext, 1.0, 0.5, -122 - ins["right"], -56, -14 - ins["right"], 56)
 	_apply_swipe_visual(swipe_offset)
+	if current >= 0:
+		_place_close()
+
+# Retângulo realmente desenhado da imagem atual (a TextureRect usa
+# "keep aspect centered", então sobra moldura dentro do box)
+func _drawn_img_rect() -> Rect2:
+	var vs := get_viewport_rect().size
+	var pos := Vector2(img_base[0], img_base[1])
+	var size := Vector2(vs.x + img_base[2], vs.y + img_base[3]) - pos
+	var tex: Texture2D = %FullImage.texture
+	if tex == null or tex.get_width() == 0 or tex.get_height() == 0:
+		return Rect2(pos, size)
+	var ts := Vector2(tex.get_size())
+	var s := minf(size.x / ts.x, size.y / ts.y)
+	var ds := ts * s
+	return Rect2(pos + (size - ds) / 2.0, ds)
+
+# O botão de fechar fica POR CIMA do canto superior direito da imagem:
+# sempre visível, longe do notch do celular e do botão ⛶ do navegador.
+func _place_close():
+	var r := _drawn_img_rect()
+	var sz := 112.0
+	var margin := 14.0
+	var top_limit: float = Globals.web_safe_insets()["top"] + 10.0
+	var y0 := maxf(r.position.y + margin, top_limit)
+	var x1 := minf(r.end.x - margin, get_viewport_rect().size.x - 10.0)
+	_place(%CloseFull, 0.0, 0.0, x1 - sz, y0, x1, y0 + sz)
 
 func _make_card(idx: int, entry: Dictionary, is_new: bool) -> PanelContainer:
 	var card := PanelContainer.new()
@@ -185,6 +231,7 @@ func _on_close_full_pressed():
 func _refresh_full():
 	var entry: Dictionary = Progress.images()[current]
 	%FullImage.texture = load("res://Assets/gallery/" + _thumb_of(entry))
+	_place_close()
 	%WatchButton.visible = entry["kind"] == "video"
 	# esmaecida (mas ocupando o espaço) para os botões não pularem
 	var has_prev := _step_from(current, -1) != -1
@@ -308,7 +355,7 @@ func _on_watch_pressed():
 	  if (document.getElementById('etd-video-wrap')) return;
 	  var w = document.createElement('div');
 	  w.id = 'etd-video-wrap';
-	  w.style.cssText = 'position:fixed;inset:0;background:rgba(20,5,12,0.93);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;';
+	  w.style.cssText = 'position:fixed;inset:0;background:rgba(20,5,12,0.93);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding-bottom:env(safe-area-inset-bottom,0px);';
 	  var v = document.createElement('video');
 	  v.src = 'gallery_video.mp4';
 	  v.autoplay = true;
@@ -345,7 +392,7 @@ func _on_watch_pressed():
 	  v.addEventListener('pause', function(){ btn.textContent = '>'; });
 	  var x = document.createElement('button');
 	  x.textContent = 'X';
-	  x.style.cssText = 'position:absolute;top:14px;right:18px;font-size:24px;padding:8px 18px;border-radius:12px;border:none;background:#FF5F8F;color:#fff;font-weight:bold;';
+	  x.style.cssText = 'position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:calc(18px + env(safe-area-inset-right,0px));font-size:24px;padding:8px 18px;border-radius:12px;border:none;background:#FF5F8F;color:#fff;font-weight:bold;';
 	  x.onclick = function(){ v.pause(); w.remove(); };
 	  bar.appendChild(btn); bar.appendChild(line); bar.appendChild(tm);
 	  w.appendChild(v); w.appendChild(bar); w.appendChild(x);
