@@ -3,6 +3,10 @@ extends PanelContainer
 
 func _ready():
 	Engine.time_scale = 1.0
+	# congela o jogo por baixo (fantasmas/meteoros atrasados ainda
+	# podiam agir e tocar sfx atrás da tela de vitória)
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	get_tree().paused = true
 	Sfx.stop_music(0.4)
 	Sfx.play("victory", -2.0)
 	Progress.add_points(50)
@@ -42,12 +46,15 @@ func animate_appear():
 	tween.tween_property($CenterPanel, "scale", Vector2(fit, fit), 0.5)
 
 func _on_retry_button_pressed():
+	get_tree().paused = false
 	Globals.restart_current_level()
 	queue_free()
 
 func _on_main_menu_button_pressed():
+	get_tree().paused = false
 	get_tree().change_scene_to_file("res://Scenes/ui/mainMenu/mainMenu.tscn")
 
 func _on_gallery_button_pressed():
 	Sfx.play("click", -10.0)
+	get_tree().paused = false
 	get_tree().change_scene_to_file("res://Scenes/ui/gallery/gallery.tscn")

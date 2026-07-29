@@ -12,6 +12,8 @@ var enemy_type := "":
 		$Sprite2D.scale = Vector2(s, s)
 		$Area.scale = Vector2(s, s)
 		is_boss = cfg.get("boss", false)
+		# o gigante pulsa devagar, imponente; os pequenos batem rápido
+		$AnimationPlayer.speed_scale = 0.4 if is_boss else 1.0
 		for stat in cfg["stats"].keys():
 			set(stat, cfg["stats"][stat])
 

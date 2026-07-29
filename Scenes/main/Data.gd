@@ -224,7 +224,7 @@ const enemies := {
 			},
 		"difficulty": 99.0,
 		"sprite": "res://Assets/enemies/heart_shattered.png",
-		"scale": 2.4,
+		"scale": 2.76,
 		"boss": true,
 	},
 }

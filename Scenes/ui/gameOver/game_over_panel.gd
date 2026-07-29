@@ -4,6 +4,10 @@ extends PanelContainer
 
 func _ready():
 	Engine.time_scale = 1.0
+	# congela a partida por baixo: sem isso os corações continuavam
+	# atacando a Elisa (com sfx de golpe) atrás da tela de game over
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	get_tree().paused = true
 	Sfx.stop_music(0.4)
 	Sfx.play("gameover", -4.0)
 	Progress.save()
@@ -26,12 +30,15 @@ func animate_appear():
 	tween.tween_property($CenterPanel, "scale", Vector2(fit, fit), 0.5)
 
 func _on_retry_button_pressed():
+	get_tree().paused = false
 	Globals.restart_current_level()
 	queue_free()
 
 func _on_main_menu_button_pressed():
+	get_tree().paused = false
 	get_tree().change_scene_to_file("res://Scenes/ui/mainMenu/mainMenu.tscn")
 
 func _on_gallery_button_pressed():
 	Sfx.play("click", -10.0)
+	get_tree().paused = false
 	get_tree().change_scene_to_file("res://Scenes/ui/gallery/gallery.tscn")
