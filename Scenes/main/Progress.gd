@@ -94,6 +94,20 @@ func unlock_all():
 	played_once = true
 	save()
 
+# apaga TODO o progresso (botão "Zerar pontuação" das opções):
+# pontos, estrelas, galeria e instruções voltam ao estado de
+# primeira vez. O save é sobrescrito nas duas pontas (disco e
+# espelho), então o "combinar pelo maior" do load não ressuscita nada.
+func reset_all():
+	total_points = 0
+	session_points = 0
+	seen = PackedStringArray()
+	played_once = false
+	won_once = false
+	for k in stars.keys():
+		stars[k] = 0
+	save()
+
 # vitória: guarda o melhor número de estrelas da dificuldade
 func record_victory(diff_key: String, n_stars: int):
 	won_once = true

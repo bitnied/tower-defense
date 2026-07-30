@@ -40,7 +40,7 @@ func refresh_icon():
 			# surpresa não revelada (Elisa): só um "?"
 			$HBox/TextureRect.texture = load(Data.locked_icon)
 			$HBox/CostRow/CoinIcon.visible = true
-			$HBox/CostRow/CostLabel.add_theme_font_size_override("font_size", 38)
+			$HBox/CostRow/CostLabel.add_theme_font_size_override("font_size", 34)
 			$HBox/CostRow/CostLabel.text = "?"
 		else:
 			# reforço a caminho: retrato + onda em que chega
@@ -51,7 +51,7 @@ func refresh_icon():
 	else:
 		$HBox/TextureRect.texture = Globals.defender_icon(turret_type)
 		$HBox/CostRow/CoinIcon.visible = true
-		$HBox/CostRow/CostLabel.add_theme_font_size_override("font_size", 38)
+		$HBox/CostRow/CostLabel.add_theme_font_size_override("font_size", 34)
 		$HBox/CostRow/CostLabel.text = str(Globals.defender_cost(turret_type))
 		%LockIcon.visible = false
 

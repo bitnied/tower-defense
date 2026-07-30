@@ -15,6 +15,9 @@ signal defenderUnlocked(defender_key)
 var selected_map := "elisa"
 # dificuldade escolhida na home (ver Data.difficulties)
 var selected_difficulty := "medio"
+# "Jogar de novo" da tela de vitória: a home abre direto a
+# escolha de dificuldade (com as estrelas) em vez de esperar o Jogar
+var open_difficulty_chooser := false
 
 func difficulty_cfg() -> Dictionary:
 	return Data.difficulties[selected_difficulty]

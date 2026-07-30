@@ -40,6 +40,12 @@ var sfx_muted := false
 var music_player: AudioStreamPlayer
 # a música só toca durante o gameplay (nunca em menus/galeria)
 var music_on := false
+# pausa pedida pelo jogo (galeria aberta por cima do pause):
+# a volta do foco não pode desfazer esta pausa
+var _hold_paused := false
+# a referência precisa viver enquanto o jogo rodar (mesmo motivo
+# do Progress): senão o navegador perde o callback registrado
+var _web_vis_cb
 
 func _ready():
 	music_player = AudioStreamPlayer.new()
@@ -48,6 +54,7 @@ func _ready():
 	music_player.stream = stream
 	music_player.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(music_player)
+	_install_web_visibility_hooks()
 
 # começa a música do gameplay (com fade-in); não recomeça se já toca
 func play_music():
@@ -73,7 +80,33 @@ func stop_music(fade := 0.5):
 
 # pausa sem perder a posição (galeria por cima do jogo pausado)
 func set_music_paused(p: bool):
+	_hold_paused = p
 	music_player.stream_paused = p
+
+# No webapp da tela de início (iPad/iPhone) a página antiga pode
+# continuar viva em segundo plano com a música tocando: ao reabrir o
+# jogo ouvia-se música na home e, entrando no gameplay, DUAS trilhas.
+# Página escondida => música pausada, sempre.
+func _install_web_visibility_hooks():
+	if not OS.has_feature("web"):
+		return
+	_web_vis_cb = JavaScriptBridge.create_callback(_on_web_visibility)
+	var doc = JavaScriptBridge.get_interface("document")
+	if doc != null:
+		doc.addEventListener("visibilitychange", _web_vis_cb)
+	var win = JavaScriptBridge.get_interface("window")
+	if win != null:
+		win.addEventListener("pagehide", _web_vis_cb)
+		win.addEventListener("pageshow", _web_vis_cb)
+
+func _on_web_visibility(_args):
+	var doc = JavaScriptBridge.get_interface("document")
+	var hidden: bool = doc == null or bool(doc.hidden)
+	if hidden:
+		music_player.stream_paused = true
+	else:
+		# só desfaz a pausa da troca de aba; a da galeria fica
+		music_player.stream_paused = _hold_paused
 
 func _target_db() -> float:
 	if music_muted or music_volume <= 0.001:

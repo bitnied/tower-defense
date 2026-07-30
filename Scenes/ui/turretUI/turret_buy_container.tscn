@@ -22,7 +22,7 @@ corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
 [node name="TurretBuyContainer" type="PanelContainer"]
-custom_minimum_size = Vector2(240, 104)
+custom_minimum_size = Vector2(212, 96)
 theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 script = ExtResource("1_7686v")
 
@@ -32,7 +32,7 @@ theme_override_constants/separation = 10
 
 [node name="TextureRect" type="TextureRect" parent="HBox"]
 texture_filter = 1
-custom_minimum_size = Vector2(84, 84)
+custom_minimum_size = Vector2(76, 76)
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 0
@@ -48,7 +48,7 @@ alignment = 1
 theme_override_constants/separation = 8
 
 [node name="CoinIcon" type="TextureRect" parent="HBox/CostRow"]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 size_flags_vertical = 4
 expand_mode = 1
@@ -57,7 +57,7 @@ texture = ExtResource("3_coin")
 
 [node name="CostLabel" type="Label" parent="HBox/CostRow"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 38
+theme_override_font_sizes/font_size = 34
 text = "30"
 
 [node name="CantBuy" type="ColorRect" parent="."]

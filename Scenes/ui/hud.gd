@@ -19,6 +19,17 @@ func _ready():
 	Globals.defenderUnlocked.connect(_on_defender_unlocked)
 	Engine.time_scale = SPEEDS[speed_idx]
 	_refresh_play_button()
+	_apply_safe_insets()
+	get_viewport().size_changed.connect(_apply_safe_insets)
+
+# No webapp em tela cheia a barra de status do iPad/iPhone (hora,
+# bateria) fica POR CIMA do canvas: empurra o HUD para a área segura.
+func _apply_safe_insets():
+	var ins: Dictionary = Globals.web_safe_insets()
+	$TopLeft.position = Vector2(14.0 + ins["left"], 12.0 + ins["top"])
+	var sb: StyleBoxFlat = $SidePanel.get_theme_stylebox("panel")
+	sb.content_margin_top = 12.0 + ins["top"]
+	sb.content_margin_right = 12.0 + ins["right"]
 
 func max_waves() -> int:
 	return int(Data.maps[Globals.selected_map]["spawner_settings"]["max_waves"])

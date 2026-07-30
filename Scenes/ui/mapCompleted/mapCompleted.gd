@@ -46,9 +46,12 @@ func animate_appear():
 	tween.tween_property($CenterPanel, "scale", Vector2(fit, fit), 0.5)
 
 func _on_retry_button_pressed():
+	# em vez de repetir a mesma partida, volta à home com a escolha
+	# de dificuldade (e as estrelas conquistadas) já aberta
+	Sfx.play("click", -10.0)
 	get_tree().paused = false
-	Globals.restart_current_level()
-	queue_free()
+	Globals.open_difficulty_chooser = true
+	get_tree().change_scene_to_file("res://Scenes/ui/mainMenu/mainMenu.tscn")
 
 func _on_main_menu_button_pressed():
 	get_tree().paused = false

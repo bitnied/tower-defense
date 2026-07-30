@@ -129,6 +129,91 @@ custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 text = "Menu"
 
+[node name="ResetButton" type="Button" parent="Center/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+modulate = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 24
+flat = true
+text = "Zerar pontuação"
+
+[node name="ConfirmReset" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="ConfirmReset"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1, 0.03, 0.07, 0.7)
+
+[node name="Center" type="CenterContainer" parent="ConfirmReset"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="ConfirmReset/Center"]
+custom_minimum_size = Vector2(620, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ConfirmReset/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="ConfirmReset/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="ConfirmReset/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Zerar pontuação?"
+horizontal_alignment = 1
+
+[node name="Msg" type="Label" parent="ConfirmReset/Center/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(560, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Todo o progresso será apagado: pontos de amor, estrelas e as fotos da galeria voltam a ficar bloqueadas. O jogo recomeça como na primeira vez."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="ConfirmReset/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="CancelButton" type="Button" parent="ConfirmReset/Center/Panel/Margin/VBox/Buttons"]
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancelar"
+
+[node name="ConfirmButton" type="Button" parent="ConfirmReset/Center/Panel/Margin/VBox/Buttons"]
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+size_flags_horizontal = 3
+modulate = Color(1, 0.75, 0.75, 1)
+text = "Sim, zerar tudo"
+
+[connection signal="pressed" from="Center/Panel/Margin/VBox/ResetButton" to="." method="_on_reset_pressed"]
+[connection signal="pressed" from="ConfirmReset/Center/Panel/Margin/VBox/Buttons/CancelButton" to="." method="_on_reset_cancel_pressed"]
+[connection signal="pressed" from="ConfirmReset/Center/Panel/Margin/VBox/Buttons/ConfirmButton" to="." method="_on_reset_confirm_pressed"]
+
 [connection signal="pressed" from="Center/Panel/Margin/VBox/ContinueButton" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="Center/Panel/Margin/VBox/RestartButton" to="." method="_on_restart_pressed"]
 [connection signal="pressed" from="Center/Panel/Margin/VBox/MenuButton" to="." method="_on_menu_pressed"]

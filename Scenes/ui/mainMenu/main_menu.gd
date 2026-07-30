@@ -26,6 +26,12 @@ func _ready():
 	%Title.text = Data.texts["howto_title"]
 	%HowtoLabel.text = Data.texts["howto"]
 	_build_difficulty_dialog()
+	# veio do "Jogar de novo" da vitória: abre direto a escolha
+	if Globals.open_difficulty_chooser:
+		Globals.open_difficulty_chooser = false
+		if Progress.won_once:
+			_refresh_stars()
+			diff_dialog.visible = true
 
 func _on_play_button_pressed():
 	Sfx.play("click", -10.0)

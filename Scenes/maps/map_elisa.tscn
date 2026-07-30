@@ -18,6 +18,18 @@ script = ExtResource("1_elmap")
 [node name="Background" type="Sprite2D" parent="."]
 texture = ExtResource("2_elbg")
 
+[node name="BleedTop" type="Sprite2D" parent="."]
+z_index = -1
+position = Vector2(0, -685)
+flip_v = true
+texture = ExtResource("2_elbg")
+
+[node name="BleedBottom" type="Sprite2D" parent="."]
+z_index = -1
+position = Vector2(0, 685)
+flip_v = true
+texture = ExtResource("2_elbg")
+
 [node name="Mamae" type="Sprite2D" parent="."]
 z_index = 1
 texture_filter = 1

@@ -55,3 +55,22 @@ func _on_menu_pressed():
 	get_tree().paused = false
 	Engine.time_scale = 1.0
 	get_tree().change_scene_to_file("res://Scenes/ui/mainMenu/mainMenu.tscn")
+
+# ---------- zerar pontuação (com confirmação) ----------
+
+func _on_reset_pressed():
+	Sfx.play("click", -10.0)
+	%ConfirmReset.visible = true
+
+func _on_reset_cancel_pressed():
+	Sfx.play("click", -10.0)
+	%ConfirmReset.visible = false
+
+func _on_reset_confirm_pressed():
+	Sfx.play("click", -10.0)
+	Progress.reset_all()
+	# defensores surpresa revelados na sessão também voltam ao segredo
+	Globals.unlocked_defenders.clear()
+	get_tree().paused = false
+	Engine.time_scale = 1.0
+	get_tree().change_scene_to_file("res://Scenes/ui/mainMenu/mainMenu.tscn")
