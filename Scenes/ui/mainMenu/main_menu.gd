@@ -3,7 +3,8 @@ extends Control
 # fechá-las inicia o jogo. Depois disso o [?] mostra as instruções
 # (fechar volta pra home) e, com a primeira vitória, Jogar passa a
 # abrir a escolha de dificuldade (Fácil / Médio / Vida Real) com as
-# estrelas conquistadas em cada uma.
+# estrelas conquistadas em cada uma. A engrenagem ao lado do [?] abre as
+# opções de áudio (as mesmas do menu de pause).
 
 var howto_starts_game := false
 var diff_dialog: Control
@@ -23,6 +24,7 @@ func _ready():
 	%GalleryButton.visible = Progress.is_unlocked(0)
 	# [?] só faz sentido depois que as instruções já foram vistas
 	%HelpButton.visible = Progress.played_once
+	_sync_settings_controls()
 	%Title.text = Data.texts["howto_title"]
 	%HowtoLabel.text = Data.texts["howto"]
 	_build_difficulty_dialog()
@@ -67,6 +69,46 @@ func _start_game(diff_key: String):
 func _on_gallery_button_pressed():
 	Sfx.play("click", -10.0)
 	get_tree().change_scene_to_file("res://Scenes/ui/gallery/gallery.tscn")
+
+# ---------- opções (mesmos controles de áudio do menu de pause) ----------
+
+func _on_settings_button_pressed():
+	Sfx.play("click", -10.0)
+	_sync_settings_controls()
+	%SettingsDialog.visible = true
+
+func _on_settings_closed():
+	Sfx.play("click", -10.0)
+	%SettingsDialog.visible = false
+
+func _sync_settings_controls():
+	%MusicSlider.value = Sfx.music_volume
+	%SfxSlider.value = Sfx.sfx_volume
+	%MusicMute.button_pressed = Sfx.music_muted
+	%SfxMute.button_pressed = Sfx.sfx_muted
+	_refresh_mute_looks()
+
+func _refresh_mute_looks():
+	%MusicMute.modulate = Color(1, 1, 1, 0.4) if Sfx.music_muted else Color.WHITE
+	%SfxMute.modulate = Color(1, 1, 1, 0.4) if Sfx.sfx_muted else Color.WHITE
+	%MusicSlider.editable = not Sfx.music_muted
+	%SfxSlider.editable = not Sfx.sfx_muted
+
+func _on_music_mute_toggled(pressed: bool):
+	Sfx.music_muted = pressed
+	_refresh_mute_looks()
+
+func _on_sfx_mute_toggled(pressed: bool):
+	Sfx.sfx_muted = pressed
+	_refresh_mute_looks()
+	if not pressed:
+		Sfx.play("click", -10.0)
+
+func _on_music_volume_changed(v: float):
+	Sfx.music_volume = v
+
+func _on_sfx_volume_changed(v: float):
+	Sfx.sfx_volume = v
 
 # ---------- modal de escolha de dificuldade (construída em código) ----------
 

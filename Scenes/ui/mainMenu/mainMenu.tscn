@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://duvsvsvu8biwm"]
+[gd_scene load_steps=4 format=3 uid="uid://duvsvsvu8biwm"]
 
 [ext_resource type="Script" path="res://Scenes/ui/mainMenu/main_menu.gd" id="1_lnqmy"]
 [ext_resource type="Texture2D" path="res://Assets/menu/home_bg.png" id="2_jl1fa"]
+[ext_resource type="Texture2D" path="res://Assets/ui/icon_gear.png" id="3_gear"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -47,12 +48,24 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_constants/separation = 12
 
-[node name="HelpButton" type="Button" parent="RightBox"]
+[node name="IconsRow" type="HBoxContainer" parent="RightBox"]
+layout_mode = 2
+alignment = 2
+theme_override_constants/separation = 12
+
+[node name="SettingsButton" type="Button" parent="RightBox/IconsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+icon = ExtResource("3_gear")
+icon_alignment = 1
+expand_icon = true
+
+[node name="HelpButton" type="Button" parent="RightBox/IconsRow"]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
-size_flags_horizontal = 8
 theme_override_font_sizes/font_size = 40
 text = "?"
 
@@ -152,7 +165,126 @@ horizontal_alignment = 1
 autowrap_mode = 2
 text = "Como jogar"
 
-[connection signal="pressed" from="RightBox/HelpButton" to="." method="_on_help_button_pressed"]
+[node name="SettingsDialog" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="SettingsDialog"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1, 0.03, 0.07, 0.55)
+
+[node name="Center" type="CenterContainer" parent="SettingsDialog"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="SettingsDialog/Center"]
+custom_minimum_size = Vector2(640, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="SettingsDialog/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="SettingsDialog/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleRow" type="HBoxContainer" parent="SettingsDialog/Center/Panel/Margin/VBox"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="SettingsDialog/Center/Panel/Margin/VBox/TitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 46
+text = "Opções"
+
+[node name="CloseButton" type="Button" parent="SettingsDialog/Center/Panel/Margin/VBox/TitleRow"]
+custom_minimum_size = Vector2(76, 76)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "X"
+
+[node name="MusicRow" type="HBoxContainer" parent="SettingsDialog/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MusicLabel" type="Label" parent="SettingsDialog/Center/Panel/Margin/VBox/MusicRow"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "Música"
+
+[node name="MusicMute" type="Button" parent="SettingsDialog/Center/Panel/Margin/VBox/MusicRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 68)
+layout_mode = 2
+toggle_mode = true
+theme_override_font_sizes/font_size = 34
+text = "♪"
+
+[node name="MusicSlider" type="HSlider" parent="SettingsDialog/Center/Panel/Margin/VBox/MusicRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="SfxRow" type="HBoxContainer" parent="SettingsDialog/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SfxLabel" type="Label" parent="SettingsDialog/Center/Panel/Margin/VBox/SfxRow"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "Efeitos"
+
+[node name="SfxMute" type="Button" parent="SettingsDialog/Center/Panel/Margin/VBox/SfxRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 68)
+layout_mode = 2
+toggle_mode = true
+theme_override_font_sizes/font_size = 34
+text = "✦"
+
+[node name="SfxSlider" type="HSlider" parent="SettingsDialog/Center/Panel/Margin/VBox/SfxRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[connection signal="pressed" from="RightBox/IconsRow/SettingsButton" to="." method="_on_settings_button_pressed"]
+[connection signal="pressed" from="RightBox/IconsRow/HelpButton" to="." method="_on_help_button_pressed"]
 [connection signal="pressed" from="RightBox/PlayButton" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="RightBox/GalleryButton" to="." method="_on_gallery_button_pressed"]
 [connection signal="pressed" from="HowtoDialog/Center/Panel/Margin/VBox/TitleRow/CloseButton" to="." method="_on_howto_closed"]
+[connection signal="pressed" from="SettingsDialog/Center/Panel/Margin/VBox/TitleRow/CloseButton" to="." method="_on_settings_closed"]
+[connection signal="toggled" from="SettingsDialog/Center/Panel/Margin/VBox/MusicRow/MusicMute" to="." method="_on_music_mute_toggled"]
+[connection signal="toggled" from="SettingsDialog/Center/Panel/Margin/VBox/SfxRow/SfxMute" to="." method="_on_sfx_mute_toggled"]
+[connection signal="value_changed" from="SettingsDialog/Center/Panel/Margin/VBox/MusicRow/MusicSlider" to="." method="_on_music_volume_changed"]
+[connection signal="value_changed" from="SettingsDialog/Center/Panel/Margin/VBox/SfxRow/SfxSlider" to="." method="_on_sfx_volume_changed"]

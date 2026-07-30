@@ -309,9 +309,11 @@ const difficulties := {
 		"baseHp": 8,
 		"startingGold": 50,
 		"increase": 1.24,
-		"hp_per_wave": 0.095,
-		"hp_mult": 1.16,
-		"ghost_waves": [4, 6, 8, 10],
+		"hp_per_wave": 0.09,
+		"hp_mult": 1.1,
+		# sem fantasma na onda final: chefão + meteoro + fantasma ao
+		# mesmo tempo era o pico de crueldade da dificuldade antiga
+		"ghost_waves": [4, 6, 8],
 		"meteor_waves": [5, 7, 9, 10],
 		"escort": 16,
 		"spawn_wait_mult": 0.92,
