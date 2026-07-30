@@ -62,11 +62,11 @@ text = "Música"
 
 [node name="MusicMute" type="Button" parent="Center/Panel/Margin/VBox/MusicRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(80, 68)
+custom_minimum_size = Vector2(120, 68)
 layout_mode = 2
 toggle_mode = true
-theme_override_font_sizes/font_size = 34
-text = "♪"
+theme_override_font_sizes/font_size = 26
+text = "Som"
 
 [node name="MusicSlider" type="HSlider" parent="Center/Panel/Margin/VBox/MusicRow"]
 unique_name_in_owner = true
@@ -90,11 +90,11 @@ text = "Efeitos"
 
 [node name="SfxMute" type="Button" parent="Center/Panel/Margin/VBox/SfxRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(80, 68)
+custom_minimum_size = Vector2(120, 68)
 layout_mode = 2
 toggle_mode = true
-theme_override_font_sizes/font_size = 34
-text = "✦"
+theme_override_font_sizes/font_size = 26
+text = "Som"
 
 [node name="SfxSlider" type="HSlider" parent="Center/Panel/Margin/VBox/SfxRow"]
 unique_name_in_owner = true

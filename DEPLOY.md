@@ -20,6 +20,15 @@ O build web fica em `docs/` (gerado pelo preset "Web" do Godot).
 Sempre que alterar o jogo:
 
 ```sh
+tools/deploy.sh "mensagem do commit"
+```
+
+O script carimba a versão (data/hora) em `Scenes/main/BuildInfo.gd` —
+ela aparece no canto inferior esquerdo da home, que é como se confere
+se o webapp já recebeu a atualização — valida o parse dos scripts,
+exporta, corrige o manifest e faz commit + push. Equivalente manual:
+
+```sh
 "/Applications/Godot.app/Contents/MacOS/Godot" --headless --export-release "Web" docs/index.html
 sed -i '' 's/"orientation":"landscape"/"orientation":"landscape-primary"/' docs/index.manifest.json
 git add -A && git commit -m "Update web build" && git push

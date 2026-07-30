@@ -8,7 +8,7 @@ func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = true
 	Sfx.stop_music(0.4)
-	Sfx.play("victory", -2.0)
+	Sfx.play("victory", 0.0)
 	Progress.add_points(50)
 	# estrelas pela vida da mamãe: 3 = intacta, 2 = metade ou mais,
 	# 1 = venceu sofrendo
@@ -48,7 +48,7 @@ func animate_appear():
 func _on_retry_button_pressed():
 	# em vez de repetir a mesma partida, volta à home com a escolha
 	# de dificuldade (e as estrelas conquistadas) já aberta
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	get_tree().paused = false
 	Globals.open_difficulty_chooser = true
 	get_tree().change_scene_to_file("res://Scenes/ui/mainMenu/mainMenu.tscn")
@@ -58,6 +58,6 @@ func _on_main_menu_button_pressed():
 	get_tree().change_scene_to_file("res://Scenes/ui/mainMenu/mainMenu.tscn")
 
 func _on_gallery_button_pressed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://Scenes/ui/gallery/gallery.tscn")

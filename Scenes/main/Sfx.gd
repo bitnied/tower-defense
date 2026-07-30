@@ -21,6 +21,46 @@ const SFX := {
 	"atk_elisa": "res://Assets/audio/sfx_atk_elisa.ogg",
 }
 
+# Normalização por arquivo. Cada .ogg/.mp3 veio de uma fonte diferente e
+# foi masterizado num nível diferente, então o `volume_db` do call site
+# sozinho não dizia nada: -4.0 num arquivo quente e -4.0 num arquivo fraco
+# davam resultados a 10 dB de distância (era esse o salto do "unlock").
+#
+# Este ganho traz todos para a mesma sonoridade PERCEBIDA, medida com
+# ffmpeg (RMS da janela de 100 ms mais alta) e corrigida pela duração —
+# som curto soa mais baixo que som longo no mesmo RMS (integração
+# temporal do ouvido, ~10 dB por década abaixo de 200 ms).
+#
+#   ganho = -16.0 - (RMS_100ms + correção_de_duração)
+#
+# Com isso o `volume_db` do call site vira mixagem pura: o mesmo número
+# soa igual em qualquer efeito, e 0.0 = referência (-16 dB percebidos).
+# Para reconferir depois de trocar um arquivo: tools/audio_levels.sh
+const SFX_GAIN := {
+	#              RMS100  dur     ganho
+	"click": -7.8,      # -16.2   10ms
+	"place": 0.8,       # -17.0  190ms
+	"heal": 0.2,        # -18.1  130ms
+	"hit": -2.8,        # -16.2  100ms
+	"upgrade": -6.4,    #  -9.6  540ms
+	"unlock": -5.6,     # -10.4  670ms
+	"impact": -5.6,     # -10.4  750ms
+	"ghost": -9.9,      #  -6.1  900ms
+	"fall": -11.4,      #  -4.6  850ms
+	"gameover": -3.9,   # -12.1 1000ms
+	"victory": -3.6,    # -12.4  800ms
+	"atk_tiago": 1.5,   # -20.5  100ms
+	"atk_leo": 1.4,     # -20.0  110ms
+	"atk_elisa": -0.3,  # -15.7  280ms
+	"atk_luna": -5.1,   # -10.9  940ms
+}
+
+# Duas cópias do mesmo efeito no mesmo instante somam ~3 dB (quatro, ~6).
+# Acontece de verdade quando vários corações morrem juntos ("heal") ou
+# duas torres atiram no mesmo frame. Abaixo desta janela o ouvido junta
+# tudo num som só, então a repetição vira só volume — descarta.
+const RETRIGGER_MS := 50
+
 # ganho base da música (para não competir com os efeitos)
 const MUSIC_BASE := 0.2
 
@@ -38,6 +78,8 @@ var music_muted := false:
 var sfx_muted := false
 
 var music_player: AudioStreamPlayer
+# último disparo de cada efeito, para o corte de retrigger
+var _last_played := {}
 # a música só toca durante o gameplay (nunca em menus/galeria)
 var music_on := false
 # pausa pedida pelo jogo (galeria aberta por cima do pause):
@@ -118,12 +160,18 @@ func _apply_music():
 		return
 	music_player.volume_db = _target_db()
 
+# volume_db aqui é MIXAGEM, não ganho bruto: o nível real de cada arquivo
+# já foi igualado por SFX_GAIN. 0.0 = referência; -20.0 = bem ao fundo.
 func play(sfx_name: String, volume_db := -6.0):
 	if sfx_muted or sfx_volume <= 0.001 or not SFX.has(sfx_name):
 		return
+	var now := Time.get_ticks_msec()
+	if now - int(_last_played.get(sfx_name, -RETRIGGER_MS)) < RETRIGGER_MS:
+		return
+	_last_played[sfx_name] = now
 	var p := AudioStreamPlayer.new()
 	p.stream = load(SFX[sfx_name])
-	p.volume_db = volume_db + linear_to_db(sfx_volume)
+	p.volume_db = SFX_GAIN.get(sfx_name, 0.0) + volume_db + linear_to_db(sfx_volume)
 	p.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(p)
 	p.finished.connect(p.queue_free)

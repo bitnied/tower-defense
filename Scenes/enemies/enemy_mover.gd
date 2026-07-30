@@ -123,7 +123,7 @@ func attack_guardian_animation():
 	tween.tween_callback(queue_free)
 
 func _hit_guardian(guardian: Node2D):
-	Sfx.play("hit", -7.0)
+	Sfx.play("hit", -4.0)
 	guardian.modulate = Color(1, 0.45, 0.5)
 	var tween := guardian.create_tween()
 	tween.set_parallel()
@@ -228,7 +228,7 @@ func begin_sky_drop():
 	$Sprite2D.top_level = true
 	$Sprite2D.global_rotation = 0.0
 	$Sprite2D.global_position = land + Vector2(0, -440)
-	Sfx.play("fall", -14.0)
+	Sfx.play("fall", -5.0)
 	var tween := create_tween()
 	tween.set_parallel()
 	tween.tween_property($Sprite2D, "global_position", land, 0.85) \
@@ -240,7 +240,7 @@ func begin_sky_drop():
 
 func _land_impact(shadow: Sprite2D):
 	shadow.queue_free()
-	Sfx.play("impact", -4.0)
+	Sfx.play("impact", -2.0)
 	var crack := Sprite2D.new()
 	crack.texture = load("res://Assets/vfx/crack.png")
 	Globals.currentMap.add_child(crack)

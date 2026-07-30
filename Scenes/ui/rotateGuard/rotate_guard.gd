@@ -140,7 +140,7 @@ func _show_resume():
 	_fit_box()
 
 func _on_resume_pressed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	resume_pending = false
 	overlay.visible = false
 	get_tree().paused = false

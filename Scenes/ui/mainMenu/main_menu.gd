@@ -34,9 +34,21 @@ func _ready():
 		if Progress.won_once:
 			_refresh_stars()
 			diff_dialog.visible = true
+	_show_build_stamp()
+
+# Carimbo da versão publicada no canto da home: o webapp do iPad
+# cacheia builds, e sem isto não dá para saber se a atualização chegou.
+func _show_build_stamp():
+	var ver := Label.new()
+	ver.text = preload("res://Scenes/main/BuildInfo.gd").STAMP
+	ver.add_theme_font_size_override("font_size", 20)
+	ver.modulate = Color(1, 1, 1, 0.4)
+	add_child(ver)
+	ver.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT,
+		Control.PRESET_MODE_MINSIZE, 12)
 
 func _on_play_button_pressed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	if not Progress.played_once:
 		# primeira vez: instruções e o fechar inicia o jogo
 		howto_starts_game = true
@@ -50,12 +62,12 @@ func _on_play_button_pressed():
 		_start_game("facil")
 
 func _on_help_button_pressed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	howto_starts_game = false
 	%HowtoDialog.visible = true
 
 func _on_howto_closed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	%HowtoDialog.visible = false
 	if howto_starts_game:
 		# primeira partida da vida: nível Fácil
@@ -67,18 +79,18 @@ func _start_game(diff_key: String):
 	get_tree().change_scene_to_file("res://Scenes/main/main.tscn")
 
 func _on_gallery_button_pressed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	get_tree().change_scene_to_file("res://Scenes/ui/gallery/gallery.tscn")
 
 # ---------- opções (mesmos controles de áudio do menu de pause) ----------
 
 func _on_settings_button_pressed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	_sync_settings_controls()
 	%SettingsDialog.visible = true
 
 func _on_settings_closed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	%SettingsDialog.visible = false
 
 func _sync_settings_controls():
@@ -89,6 +101,10 @@ func _sync_settings_controls():
 	_refresh_mute_looks()
 
 func _refresh_mute_looks():
+	# texto em vez de ♪/✦: a Baloo2 não tem esses glifos e no navegador
+	# (sem fonte de sistema para emprestar) eles viravam quadradinhos
+	%MusicMute.text = "Mudo" if Sfx.music_muted else "Som"
+	%SfxMute.text = "Mudo" if Sfx.sfx_muted else "Som"
 	%MusicMute.modulate = Color(1, 1, 1, 0.4) if Sfx.music_muted else Color.WHITE
 	%SfxMute.modulate = Color(1, 1, 1, 0.4) if Sfx.sfx_muted else Color.WHITE
 	%MusicSlider.editable = not Sfx.music_muted
@@ -102,7 +118,7 @@ func _on_sfx_mute_toggled(pressed: bool):
 	Sfx.sfx_muted = pressed
 	_refresh_mute_looks()
 	if not pressed:
-		Sfx.play("click", -10.0)
+		Sfx.play("click", -2.0)
 
 func _on_music_volume_changed(v: float):
 	Sfx.music_volume = v
@@ -145,7 +161,7 @@ func _build_difficulty_dialog():
 	close.custom_minimum_size = Vector2(72, 72)
 	close.add_theme_font_size_override("font_size", 36)
 	close.pressed.connect(func():
-		Sfx.play("click", -10.0)
+		Sfx.play("click", -2.0)
 		diff_dialog.visible = false)
 	title_row.add_child(close)
 	var cards := HBoxContainer.new()
@@ -159,7 +175,7 @@ func _make_difficulty_card(key: String) -> Button:
 	var card := Button.new()
 	card.custom_minimum_size = Vector2(290, 240)
 	card.pressed.connect(func():
-		Sfx.play("click", -10.0)
+		Sfx.play("click", -2.0)
 		_start_game(key))
 	var inner := VBoxContainer.new()
 	inner.set_anchors_preset(Control.PRESET_FULL_RECT)

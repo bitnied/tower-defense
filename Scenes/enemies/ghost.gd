@@ -23,7 +23,7 @@ var home_spot := Vector2.ZERO   # onde a vítima estava (para devolver)
 
 func _ready():
 	add_to_group("enemy")
-	Sfx.play("ghost", -13.0)
+	Sfx.play("ghost", -3.0)
 	if is_instance_valid(Globals.hud):
 		Globals.hud.show_banner("Uh! Um fantasma quer levar a família!", 2.0)
 
@@ -71,7 +71,7 @@ func _start_grab():
 	state = State.grabbing
 	grab_t = 0.0
 	$Sprite2D.frame = FRAME_FRONT
-	Sfx.play("hit", -9.0)
+	Sfx.play("hit", -6.0)
 	# mergulho de agarrar: desce sobre a defesa com squash
 	var tween := create_tween()
 	tween.tween_property($Sprite2D, "scale", Vector2(1.15, 0.85), 0.1)
@@ -93,7 +93,7 @@ func _steal():
 		state = State.seeking
 		return
 	state = State.carrying
-	Sfx.play("gameover", -10.0)
+	Sfx.play("gameover", -6.0)
 	home_spot = target.global_position
 	target.deployed = false
 	# congela a vítima por completo (timers de ataque inclusive)

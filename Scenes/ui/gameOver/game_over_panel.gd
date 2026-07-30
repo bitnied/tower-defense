@@ -9,7 +9,7 @@ func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = true
 	Sfx.stop_music(0.4)
-	Sfx.play("gameover", -4.0)
+	Sfx.play("gameover", -1.0)
 	Progress.save()
 	%TitleLabel.text = Data.texts["gameover_title"]
 	%MsgLabel.text = Data.texts["gameover_msg"]
@@ -39,6 +39,6 @@ func _on_main_menu_button_pressed():
 	get_tree().change_scene_to_file("res://Scenes/ui/mainMenu/mainMenu.tscn")
 
 func _on_gallery_button_pressed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://Scenes/ui/gallery/gallery.tscn")

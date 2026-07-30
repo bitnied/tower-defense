@@ -195,7 +195,7 @@ func _thumb_of(entry: Dictionary) -> String:
 func _animate_reveals(new_ones: Array):
 	if new_ones.is_empty():
 		return
-	Sfx.play("unlock", -6.0)
+	Sfx.play("unlock", -4.0)
 	var delay := 0.35
 	for i in new_ones:
 		var card := cards[i]
@@ -217,7 +217,7 @@ var drag_from := Vector2.ZERO
 var swipe_tween: Tween
 
 func _open_full(idx: int):
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	current = idx
 	swipe_offset = 0.0
 	_refresh_full()
@@ -225,7 +225,7 @@ func _open_full(idx: int):
 	%FullViewer.visible = true
 
 func _on_close_full_pressed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	%FullViewer.visible = false
 
 func _refresh_full():
@@ -263,7 +263,7 @@ func _snap_advance(dir: int):
 		return
 	if _step_from(current, dir) == -1:
 		return
-	Sfx.play("click", -12.0)
+	Sfx.play("click", -4.0)
 	_animate_snap(dir)
 
 # ---------- swipe orgânico com snap ----------
@@ -298,7 +298,7 @@ func _end_swipe(dx: float):
 	if dir == 0:
 		_animate_back()
 	else:
-		Sfx.play("click", -12.0)
+		Sfx.play("click", -4.0)
 		_animate_snap(dir)
 
 func _animate_back():
@@ -346,7 +346,7 @@ func _apply_swipe_visual(off: float):
 
 # ---------- vídeo (player HTML5 nativo por cima do canvas) ----------
 func _on_watch_pressed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	if not OS.has_feature("web"):
 		Globals_print_warning()
 		return
@@ -406,7 +406,7 @@ func Globals_print_warning():
 	print("O vídeo toca na versão web do jogo.")
 
 func _on_back_pressed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	if overlay_mode:
 		# volta para o jogo pausado (o menu de pause continua lá)
 		Sfx.set_music_paused(false)

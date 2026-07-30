@@ -149,7 +149,7 @@ func set_placeholder():
 func build():
 	deployed = true
 	modulate = Color.WHITE
-	Sfx.play("place")
+	Sfx.play("place", -7.0)
 
 func colliding():
 	can_place = false
@@ -231,7 +231,7 @@ func upgrade_turret():
 
 # pulinho + faíscas douradas ao evoluir
 func celebrate_upgrade():
-	Sfx.play("upgrade", -10.0)
+	Sfx.play("upgrade", -4.0)
 	attack_punch()
 	queue_redraw()
 	var p := CPUParticles2D.new()

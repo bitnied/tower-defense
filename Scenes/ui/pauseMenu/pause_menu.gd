@@ -10,6 +10,10 @@ func _ready():
 	_refresh_mute_looks()
 
 func _refresh_mute_looks():
+	# texto em vez de ♪/✦: a Baloo2 não tem esses glifos e no navegador
+	# (sem fonte de sistema para emprestar) eles viravam quadradinhos
+	%MusicMute.text = "Mudo" if Sfx.music_muted else "Som"
+	%SfxMute.text = "Mudo" if Sfx.sfx_muted else "Som"
 	%MusicMute.modulate = Color(1, 1, 1, 0.4) if Sfx.music_muted else Color.WHITE
 	%SfxMute.modulate = Color(1, 1, 1, 0.4) if Sfx.sfx_muted else Color.WHITE
 	%MusicSlider.editable = not Sfx.music_muted
@@ -23,7 +27,7 @@ func _on_sfx_mute_toggled(pressed: bool):
 	Sfx.sfx_muted = pressed
 	_refresh_mute_looks()
 	if not pressed:
-		Sfx.play("click", -10.0)
+		Sfx.play("click", -2.0)
 
 func _on_music_volume_changed(v: float):
 	Sfx.music_volume = v
@@ -43,7 +47,7 @@ func _on_restart_pressed():
 
 func _on_gallery_pressed():
 	# abre a galeria por cima do jogo pausado; fechar volta para cá
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	var layer := CanvasLayer.new()
 	layer.layer = 20
 	var gallery := preload("res://Scenes/ui/gallery/gallery.tscn").instantiate()
@@ -59,15 +63,15 @@ func _on_menu_pressed():
 # ---------- zerar pontuação (com confirmação) ----------
 
 func _on_reset_pressed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	%ConfirmReset.visible = true
 
 func _on_reset_cancel_pressed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	%ConfirmReset.visible = false
 
 func _on_reset_confirm_pressed():
-	Sfx.play("click", -10.0)
+	Sfx.play("click", -2.0)
 	Progress.reset_all()
 	# defensores surpresa revelados na sessão também voltam ao segredo
 	Globals.unlocked_defenders.clear()
