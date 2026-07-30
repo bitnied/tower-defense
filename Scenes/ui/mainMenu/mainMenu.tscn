@@ -278,12 +278,32 @@ max_value = 1.0
 step = 0.05
 value = 1.0
 
+[node name="HSep" type="HSeparator" parent="SettingsDialog/Center/Panel/Margin/VBox"]
+layout_mode = 2
+
+[node name="UnlockButton" type="Button" parent="SettingsDialog/Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Desbloquear galeria"
+
+[node name="ResetButton" type="Button" parent="SettingsDialog/Center/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+modulate = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 24
+flat = true
+text = "Zerar pontuação"
+
 [connection signal="pressed" from="RightBox/IconsRow/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="RightBox/IconsRow/HelpButton" to="." method="_on_help_button_pressed"]
 [connection signal="pressed" from="RightBox/PlayButton" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="RightBox/GalleryButton" to="." method="_on_gallery_button_pressed"]
 [connection signal="pressed" from="HowtoDialog/Center/Panel/Margin/VBox/TitleRow/CloseButton" to="." method="_on_howto_closed"]
 [connection signal="pressed" from="SettingsDialog/Center/Panel/Margin/VBox/TitleRow/CloseButton" to="." method="_on_settings_closed"]
+[connection signal="pressed" from="SettingsDialog/Center/Panel/Margin/VBox/UnlockButton" to="." method="_on_unlock_gallery_pressed"]
+[connection signal="pressed" from="SettingsDialog/Center/Panel/Margin/VBox/ResetButton" to="." method="_on_reset_pressed"]
 [connection signal="toggled" from="SettingsDialog/Center/Panel/Margin/VBox/MusicRow/MusicMute" to="." method="_on_music_mute_toggled"]
 [connection signal="toggled" from="SettingsDialog/Center/Panel/Margin/VBox/SfxRow/SfxMute" to="." method="_on_sfx_mute_toggled"]
 [connection signal="value_changed" from="SettingsDialog/Center/Panel/Margin/VBox/MusicRow/MusicSlider" to="." method="_on_music_volume_changed"]

@@ -4,10 +4,17 @@ extends Control
 # (fechar volta pra home) e, com a primeira vitória, Jogar passa a
 # abrir a escolha de dificuldade (Fácil / Médio / Vida Real) com as
 # estrelas conquistadas em cada uma. A engrenagem ao lado do [?] abre as
-# opções de áudio (as mesmas do menu de pause).
+# opções: áudio (as mesmas do menu de pause), desbloquear a galeria e
+# zerar a pontuação — as duas últimas pedem confirmação.
 
 var howto_starts_game := false
 var diff_dialog: Control
+var confirm_dialog: Control
+var confirm_title: Label
+var confirm_msg: Label
+var confirm_ok: Button
+# o que fazer se o jogador confirmar
+var confirm_action := Callable()
 # key -> [TextureRect, TextureRect, TextureRect] (as 3 estrelas)
 var star_rows := {}
 
@@ -28,6 +35,7 @@ func _ready():
 	%Title.text = Data.texts["howto_title"]
 	%HowtoLabel.text = Data.texts["howto"]
 	_build_difficulty_dialog()
+	_build_confirm_dialog()
 	# veio do "Jogar de novo" da vitória: abre direto a escolha
 	if Globals.open_difficulty_chooser:
 		Globals.open_difficulty_chooser = false
@@ -125,6 +133,100 @@ func _on_music_volume_changed(v: float):
 
 func _on_sfx_volume_changed(v: float):
 	Sfx.sfx_volume = v
+
+# ---------- desbloquear a galeria / zerar (com confirmação) ----------
+
+func _on_unlock_gallery_pressed():
+	Sfx.play("click", -2.0)
+	_ask_confirm(
+		"Desbloquear a galeria?",
+		"Todas as fotos e o vídeo da Galeria do Amor ficam liberados na hora, sem precisar juntar pontos de amor.",
+		"Sim, liberar tudo",
+		_do_unlock_gallery)
+
+func _on_reset_pressed():
+	Sfx.play("click", -2.0)
+	_ask_confirm(
+		"Zerar pontuação?",
+		"Todo o progresso será apagado: pontos de amor, estrelas e as fotos da galeria voltam a ficar bloqueadas. O jogo recomeça como na primeira vez.",
+		"Sim, zerar tudo",
+		_do_reset)
+
+func _do_unlock_gallery():
+	Progress.unlock_all()
+	Sfx.play("unlock", -6.0)
+	# a home muda de cara (Galeria aparece, Jogar passa a escolher a
+	# dificuldade): recarregar deixa tudo coerente de uma vez
+	get_tree().reload_current_scene()
+
+func _do_reset():
+	Progress.reset_all()
+	# defensores surpresa revelados na sessão também voltam ao segredo
+	Globals.unlocked_defenders.clear()
+	get_tree().reload_current_scene()
+
+func _ask_confirm(title: String, msg: String, ok_text: String, action: Callable):
+	confirm_title.text = title
+	confirm_msg.text = msg
+	confirm_ok.text = ok_text
+	confirm_action = action
+	confirm_dialog.visible = true
+
+func _build_confirm_dialog():
+	confirm_dialog = Control.new()
+	confirm_dialog.visible = false
+	confirm_dialog.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(confirm_dialog)
+	var dim := ColorRect.new()
+	dim.color = Color(0.1, 0.03, 0.07, 0.7)
+	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	confirm_dialog.add_child(dim)
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	confirm_dialog.add_child(center)
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(620, 0)
+	center.add_child(panel)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 30)
+	margin.add_theme_constant_override("margin_top", 24)
+	margin.add_theme_constant_override("margin_right", 30)
+	margin.add_theme_constant_override("margin_bottom", 24)
+	panel.add_child(margin)
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 16)
+	margin.add_child(vbox)
+	confirm_title = Label.new()
+	confirm_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	confirm_title.add_theme_font_size_override("font_size", 40)
+	vbox.add_child(confirm_title)
+	confirm_msg = Label.new()
+	confirm_msg.custom_minimum_size = Vector2(560, 0)
+	confirm_msg.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	confirm_msg.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	confirm_msg.add_theme_font_size_override("font_size", 28)
+	vbox.add_child(confirm_msg)
+	var buttons := HBoxContainer.new()
+	buttons.add_theme_constant_override("separation", 14)
+	vbox.add_child(buttons)
+	var cancel := Button.new()
+	cancel.text = "Cancelar"
+	cancel.custom_minimum_size = Vector2(0, 76)
+	cancel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cancel.pressed.connect(func():
+		Sfx.play("click", -2.0)
+		confirm_dialog.visible = false)
+	buttons.add_child(cancel)
+	confirm_ok = Button.new()
+	confirm_ok.custom_minimum_size = Vector2(0, 76)
+	confirm_ok.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	confirm_ok.modulate = Color(1, 0.75, 0.75)
+	confirm_ok.pressed.connect(func():
+		Sfx.play("click", -2.0)
+		confirm_dialog.visible = false
+		if confirm_action.is_valid():
+			confirm_action.call())
+	buttons.add_child(confirm_ok)
 
 # ---------- modal de escolha de dificuldade (construída em código) ----------
 
