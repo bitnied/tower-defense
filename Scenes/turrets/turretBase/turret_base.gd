@@ -195,7 +195,9 @@ func open_details_pane():
 func close_details_pane():
 	draw_range = false
 	queue_redraw()
-	Globals.hud.open_details_pane.queue_free()
+	var pane = Globals.hud.open_details_pane
+	if is_instance_valid(pane):
+		pane.dismiss()
 	Globals.hud.open_details_pane = null
 
 # no celular UM toque chega duas vezes no mesmo frame (InputEventScreenTouch
@@ -212,11 +214,18 @@ func _on_collision_area_input_event(_viewport, event, _shape_idx):
 		if frame == _last_tap_frame:
 			return
 		_last_tap_frame = frame
-		if is_instance_valid(Globals.hud.open_details_pane):
-			if Globals.hud.open_details_pane.turret == self:
+		var pane = Globals.hud.open_details_pane
+		if is_instance_valid(pane):
+			if pane.turret == self:
 				close_details_pane()
 				return
-			Globals.hud.open_details_pane.turret.close_details_pane()
+			# painel de outra defesa (ou de uma que já saiu de campo):
+			# fecha antes de abrir o meu, senão sobra painel na tela
+			if is_instance_valid(pane.turret):
+				pane.turret.close_details_pane()
+			else:
+				pane.dismiss()
+				Globals.hud.open_details_pane = null
 		open_details_pane()
 
 func upgrade_turret():

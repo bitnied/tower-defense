@@ -137,4 +137,8 @@ func reset():
 	Engine.time_scale = SPEEDS[speed_idx]
 	_refresh_play_button()
 	if is_instance_valid(open_details_pane):
-		open_details_pane.turret.close_details_pane()
+		if is_instance_valid(open_details_pane.turret):
+			open_details_pane.turret.close_details_pane()
+		else:
+			open_details_pane.dismiss()
+		open_details_pane = null

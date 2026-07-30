@@ -20,9 +20,11 @@ var grab_t := 0.0
 var bob_t := 0.0
 var is_destroyed := false
 var home_spot := Vector2.ZERO   # onde a vítima estava (para devolver)
+var lift_tween: Tween           # animação de levantar a vítima
 
 func _ready():
 	add_to_group("enemy")
+	add_to_group("ghost")
 	Sfx.play("ghost", -3.0)
 	if is_instance_valid(Globals.hud):
 		Globals.hud.show_banner("Uh! Um fantasma quer levar a família!", 2.0)
@@ -44,15 +46,29 @@ func _closest_defender() -> Node2D:
 	if not is_instance_valid(Globals.turretsNode):
 		return null
 	for t in Globals.turretsNode.get_children():
-		if "deployed" in t and t.deployed:
+		if _grabbable(t) and not _claimed_by_other(t):
 			var d: float = t.global_position.distance_to(global_position)
 			if d < best_d:
 				best_d = d
 				best = t
 	return best
 
+# defesa que dá para agarrar: ativa e ainda no jogo (uma defesa vendida
+# só é liberada no fim do frame, mas já não vale mais)
+func _grabbable(t) -> bool:
+	return is_instance_valid(t) and not t.is_queued_for_deletion() \
+		and "deployed" in t and t.deployed
+
+# outro fantasma já está em cima desta defesa? (dois fantasmas na mesma
+# vítima deixavam a defesa pendurada no limbo)
+func _claimed_by_other(t) -> bool:
+	for g in get_tree().get_nodes_in_group("ghost"):
+		if g != self and is_instance_valid(g) and not g.is_destroyed and g.target == t:
+			return true
+	return false
+
 func _seek(delta):
-	if not is_instance_valid(target) or not ("deployed" in target) or not target.deployed:
+	if not _grabbable(target):
 		target = _closest_defender()
 		if target == null:
 			state = State.leaving
@@ -79,7 +95,9 @@ func _start_grab():
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func _grab(delta):
-	if not is_instance_valid(target) or not target.deployed:
+	if not _grabbable(target):
+		# vendida/removida no meio do agarrão: solta e procura outra
+		_release_victim()
 		state = State.seeking
 		return
 	grab_t += delta
@@ -89,7 +107,8 @@ func _grab(delta):
 		_steal()
 
 func _steal():
-	if not is_instance_valid(target):
+	if not _grabbable(target):
+		_release_victim()
 		state = State.seeking
 		return
 	state = State.carrying
@@ -101,14 +120,42 @@ func _steal():
 	target.get_node("Sprite2D").position.x = 0
 	target.reparent(self)
 	# levanta a vítima num arco suave (pendurada embaixo dele)
-	var tween := create_tween()
-	tween.tween_property(target, "position", Vector2(0, 34), 0.45) \
+	lift_tween = create_tween()
+	lift_tween.tween_property(target, "position", Vector2(0, 34), 0.45) \
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.parallel().tween_property(self, "global_position",
+	lift_tween.parallel().tween_property(self, "global_position",
 		global_position + Vector2(20, -46), 0.45) \
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	if is_instance_valid(Globals.hud):
 		Globals.hud.show_banner("O fantasma levou %s!" % Data.turrets[target.turret_type]["name"], 1.8)
+
+# Solta a vítima: volta ao lugar de origem, viva e atacando de novo.
+# Devolve o nome dela (ou "") para quem quiser avisar o jogador.
+# ATENÇÃO: religar o process_mode ANTES de criar o tween é obrigatório —
+# tween preso a um nó com processamento desligado nunca roda, e era
+# justamente isso que deixava a defesa congelada no ar para sempre.
+func _release_victim() -> String:
+	var victim = target
+	target = null
+	if lift_tween and lift_tween.is_valid():
+		lift_tween.kill()   # senão o tween do "levanta" briga com a volta
+	if not is_instance_valid(victim):
+		return ""
+	if victim.has_node("Sprite2D"):
+		victim.get_node("Sprite2D").position.x = 0.0   # para de se debater
+	if victim.get_parent() != self:
+		return ""   # não está nos meus braços (ou nem foi roubada ainda)
+	if not is_instance_valid(Globals.turretsNode):
+		return ""   # mapa saindo de cena: não há para onde devolver
+	victim.reparent(Globals.turretsNode)
+	victim.process_mode = Node.PROCESS_MODE_INHERIT
+	victim.deployed = true
+	if victim.is_queued_for_deletion():
+		return ""   # foi vendida enquanto estava pendurada: nada a devolver
+	var back := victim.create_tween()
+	back.tween_property(victim, "global_position", home_spot, 0.4) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	return Data.turrets[victim.turret_type]["name"]
 
 func _leave(delta):
 	# de costas, fugindo para cima no DOBRO da velocidade
@@ -133,20 +180,16 @@ func _banish():
 	remove_from_group("enemy")
 	$Area/CollisionShape2D.set_deferred("disabled", true)
 	set_process(false)
-	# devolve a vítima ao lugar dela
-	if state == State.carrying and is_instance_valid(target) and target.get_parent() == self:
-		target.reparent(Globals.turretsNode)
-		var back := target.create_tween()
-		back.tween_property(target, "global_position", home_spot, 0.4) \
-			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		back.tween_callback(func():
-			target.deployed = true
-			target.process_mode = Node.PROCESS_MODE_INHERIT)
+	var rescued := _release_victim()
 	Globals.currentMap.gold += reward
 	Progress.add_points(3)
 	Sfx.play("heal", -6.0)
 	if is_instance_valid(Globals.hud):
-		Globals.hud.show_banner("Fantasma espantado! +%d" % reward, 1.6)
+		if rescued != "":
+			Globals.hud.show_banner("Fantasma espantado! %s voltou pra casa! +%d"
+				% [rescued, reward], 1.8)
+		else:
+			Globals.hud.show_banner("Fantasma espantado! +%d" % reward, 1.6)
 	# dissolve
 	var tween := create_tween()
 	tween.set_parallel()

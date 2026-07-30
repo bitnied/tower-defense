@@ -3,12 +3,43 @@ extends PanelContainer
 var turret : Node2D
 const sell_modifier := 0.7
 
+# a venda só pode acontecer UMA vez: o queue_free() do painel só vale no
+# fim do frame, então sem esta trava cada toque extra em "Vender" (e no
+# celular um toque chega duas vezes) pagava o preço inteiro outra vez —
+# era a chuva de corações ao vender uma defesa agarrada pelo fantasma
+var sold := false
+var _last_press_frame := -1
+
 func _ready():
 	Globals.goldChanged.connect(check_can_upgrade)
 	turret.turretUpdated.connect(set_props)
+	# se a defesa sair de campo (fantasma fugiu com ela, mapa reiniciou),
+	# o painel não pode ficar aberto apontando para quem não existe mais
+	turret.tree_exiting.connect(_on_turret_left)
 	set_props()
 	animate_appear()
 	check_can_upgrade()
+
+# um toque de celular chega como toque + clique emulado: só o primeiro vale
+func _duplicate_press() -> bool:
+	var frame := Engine.get_process_frames()
+	if frame == _last_press_frame:
+		return true
+	_last_press_frame = frame
+	return false
+
+func _on_turret_left():
+	if not sold:
+		dismiss()
+
+# fecha o painel sem mexer na defesa, deixando o HUD sem ponteiro solto
+func dismiss():
+	if is_instance_valid(Globals.hud) and Globals.hud.open_details_pane == self:
+		Globals.hud.open_details_pane = null
+	if is_instance_valid(turret):
+		turret.draw_range = false
+		turret.queue_redraw()
+	queue_free()
 
 func animate_appear():
 	var tween := create_tween()
@@ -33,6 +64,8 @@ func set_props():
 		%Stats.add_child(statLabel)
 
 func _on_upgrade_button_pressed():
+	if sold or _duplicate_press() or not is_instance_valid(turret):
+		return
 	if check_can_upgrade():
 		Globals.currentMap.gold -= get_upgrade_price()
 		turret.upgrade_turret()
@@ -57,10 +90,20 @@ func check_can_upgrade(_new_gold=0):
 
 
 func _on_sell_button_pressed():
+	if sold or not is_instance_valid(turret) or turret.is_queued_for_deletion():
+		return
+	sold = true
+	%SellButton.disabled = true
+	%UpgradeButton.disabled = true
 	Sfx.play("heal", -10.0)
-	queue_free()
 	Globals.currentMap.gold += get_sell_price()
 	turret.queue_free()
+	dismiss()
 
 func _on_close_button_pressed():
-	turret.close_details_pane()
+	if _duplicate_press():
+		return
+	if is_instance_valid(turret):
+		turret.close_details_pane()
+	else:
+		dismiss()
