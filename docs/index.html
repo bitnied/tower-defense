@@ -143,6 +143,41 @@ addEventListener('DOMContentLoaded',function(){
 	document.addEventListener('webkitfullscreenchange',function(){if(document.webkitFullscreenElement)lock();});
 });
 </script>
+<script>
+// iPad/iPhone congelam a pagina em segundo plano com o main loop do Godot
+// parado — o hook de visibilidade em GDScript (Sfx.gd) nunca chega a rodar,
+// mas o WebAudio vive na thread de som e a musica continuava tocando,
+// duplicando com a instancia nova aberta pelo icone da tela de inicio.
+// Suspender o AudioContext aqui, em JS puro, roda no proprio evento,
+// antes do congelamento.
+(function(){
+	var ctxs=[];
+	var wrap=function(name){
+		var Orig=window[name];
+		if(!Orig)return;
+		var Wrapped=function(opts){
+			var c=new Orig(opts);
+			ctxs.push(c);
+			return c;
+		};
+		Wrapped.prototype=Orig.prototype;
+		window[name]=Wrapped;
+	};
+	wrap('AudioContext');
+	wrap('webkitAudioContext');
+	var each=function(m){
+		ctxs.forEach(function(c){
+			try{var p=c[m]();if(p&&p.catch)p.catch(function(){});}catch(e){}
+		});
+	};
+	var sync=function(){each(document.hidden?'suspend':'resume');};
+	document.addEventListener('visibilitychange',sync);
+	addEventListener('pagehide',function(){each('suspend');});
+	addEventListener('pageshow',sync);
+	// no iOS a retomada as vezes so vale dentro de um gesto do usuario
+	document.addEventListener('touchend',function(){if(!document.hidden)each('resume');},true);
+})();
+</script>
 	</head>
 	<body>
 		<canvas id="canvas">
